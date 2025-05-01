@@ -1,13 +1,13 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:NewApp.ViewModels"
+        xmlns:vm="using:newApp.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="NewApp.Views.MainWindow"
+        x:Class="newApp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="NewApp">
+        Title="newApp">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -15,13 +15,14 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-        <StackPanel>
+    <StackPanel>    
+        <TextBlock Text="{Binding Greeting}"/>
+
         <Border Margin="5" CornerRadius="10" Background="LightBlue">
             <TextBlock Margin="5"
-                       FontSize="24" 
-                       HorizontalAlignment="Center"
-                       Text="Temperature Converter">
-            </TextBlock>
+                HorizontalAlignment="Center"
+                FontSize="24"
+                Text="Temperature Converter" />
         </Border>
         <Grid ShowGridLines="True"  Margin="5" 
             ColumnDefinitions="120, 100" 
@@ -31,6 +32,7 @@
             <Label Grid.Row="1" Grid.Column="0" Margin="10">Fahrenheit</Label>
             <TextBox Grid.Row="1"  Grid.Column="1" Margin="0 5" Text="0"/>
         </Grid>
-        <Button HorizontalAlignment="Center">Calculate</Button>
+        <Button Grid.Row="2"  Grid.Column="1" Click="Button_OnClick">Calculate</Button>
     </StackPanel>
+
 </Window>
