@@ -12,6 +12,15 @@ public partial class MainWindow : Window
     }
     private void Button_OnClick(object? sender, RoutedEventArgs e)
     {
-        Console.WriteLine("Click!");
-}
+        if (double.TryParse(Celsius.Text, out double C))
+        {
+            var F = C * (9d / 5d) + 32;
+            Fahrenheit.Text = F.ToString("0.0");
+        }
+        else
+        {
+            Celsius.Text = "0";
+            Fahrenheit.Text = "32,0";
+        }
+    }
 }
