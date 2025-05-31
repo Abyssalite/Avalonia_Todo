@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using System;
 
-namespace newApp;
+namespace App2;
 
 sealed class Program
 {

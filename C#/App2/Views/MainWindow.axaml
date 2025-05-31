@@ -1,13 +1,13 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:newApp.ViewModels"
+        xmlns:vm="using:App2.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="newApp.Views.MainWindow"
+        x:Class="App2.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="newApp">
+        Title="App2">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -15,24 +15,17 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <StackPanel>    
-        <TextBlock Text="{Binding Greeting}"/>
+    <StackPanel Margin="10">
+        <TextBox Watermark="Write a note..." Text="{Binding NewTaskName}" />
+        <Button Content="Add" Command="{Binding AddNoteCommand}" Margin="0,5"/>
+        <Button Content="Clear All" Command="{Binding ClearCommand}" Margin="0,5"/>
 
-        <Border Margin="5" CornerRadius="10" Background="LightBlue">
-            <TextBlock Margin="5"
-                HorizontalAlignment="Center"
-                FontSize="24"
-                Text="Temperature Converter" />
-        </Border>
-        <Grid ShowGridLines="True"  Margin="5" 
-            ColumnDefinitions="120, 100" 
-            RowDefinitions="Auto, Auto, Auto">
-            <Label Grid.Row="0" Grid.Column="0" Margin="10">Celsius</Label>
-            <TextBox Grid.Row="0" Grid.Column="1" Margin="0 5" Text="0" Name="Celsius"/>
-            <Label Grid.Row="1" Grid.Column="0" Margin="10">Fahrenheit</Label>
-            <TextBox Grid.Row="1"  Grid.Column="1" Margin="0 5" Text="0" Name="Fahrenheit"/>
-        </Grid>
-        <Button Grid.Row="2"  Grid.Column="1" Click="Button_OnClick">Calculate</Button>
+        <ListBox ItemsSource="{Binding Tasks}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </StackPanel>
-
 </Window>
