@@ -1,7 +1,7 @@
 <UserControl
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:vm="clr-namespace:App2.ViewModels"
+    xmlns:vm="using:App2.ViewModels"
     x:Class="App2.Views.MainView"
     x:DataType="vm:MainViewModel"> 
 
@@ -11,12 +11,19 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Button Content="{Binding Name}"
-                            Command="{Binding DataContext.OpenTaskCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenTaskCommand}"
                             CommandParameter="{Binding}" 
-                            x:CompileBindings="False"/>
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="10"
+                            HorizontalContentAlignment="Left"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Cursor="Hand" />
 
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+
     </StackPanel>
 </UserControl>
