@@ -7,7 +7,6 @@ public partial class TaskDetailView : UserControl
 {
     public TaskDetailView()
     {
-        Console.WriteLine("TaskDetailView");
         InitializeComponent();
     }
 }

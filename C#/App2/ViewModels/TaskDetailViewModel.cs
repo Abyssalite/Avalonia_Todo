@@ -13,8 +13,6 @@ public class TaskDetailViewModel : ViewModelBase
 
     public TaskDetailViewModel(MainWindowViewModel main, BaseTask task)
     {
-        Console.WriteLine("TaskDetailViewModel");
-
         _mainWindowViewModel = main;
         Task = task;
         GoBackCommand = new RelayCommand(() => _mainWindowViewModel.MainView = new MainViewModel(_mainWindowViewModel));

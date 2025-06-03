@@ -7,9 +7,18 @@
     
     <StackPanel Margin="10">
         <TextBlock Text="Task Detail" FontSize="20"/>
-        <TextBlock Text="{Binding Task.Name}" />
-        <TextBlock Text="{Binding Task.Description}" />
-        <TextBlock Text="{Binding Task.Category}" />
+        <Grid ColumnDefinitions="100,*" Margin="10">
+            <TextBlock Text="Name" Grid.Column="0"/>
+            <TextBlock Text="{Binding Task.Name}" Grid.Column="1"/>
+        </Grid>
+        <Grid ColumnDefinitions="100,*" Margin="10">
+            <TextBlock Text="Description" Grid.Column="0"/>
+            <TextBlock Text="{Binding Task.Description}" Grid.Column="1"/>
+        </Grid>
+        <Grid ColumnDefinitions="100,*" Margin="10">
+            <TextBlock Text="Category" Grid.Column="0"/>
+            <TextBlock Text="{Binding Task.Category}" Grid.Column="1"/>
+        </Grid>
         <Button Content="Back" Command="{Binding GoBackCommand}" Margin="0,10,0,0"/>
     </StackPanel>
 </UserControl>

@@ -4,26 +4,34 @@
     xmlns:vm="using:App2.ViewModels"
     x:Class="App2.Views.MainView"
     x:DataType="vm:MainViewModel"> 
-
     <StackPanel Margin="10">
-        <TextBlock Text="Task List" FontSize="20"/>
-        <ListBox ItemsSource="{Binding Tasks}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Button Content="{Binding Name}"
-                            Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenTaskCommand}"
-                            CommandParameter="{Binding}" 
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Padding="10"
-                            HorizontalContentAlignment="Left"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Cursor="Hand" />
 
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <StackPanel Margin="10">          
+            <TextBox Watermark="Write a name..." Text="{Binding NewTaskName}" />
+            <TextBox Watermark="Description" Text="{Binding TaskDesc}" />
+            <TextBox Watermark="Category" Text="{Binding TaskCatalog}" />
 
+            <Button Content="Add" Command="{Binding AddTaskCommand}" Margin="0,5"/>
+        </StackPanel>
+        <StackPanel Margin="10">
+            <TextBlock Text="Task List" FontSize="20"/>
+            <ListBox ItemsSource="{Binding Tasks}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Name}"
+                                Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenTaskCommand}"
+                                CommandParameter="{Binding}" 
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Padding="10"
+                                HorizontalContentAlignment="Left"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Cursor="Hand" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
     </StackPanel>
+
 </UserControl>

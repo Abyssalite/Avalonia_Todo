@@ -1,7 +1,4 @@
-﻿using System;
-using App2.Views;
-
-namespace App2.ViewModels;
+﻿namespace App2.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
@@ -14,7 +11,6 @@ public class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
-        Console.WriteLine("MainWindowViewModel");
         _mainViewModel = new MainViewModel(this);
         
     }

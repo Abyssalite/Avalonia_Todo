@@ -7,7 +7,6 @@ public partial class MainView : UserControl
 {
     public MainView()
     {
-        Console.WriteLine("MainView");
         InitializeComponent();
     }
 }
