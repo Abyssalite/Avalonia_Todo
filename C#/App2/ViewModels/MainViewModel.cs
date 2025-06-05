@@ -10,12 +10,27 @@ namespace App2.ViewModels;
 public class MainViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
+    public ViewModelBase? TaskDetailView { get; private set; }
+
     public ObservableCollection<BaseTask> Tasks { get; set; } = new();
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
-    public ICommand OpenTaskCommand { get; }
-    public ICommand AddTaskCommand { get; }
+    public ICommand AddTaskCommand { get; } //Button only
+    private BaseTask? _selectedTask;
+    public BaseTask? SelectedTask
+    {
+        get => _selectedTask;
+        set
+        {
+            if (value is not null &&_selectedTask != value)
+            {
+                _selectedTask = value;
+                OnPropertyChanged(nameof(SelectedTask));
+                OpenTask(value);
+            }
+        }
+    }
 
     private string InputOrDefault(string? input, string defaultValue)
     {
@@ -26,14 +41,13 @@ public class MainViewModel : ViewModelBase
     {
         _mainWindowViewModel = main;
         Tasks = Load();
-        OpenTaskCommand = new RelayCommand<BaseTask>(OpenTask);
-        AddTaskCommand = new RelayCommand(AddTask);
+        AddTaskCommand = new RelayCommand(() => Console.WriteLine("Nothing... yet"));
     }
 
-    private void OpenTask(BaseTask? task)
+    private void OpenTask(BaseTask task)
     {
-        if (task is not null)
-            _mainWindowViewModel.MainView = new TaskDetailViewModel(_mainWindowViewModel, task);
+        TaskDetailView = new TaskDetailViewModel(task);
+        OnPropertyChanged(nameof(TaskDetailView));
     }
 
     private void AddTask()

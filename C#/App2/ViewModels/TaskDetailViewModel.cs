@@ -6,15 +6,10 @@ namespace App2.ViewModels;
 
 public class TaskDetailViewModel : ViewModelBase
 {
-    private readonly MainWindowViewModel _mainWindowViewModel;
     public BaseTask Task { get; }
 
-    public ICommand GoBackCommand { get; }
-
-    public TaskDetailViewModel(MainWindowViewModel main, BaseTask task)
+    public TaskDetailViewModel(BaseTask task)
     {
-        _mainWindowViewModel = main;
         Task = task;
-        GoBackCommand = new RelayCommand(() => _mainWindowViewModel.MainView = new MainViewModel(_mainWindowViewModel));
     }
 }

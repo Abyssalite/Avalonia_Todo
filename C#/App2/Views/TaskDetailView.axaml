@@ -5,20 +5,26 @@
     x:Class="App2.Views.TaskDetailView"
     x:DataType="vm:TaskDetailViewModel">
     
-    <StackPanel Margin="10">
-        <TextBlock Text="Task Detail" FontSize="20"/>
-        <Grid ColumnDefinitions="100,*" Margin="10">
-            <TextBlock Text="Name" Grid.Column="0"/>
-            <TextBlock Text="{Binding Task.Name}" Grid.Column="1"/>
-        </Grid>
-        <Grid ColumnDefinitions="100,*" Margin="10">
-            <TextBlock Text="Description" Grid.Column="0"/>
-            <TextBlock Text="{Binding Task.Description}" Grid.Column="1"/>
-        </Grid>
-        <Grid ColumnDefinitions="100,*" Margin="10">
-            <TextBlock Text="Category" Grid.Column="0"/>
-            <TextBlock Text="{Binding Task.Category}" Grid.Column="1"/>
-        </Grid>
-        <Button Content="Back" Command="{Binding GoBackCommand}" Margin="0,10,0,0"/>
-    </StackPanel>
+    <Grid>
+        <StackPanel HorizontalAlignment="Stretch" Margin="10">
+            <TextBlock Text="Task Detail" FontSize="30" Margin="10" HorizontalAlignment="Center"/>
+            
+            <Grid ColumnDefinitions="150,*" Margin="20">
+                <TextBlock Text="Name" Grid.Column="0"/>
+                <TextBlock Text="{Binding Task.Name}" Grid.Column="1"/>
+            </Grid>
+
+            <Grid ColumnDefinitions="150,*" Margin="20">
+                <TextBlock Text="Description" Grid.Column="0"/>
+                <TextBlock Text="{Binding Task.Description}" Grid.Column="1"/>
+            </Grid>
+
+            <Grid ColumnDefinitions="150,*" Margin="20">
+                <TextBlock Text="Category" Grid.Column="0"/>
+                <TextBlock Text="{Binding Task.Category}" Grid.Column="1"/>
+            </Grid>
+        </StackPanel>
+    </Grid>
+
+
 </UserControl>

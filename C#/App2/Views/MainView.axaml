@@ -4,34 +4,41 @@
     xmlns:vm="using:App2.ViewModels"
     x:Class="App2.Views.MainView"
     x:DataType="vm:MainViewModel"> 
-    <StackPanel Margin="10">
+   <Grid ColumnDefinitions="1*,2*">
+        <!-- Left: Task List -->
+        <Grid Grid.Column="0" RowDefinitions="*,Auto">
+            <StackPanel Grid.Row="0" Margin="10">
+                <TextBlock Text="Task List" FontSize="20" Margin="10"/>
+                <ListBox ItemsSource="{Binding Tasks}"
+                        SelectedItem="{Binding SelectedTask, Mode=TwoWay}"
+                        Margin="10">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" Padding="10"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>                
+            <Button Grid.Row="1"
+                    Content="+"
+                    Command="{Binding AddTaskCommand}"
+                    FontSize="50"
+                    Width="60"
+                    Height="60"
+                    Margin="10"
+                    Padding="0"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="Gray"
+                    Foreground="White"
+                    BorderBrush="Transparent"
+                    CornerRadius="30"/>
+        </Grid>
 
-        <StackPanel Margin="10">          
-            <TextBox Watermark="Write a name..." Text="{Binding NewTaskName}" />
-            <TextBox Watermark="Description" Text="{Binding TaskDesc}" />
-            <TextBox Watermark="Category" Text="{Binding TaskCatalog}" />
-
-            <Button Content="Add" Command="{Binding AddTaskCommand}" Margin="0,5"/>
-        </StackPanel>
-        <StackPanel Margin="10">
-            <TextBlock Text="Task List" FontSize="20"/>
-            <ListBox ItemsSource="{Binding Tasks}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Button Content="{Binding Name}"
-                                Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenTaskCommand}"
-                                CommandParameter="{Binding}" 
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Padding="10"
-                                HorizontalContentAlignment="Left"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Cursor="Hand" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </StackPanel>
-    </StackPanel>
+        <!-- Right: Task Detail -->
+        <ContentControl Grid.Column="1"
+                        Content="{Binding TaskDetailView}" />
+    </Grid>
 
 </UserControl>
