@@ -1,0 +1,36 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:App2.ViewModels"
+    x:Class="App2.Views.AddTaskView"
+    x:DataType="vm:AddTaskViewModel"> 
+
+   <Grid ColumnDefinitions="1*,2*">
+        <StackPanel Grid.Column="0" Margin="10">
+            <TextBlock Text="Task Selection" FontSize="20" Margin="10"/>
+            <ListBox Margin="10" >
+                <ListBoxItem Content="Base Task" Padding="20"/>
+                <ListBoxItem Content="Noted Task" Padding="20"/>
+            </ListBox>
+
+        </StackPanel>       
+        <StackPanel Grid.Column="1" Margin="10" Spacing="10" HorizontalAlignment="Stretch" >
+            <TextBlock Text="New Task" FontSize="30" Margin="10" HorizontalAlignment="Center"/>
+
+            <TextBox Watermark="Task name" Text="{Binding NewTaskName}" Margin="8"/>
+            <TextBox Watermark="Description" Text="{Binding TaskDesc}" Margin="8"/>
+            <TextBox Watermark="Category" Text="{Binding TaskCatalog}" Margin="8"/>
+            <Grid ColumnDefinitions="100,*">
+                <Button Grid.Column="0"
+                    Content="Add task"
+                    Command="{Binding SaveTaskCommand}"
+                    Margin="10"/>   
+                <Button Grid.Column="1"
+                    Content="Cancel"
+                    Command="{Binding CancelCommand}"
+                    Margin="10"/>   
+            </Grid>
+        </StackPanel>         
+    </Grid>
+
+</UserControl>

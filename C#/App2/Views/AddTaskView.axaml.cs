@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace App2.Views;
 
-public partial class TaskDetailView : UserControl
+public partial class AddTaskView : UserControl
 {
-    public TaskDetailView()
+    public AddTaskView()
     {
         InitializeComponent();
     }

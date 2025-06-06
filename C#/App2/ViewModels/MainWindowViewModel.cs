@@ -12,7 +12,5 @@ public class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel()
     {
         _mainViewModel = new MainViewModel(this);
-        
     }
-    
 }

@@ -16,7 +16,7 @@ public class MainViewModel : ViewModelBase
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
-    public ICommand AddTaskCommand { get; } //Button only
+    public ICommand AddTaskViewCommand { get; } //Button only
     private BaseTask? _selectedTask;
     public BaseTask? SelectedTask
     {
@@ -32,42 +32,28 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private string InputOrDefault(string? input, string defaultValue)
-    {
-        return string.IsNullOrWhiteSpace(input) ? defaultValue : input;
-    }
-
     public MainViewModel(MainWindowViewModel main)
     {
         _mainWindowViewModel = main;
         Tasks = Load();
-        AddTaskCommand = new RelayCommand(() => Console.WriteLine("Nothing... yet"));
+        AddTaskViewCommand = new RelayCommand(OpenAddTaskView);
+    }
+
+    private void OpenAddTaskView()
+    {
+        var addVM = new AddTaskViewModel(_mainWindowViewModel);
+        addVM.OnTaskCreated = task =>
+        {
+            Tasks.Add(task);
+            Save();
+        };
+        _mainWindowViewModel.MainView = addVM;
     }
 
     private void OpenTask(BaseTask task)
     {
         TaskDetailView = new TaskDetailViewModel(task);
         OnPropertyChanged(nameof(TaskDetailView));
-    }
-
-    private void AddTask()
-    {
-        string name = InputOrDefault(NewTaskName, "");
-        if (name != "")
-            Tasks.Add(new BaseTask
-            {
-                Name = name,
-                IsDone = false,
-                Category = InputOrDefault(TaskCatalog, ""),
-                Description = InputOrDefault(TaskDesc, "")
-            });
-        Save();
-        NewTaskName = string.Empty;
-        OnPropertyChanged(nameof(NewTaskName));
-        TaskCatalog = string.Empty;
-        OnPropertyChanged(nameof(TaskCatalog));
-        TaskDesc = string.Empty;
-        OnPropertyChanged(nameof(TaskDesc));
     }
 
     private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
@@ -97,5 +83,4 @@ public class MainViewModel : ViewModelBase
             return [];
         }
     }
-
 }

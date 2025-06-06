@@ -10,8 +10,8 @@
             <StackPanel Grid.Row="0" Margin="10">
                 <TextBlock Text="Task List" FontSize="20" Margin="10"/>
                 <ListBox ItemsSource="{Binding Tasks}"
-                        SelectedItem="{Binding SelectedTask, Mode=TwoWay}"
-                        Margin="10">
+                         SelectedItem="{Binding SelectedTask, Mode=TwoWay}"
+                         Margin="10">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}" Padding="10"/>
@@ -20,20 +20,22 @@
                 </ListBox>
             </StackPanel>                
             <Button Grid.Row="1"
-                    Content="+"
-                    Command="{Binding AddTaskCommand}"
-                    FontSize="50"
-                    Width="60"
-                    Height="60"
+                    Command="{Binding AddTaskViewCommand}"
+                    Width="60" 
+                    Height="60" 
                     Margin="10"
                     Padding="0"
+                    CornerRadius="30"
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    Background="Gray"
-                    Foreground="White"
                     BorderBrush="Transparent"
-                    CornerRadius="30"/>
+                    Background="LightGray">
+                <Image Source="avares://App2/Assets/plus.png"
+                    Stretch="Uniform"
+                    Width="60"
+                    Height="60" />
+            </Button>
         </Grid>
 
         <!-- Right: Task Detail -->
