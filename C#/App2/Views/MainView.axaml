@@ -30,7 +30,7 @@
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     BorderBrush="Transparent"
-                    Background="LightGray">
+                    Background="Gray">
                 <Image Source="avares://App2/Assets/plus.png"
                     Stretch="Uniform"
                     Width="60"
