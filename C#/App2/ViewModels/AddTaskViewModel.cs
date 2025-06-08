@@ -8,6 +8,8 @@ public class AddTaskViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
     public Action<BaseTask>? OnTaskCreated { get; set; } // callback
+    public Action? ShowEmptyNameDialog { get; set; }
+
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
@@ -40,8 +42,13 @@ public class AddTaskViewModel : ViewModelBase
     }
     private void AddTask()
     {
+
         string name = InputOrDefault(NewTaskName, "");
-        if (name == "") return;
+        if (name == "")
+        {
+            ShowEmptyNameDialog?.Invoke(); 
+            return;
+        }
         var task = new BaseTask
 
         {

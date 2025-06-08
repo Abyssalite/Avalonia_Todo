@@ -24,10 +24,12 @@
                 <Button Grid.Column="0"
                     Content="Add task"
                     Command="{Binding SaveTaskCommand}"
+                    Padding="10" 
                     Margin="10"/>   
                 <Button Grid.Column="1"
                     Content="Cancel"
                     Command="{Binding CancelCommand}"
+                    Padding="10" 
                     Margin="10"/>   
             </Grid>
         </StackPanel>         
