@@ -24,7 +24,6 @@ public partial class AddTaskView : UserControl
 
                 if (window is not null)
                 {
-
                     var dialog = new CustomDialog();
                     await dialog.ShowDialog(window);
                 }

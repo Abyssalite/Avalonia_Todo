@@ -11,7 +11,7 @@ namespace App2.ViewModels;
 public class MainViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
-    public ViewModelBase? TaskDetailView { get; private set; }
+    public TaskDetailViewModel? TaskDetailView { get; private set; }
 
     public ObservableCollection<BaseTask> Tasks { get; set; } = new();
     public string? NewTaskName { get; set; }
@@ -53,7 +53,13 @@ public class MainViewModel : ViewModelBase
 
     private void OpenTask(BaseTask task)
     {
-        TaskDetailView = new TaskDetailViewModel(task);
+        TaskDetailView = new TaskDetailViewModel(_mainWindowViewModel,task);
+        TaskDetailView.OnTaskDetele = task =>
+        {
+            Tasks.Remove(task);
+            Save();
+
+        };
         OnPropertyChanged(nameof(TaskDetailView));
     }
 

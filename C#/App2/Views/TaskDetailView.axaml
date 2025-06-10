@@ -1,13 +1,54 @@
 <UserControl
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
     xmlns:vm="using:App2.ViewModels"
     x:Class="App2.Views.TaskDetailView"
     x:DataType="vm:TaskDetailViewModel">
+
+        <UserControl.Styles>
+            <Style Selector="FlyoutPresenter.DropDown">
+                <Setter Property="Background" Value="#AAFFFFFF"/>
+                <Setter Property="MinWidth" Value="150"/>
+                <Setter Property="MaxHeight" Value="400"/>
+                <Setter Property="Margin" Value="10"/>
+                <Setter Property="Padding" Value="10"/>
+                <Setter Property="BorderBrush" Value="Gray"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="10"/>
+            </Style>
+        </UserControl.Styles>
+
     
-    <Grid>
         <StackPanel HorizontalAlignment="Stretch" Margin="10">
-            <TextBlock Text="Task Detail" FontSize="30" Margin="10" HorizontalAlignment="Center"/>
+            <Grid ColumnDefinitions="9*,*" Margin="20">
+                <TextBlock Grid.Column="0" Text="Task Detail" FontSize="30" HorizontalAlignment="Center"/>
+                <Button Grid.Column="1"
+                        Width="40" 
+                        Height="40" 
+                        Padding="0"
+                        CornerRadius="30"
+                        VerticalAlignment="Top"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Transparent"
+                        Background="Gray">
+                    <Image Source="avares://App2/Assets/icons8-menu-100.png"
+                        Stretch="Uniform"
+                        Width="40"
+                        Height="40" />
+                    <Button.Flyout>
+                        <Flyout FlyoutPresenterClasses="DropDown">
+                            <Flyout.Content>
+                                <StackPanel>
+                                    <MenuItem Header="Edit" />
+                                    <MenuItem Header="Delete" Command="{Binding DeleteTaskCommand}"/>
+                                </StackPanel>
+                            </Flyout.Content>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </Grid>
             
             <Grid ColumnDefinitions="150,*" Margin="20">
                 <TextBlock Text="Name" Grid.Column="0"/>
@@ -24,7 +65,4 @@
                 <TextBlock Text="{Binding Task.Category}" Grid.Column="1"/>
             </Grid>
         </StackPanel>
-    </Grid>
-
-
 </UserControl>

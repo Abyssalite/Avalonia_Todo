@@ -31,7 +31,7 @@
                     VerticalContentAlignment="Center"
                     BorderBrush="Transparent"
                     Background="Gray">
-                <Image Source="avares://App2/Assets/plus.png"
+                <Image Source="avares://App2/Assets/icons8-plus-100.png"
                     Stretch="Uniform"
                     Width="60"
                     Height="60" />
