@@ -9,13 +9,11 @@ public class AddTaskViewModel : ViewModelBase
     private readonly MainWindowViewModel _mainWindowViewModel;
     public Action<BaseTask>? OnTaskCreated { get; set; } // callback
     public Action? ShowEmptyNameDialog { get; set; }
-
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
     public ICommand SaveTaskCommand { get; } //Button only
     public ICommand CancelCommand { get; }
-
 
     private string InputOrDefault(string? input, string defaultValue)
     {
@@ -38,7 +36,6 @@ public class AddTaskViewModel : ViewModelBase
         TaskDesc = string.Empty;
         OnPropertyChanged(nameof(TaskDesc));
         _mainWindowViewModel.MainView = new MainViewModel(_mainWindowViewModel);
-
     }
     private void AddTask()
     {

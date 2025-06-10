@@ -30,7 +30,7 @@
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     BorderBrush="Transparent"
-                    Background="Gray">
+                    Background="#FAAA">
                 <Image Source="avares://App2/Assets/icons8-plus-100.png"
                     Stretch="Uniform"
                     Width="60"

@@ -12,7 +12,6 @@ public class MainViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
     public TaskDetailViewModel? TaskDetailView { get; private set; }
-
     public ObservableCollection<BaseTask> Tasks { get; set; } = new();
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
@@ -74,7 +73,7 @@ public class MainViewModel : ViewModelBase
         File.WriteAllText(fileName, json);
         Console.WriteLine("Saving tasks.json to: " + Directory.GetCurrentDirectory());
     }
-
+    
     private ObservableCollection<BaseTask> Load(string filename = "tasks.json")
     {
         try

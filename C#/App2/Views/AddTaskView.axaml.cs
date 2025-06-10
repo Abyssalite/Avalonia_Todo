@@ -24,7 +24,7 @@ public partial class AddTaskView : UserControl
 
                 if (window is not null)
                 {
-                    var dialog = new CustomDialog();
+                    var dialog = new CustomDialog("Please enter task name!", false, "Close" );
                     await dialog.ShowDialog(window);
                 }
             };

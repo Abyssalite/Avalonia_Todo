@@ -8,17 +8,16 @@
 
         <UserControl.Styles>
             <Style Selector="FlyoutPresenter.DropDown">
-                <Setter Property="Background" Value="#AAFFFFFF"/>
+                <Setter Property="Background" Value="#FAAA"/>
                 <Setter Property="MinWidth" Value="150"/>
                 <Setter Property="MaxHeight" Value="400"/>
                 <Setter Property="Margin" Value="10"/>
                 <Setter Property="Padding" Value="10"/>
-                <Setter Property="BorderBrush" Value="Gray"/>
+                <Setter Property="BorderBrush" Value="White"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="CornerRadius" Value="10"/>
             </Style>
         </UserControl.Styles>
-
     
         <StackPanel HorizontalAlignment="Stretch" Margin="10">
             <Grid ColumnDefinitions="9*,*" Margin="20">
@@ -32,7 +31,7 @@
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
                         BorderBrush="Transparent"
-                        Background="Gray">
+                        Background="#FAAA">
                     <Image Source="avares://App2/Assets/icons8-menu-100.png"
                         Stretch="Uniform"
                         Width="40"
@@ -41,8 +40,8 @@
                         <Flyout FlyoutPresenterClasses="DropDown">
                             <Flyout.Content>
                                 <StackPanel>
-                                    <MenuItem Header="Edit" />
-                                    <MenuItem Header="Delete" Command="{Binding DeleteTaskCommand}"/>
+                                    <MenuItem Header="Edit" Foreground="Black"/>
+                                    <MenuItem Header="Delete" Foreground="Black" Command="{Binding DeleteTaskCommand}"/>
                                 </StackPanel>
                             </Flyout.Content>
                         </Flyout>
