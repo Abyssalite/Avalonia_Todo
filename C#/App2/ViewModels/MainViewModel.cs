@@ -24,13 +24,12 @@ public class MainViewModel : ViewModelBase
         get => _selectedTask;
         set
         {
-            _selectedTask = value;
-            OnPropertyChanged(nameof(SelectedTask));
-
-            if (value != null)
+            if (value != null && value != _selectedTask)
             {
-            
+                _selectedTask = value;
                 OpenTask(value);
+                OnPropertyChanged(nameof(SelectedTask));
+
                 SelectedTask = null; // reset to allow re-selection
             }
         }
@@ -39,7 +38,8 @@ public class MainViewModel : ViewModelBase
     public MainViewModel(MainWindowViewModel main)
     {
         _mainWindowViewModel = main;
-        GroupedTasks  = Load();
+        GroupedTasks = Load();
+        HookSaveOnIsDoneChange();
         AddTaskViewCommand = new RelayCommand(OpenAddTaskView);
     }
 
@@ -71,6 +71,23 @@ public class MainViewModel : ViewModelBase
             {
                 GroupedTasks.Remove(group);
             };
+        }
+    }
+
+    private void HookSaveOnIsDoneChange()
+    {
+        foreach (var group in GroupedTasks)
+        {
+            foreach (var task in group.Tasks)
+            {
+                task.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == nameof(BaseTask.IsDone))
+                    {
+                        Save();
+                    }
+                };
+            }
         }
     }
 
