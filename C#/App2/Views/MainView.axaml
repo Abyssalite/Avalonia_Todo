@@ -9,15 +9,39 @@
         <Grid Grid.Column="0" RowDefinitions="*,Auto">
             <StackPanel Grid.Row="0" Margin="10">
                 <TextBlock Text="Task List" FontSize="20" Margin="10"/>
-                <ListBox ItemsSource="{Binding Tasks}"
-                         SelectedItem="{Binding SelectedTask, Mode=TwoWay}"
-                         Margin="10">
-                    <ListBox.ItemTemplate>
+                <ItemsControl ItemsSource="{Binding GroupedTasks}" Margin="10">
+                    <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name}" Padding="10"/>
+                            <StackPanel>
+                                <!-- Category Header (non-clickable) -->
+                                <TextBlock  Text="{Binding Category}" 
+                                            FontSize="16" 
+                                            Background="Transparent"
+                                            FontWeight="Bold"
+                                            Padding="5" 
+                                            Margin="5,0,0,0"/>
+
+                                <!-- Clickable Task Boxes -->
+                                <ListBox ItemsSource="{Binding Tasks}"
+                                        BorderThickness="0"
+                                        Background="Transparent"
+                                        SelectionMode="Single"
+                                        SelectedItem="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).SelectedTask, Mode=TwoWay}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}" 
+                                                       FontSize="14"
+                                                       Background="Transparent"
+                                                       Padding="10"
+                                                       Margin="10,0,0,0"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </StackPanel>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
             </StackPanel>                
             <Button Grid.Row="1"
                     Command="{Binding AddTaskViewCommand}"

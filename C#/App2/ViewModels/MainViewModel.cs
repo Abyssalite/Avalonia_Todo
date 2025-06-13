@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using App2.Views;
+using System.Linq;
 
 namespace App2.ViewModels;
 
@@ -12,7 +13,7 @@ public class MainViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
     public TaskDetailViewModel? TaskDetailView { get; private set; }
-    public ObservableCollection<BaseTask> Tasks { get; set; } = new();
+    public ObservableCollection<TaskGroup> GroupedTasks { get; set; }
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
@@ -23,11 +24,14 @@ public class MainViewModel : ViewModelBase
         get => _selectedTask;
         set
         {
-            if (value is not null &&_selectedTask != value)
+            _selectedTask = value;
+            OnPropertyChanged(nameof(SelectedTask));
+
+            if (value != null)
             {
-                _selectedTask = value;
-                OnPropertyChanged(nameof(SelectedTask));
+            
                 OpenTask(value);
+                SelectedTask = null; // reset to allow re-selection
             }
         }
     }
@@ -35,8 +39,39 @@ public class MainViewModel : ViewModelBase
     public MainViewModel(MainWindowViewModel main)
     {
         _mainWindowViewModel = main;
-        Tasks = Load();
+        GroupedTasks  = Load();
         AddTaskViewCommand = new RelayCommand(OpenAddTaskView);
+    }
+
+    public void AddTaskToCategory(BaseTask task)
+    {
+        var group = GroupedTasks.FirstOrDefault(g => g.Category == task.Category);
+        if (group != null)
+        {
+            group.Tasks.Add(task);
+        }
+        else
+        {
+            // If category doesn't exist, create a new one
+            GroupedTasks.Add(new TaskGroup
+            {
+                Category = task.Category,
+                Tasks = new ObservableCollection<BaseTask> { task }
+            });
+        }
+    }
+
+    public void DeleteTask(BaseTask task)
+    {
+        var group = GroupedTasks.FirstOrDefault(g => g.Category == task.Category);
+        if (group != null)
+        {
+            group.Tasks.Remove(task);
+            if (group.Tasks.Count == 0)
+            {
+                GroupedTasks.Remove(group);
+            };
+        }
     }
 
     private void OpenAddTaskView()
@@ -44,7 +79,7 @@ public class MainViewModel : ViewModelBase
         var addVM = new AddTaskViewModel(_mainWindowViewModel);
         addVM.OnTaskCreated = task =>
         {
-            Tasks.Add(task);
+            AddTaskToCategory(task);
             Save();
         };
         _mainWindowViewModel.MainView = addVM;
@@ -55,7 +90,7 @@ public class MainViewModel : ViewModelBase
         TaskDetailView = new TaskDetailViewModel(_mainWindowViewModel,task);
         TaskDetailView.OnTaskDetele = task =>
         {
-            Tasks.Remove(task);
+            DeleteTask(task);
             Save();
 
         };
@@ -69,18 +104,18 @@ public class MainViewModel : ViewModelBase
 
     private void Save(string fileName = "tasks.json")
     {
-        string json = JsonSerializer.Serialize(Tasks, JsonOptions);
+        string json = JsonSerializer.Serialize(GroupedTasks, JsonOptions);
         File.WriteAllText(fileName, json);
         Console.WriteLine("Saving tasks.json to: " + Directory.GetCurrentDirectory());
     }
     
-    private ObservableCollection<BaseTask> Load(string filename = "tasks.json")
+    private ObservableCollection<TaskGroup> Load(string filename = "tasks.json")
     {
         try
         {
             string json = File.ReadAllText(filename);
             Console.WriteLine($"Tasks loaded from {filename}.");
-            return JsonSerializer.Deserialize<ObservableCollection<BaseTask>>(json, JsonOptions) ?? [];
+            return JsonSerializer.Deserialize<ObservableCollection<TaskGroup>>(json, JsonOptions) ?? [];
         }
         catch (Exception ex)
         {
