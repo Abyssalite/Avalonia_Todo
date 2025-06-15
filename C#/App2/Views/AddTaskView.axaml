@@ -5,7 +5,7 @@
     x:Class="App2.Views.AddTaskView"
     x:DataType="vm:AddTaskViewModel"> 
 
-   <Grid ColumnDefinitions="1*,2*">
+    <Grid ColumnDefinitions="1*,2*">
         <StackPanel Grid.Column="0" Margin="10">
             <TextBlock Text="Task Selection" FontSize="20" Margin="10"/>
             <ListBox Margin="10" >
@@ -33,5 +33,4 @@
             </Grid>
         </StackPanel>         
     </Grid>
-
 </UserControl>

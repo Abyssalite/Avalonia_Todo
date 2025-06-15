@@ -10,5 +10,4 @@
         Title="App2">
 
     <ContentControl Content="{Binding MainView}" />
-
 </Window>

@@ -1,0 +1,43 @@
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Text.Json;
+public static class TaskHelpers
+{
+    public static void HookSaveToTask(ObservableCollection<GroupList> GroupLists, BaseTask task)
+    {
+        task.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(BaseTask.IsDone))
+            {
+                Save(GroupLists);
+            }
+        };
+    }
+    private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+    {
+        WriteIndented = true
+    };
+    public static void Save(ObservableCollection<GroupList> GroupLists, string fileName = "tasks.json")
+    {
+        string json = JsonSerializer.Serialize(GroupLists, JsonOptions);
+        File.WriteAllText(fileName, json);
+        Console.WriteLine("Saving tasks.json to: " + Directory.GetCurrentDirectory());
+    }
+    
+    public static ObservableCollection<GroupList> Load(string filename = "tasks.json")
+    {
+        try
+        {
+            string json = File.ReadAllText(filename);
+            Console.WriteLine($"Tasks loaded from {filename}.");
+            return JsonSerializer.Deserialize<ObservableCollection<GroupList>>(json, JsonOptions) ?? [];
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error loading tasks: " + ex.Message);
+            Console.WriteLine("Creating...");
+            return [];
+        }
+    }
+}

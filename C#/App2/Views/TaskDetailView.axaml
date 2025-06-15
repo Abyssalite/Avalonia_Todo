@@ -6,62 +6,62 @@
     x:Class="App2.Views.TaskDetailView"
     x:DataType="vm:TaskDetailViewModel">
 
-        <UserControl.Styles>
-            <Style Selector="FlyoutPresenter.DropDown">
-                <Setter Property="Background" Value="#FAAA"/>
-                <Setter Property="MinWidth" Value="150"/>
-                <Setter Property="MaxHeight" Value="400"/>
-                <Setter Property="Margin" Value="10"/>
-                <Setter Property="Padding" Value="10"/>
-                <Setter Property="BorderBrush" Value="White"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="CornerRadius" Value="10"/>
-            </Style>
-        </UserControl.Styles>
+    <UserControl.Styles>
+        <Style Selector="FlyoutPresenter.DropDown">
+            <Setter Property="Background" Value="#FAAA"/>
+            <Setter Property="MinWidth" Value="150"/>
+            <Setter Property="MaxHeight" Value="400"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+        </Style>
+    </UserControl.Styles>
     
-        <StackPanel HorizontalAlignment="Stretch" Margin="10">
-            <Grid ColumnDefinitions="9*,*" Margin="20">
-                <TextBlock Grid.Column="0" Text="Task Detail" FontSize="30" HorizontalAlignment="Center"/>
-                <Button Grid.Column="1"
-                        Width="40" 
-                        Height="40" 
-                        Padding="0"
-                        CornerRadius="30"
-                        VerticalAlignment="Top"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        BorderBrush="Transparent"
-                        Background="#FAAA">
-                    <Image Source="avares://App2/Assets/icons8-menu-100.png"
-                        Stretch="Uniform"
-                        Width="40"
-                        Height="40" />
-                    <Button.Flyout>
-                        <Flyout FlyoutPresenterClasses="DropDown">
-                            <Flyout.Content>
-                                <StackPanel>
-                                    <MenuItem Header="Edit" Foreground="Black"/>
-                                    <MenuItem Header="Delete" Foreground="Black" Command="{Binding DeleteTaskCommand}"/>
-                                </StackPanel>
-                            </Flyout.Content>
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
-            </Grid>
+    <StackPanel HorizontalAlignment="Stretch" Margin="10">
+        <Grid ColumnDefinitions="9*,*" Margin="20">
+            <TextBlock Grid.Column="0" Text="Task Detail" FontSize="30" HorizontalAlignment="Center"/>
+            <Button Grid.Column="1"
+                    Width="40" 
+                    Height="40" 
+                    Padding="0"
+                    CornerRadius="30"
+                    VerticalAlignment="Top"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="Transparent"
+                    Background="#FAAA">
+                <Image Source="avares://App2/Assets/icons8-menu-100.png"
+                    Stretch="Uniform"
+                    Width="40"
+                    Height="40" />
+                <Button.Flyout>
+                    <Flyout FlyoutPresenterClasses="DropDown">
+                        <Flyout.Content>
+                            <StackPanel>
+                                <MenuItem Header="Edit" Foreground="Black"/>
+                                <MenuItem Header="Delete" Foreground="Black" Command="{Binding DeleteTaskCommand}"/>
+                            </StackPanel>
+                        </Flyout.Content>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </Grid>
             
-            <Grid ColumnDefinitions="150,*" Margin="20">
-                <TextBlock Text="Name" Grid.Column="0"/>
-                <TextBlock Text="{Binding Task.Name}" Grid.Column="1"/>
-            </Grid>
+        <Grid ColumnDefinitions="150,*" Margin="20">
+            <TextBlock Text="Name" Grid.Column="0"/>
+            <TextBlock Text="{Binding Task.Name}" Grid.Column="1"/>
+        </Grid>
 
-            <Grid ColumnDefinitions="150,*" Margin="20">
-                <TextBlock Text="Description" Grid.Column="0"/>
-                <TextBlock Text="{Binding Task.Description}" Grid.Column="1"/>
-            </Grid>
+        <Grid ColumnDefinitions="150,*" Margin="20">
+            <TextBlock Text="Description" Grid.Column="0"/>
+            <TextBlock Text="{Binding Task.Description}" Grid.Column="1"/>
+        </Grid>
 
-            <Grid ColumnDefinitions="150,*" Margin="20">
-                <TextBlock Text="Category" Grid.Column="0"/>
-                <TextBlock Text="{Binding Task.Category}" Grid.Column="1"/>
-            </Grid>
-        </StackPanel>
+        <Grid ColumnDefinitions="150,*" Margin="20">
+            <TextBlock Text="Category" Grid.Column="0"/>
+            <TextBlock Text="{Binding Task.Category}" Grid.Column="1"/>
+        </Grid>
+    </StackPanel>
 </UserControl>

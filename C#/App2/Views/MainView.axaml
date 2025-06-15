@@ -26,35 +26,16 @@
                             Height="30" />
                     </Button>
                 </Grid>
-                <ItemsControl ItemsSource="{Binding GroupedTasks}" Margin="10">
+                <ItemsControl ItemsSource="{Binding GroupList}" Margin="10">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel>
-                                <!-- Category Header (non-clickable) -->
-                                <TextBlock  Text="{Binding Category}" 
-                                            FontSize="16" 
-                                            Background="Transparent"
-                                            FontWeight="Bold"
-                                            Padding="5" 
-                                            Margin="5,0,0,0"/>
-                                <!-- Clickable Task Boxes -->
-                                <ListBox ItemsSource="{Binding Tasks}"
+                            <StackPanel>           
+                                <ListBox ItemsSource="{Binding List}"
                                         BorderThickness="0"
                                         Background="Transparent"
-                                        SelectionMode="Single"
-                                        SelectedItem="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).SelectedTask, Mode=TwoWay}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
-                                                <CheckBox IsChecked="{Binding IsDone}" VerticalAlignment="Center"/>
-                                                <TextBlock Text="{Binding Name}" 
-                                                        VerticalAlignment="Center"
-                                                        FontSize="14"
-                                                        Background="Transparent"
-                                                        Padding="10"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
+                                        SelectionMode="Single">
+                                <local:TaskGroupView DataContext="{Binding Group}" Margin="5"/>
+
                                 </ListBox>
                             </StackPanel>
                         </DataTemplate>

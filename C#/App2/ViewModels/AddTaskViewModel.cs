@@ -12,6 +12,7 @@ public class AddTaskViewModel : ViewModelBase
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
+    public string? GroupList { get; set; }
     public ICommand SaveTaskCommand { get; } //Button only
     public ICommand CancelCommand { get; }
 
@@ -37,13 +38,13 @@ public class AddTaskViewModel : ViewModelBase
         OnPropertyChanged(nameof(TaskDesc));
         _mainWindowViewModel.MainView = new MainViewModel(_mainWindowViewModel);
     }
+    
     private void AddTask()
     {
-
         string name = InputOrDefault(NewTaskName, "");
         if (name == "")
         {
-            ShowEmptyNameDialog?.Invoke(); 
+            ShowEmptyNameDialog?.Invoke();
             return;
         }
         var task = new BaseTask
@@ -51,6 +52,7 @@ public class AddTaskViewModel : ViewModelBase
         {
             Name = name,
             IsDone = false,
+            List = InputOrDefault(GroupList, "Quick"),
             Category = InputOrDefault(TaskCatalog, "Miscelanious"),
             Description = InputOrDefault(TaskDesc, "")
         };

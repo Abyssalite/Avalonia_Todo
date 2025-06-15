@@ -5,6 +5,8 @@ public class BaseTask : INotifyPropertyChanged
     public required string Name { set; get; }
     public string? Description { set; get; }
     public required string Category { get; set; }
+    public required string List { get; set; }
+
     private bool _isDone;
     public bool IsDone
     {

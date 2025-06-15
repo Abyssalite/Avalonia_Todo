@@ -1,0 +1,52 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:App2.ViewModels"
+    x:Class="App2.Views.TaskListView"
+    x:DataType="vm:MainViewModel"> 
+            <StackPanel Margin="10">
+                <TextBlock Text="Task List" FontSize="20" Grid.Column="0"/>
+                <ItemsControl ItemsSource="{Binding GroupLists}" Margin="10">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding Group}">
+                                <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                <StackPanel>
+                                <!-- Category Header (non-clickable) -->
+                                <TextBlock  Text="{Binding Category}" 
+                                            FontSize="16" 
+                                            Background="Transparent"
+                                            FontWeight="Bold"
+                                            Padding="5" 
+                                            Margin="5,0,0,0"/>
+                                <!-- Clickable Task Boxes -->
+                                <ListBox ItemsSource="{Binding Tasks}"
+                                        BorderThickness="0"
+                                        Background="Transparent"
+                                        SelectionMode="Single"
+                                        SelectedItem="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).SelectedTask, Mode=TwoWay}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                                                <CheckBox IsChecked="{Binding IsDone}" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Name}" 
+                                                        VerticalAlignment="Center"
+                                                        FontSize="14"
+                                                        Background="Transparent"
+                                                        Padding="10"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                </StackPanel>
+                                </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>                
+
+
+</UserControl>
