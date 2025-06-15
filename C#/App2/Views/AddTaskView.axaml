@@ -8,10 +8,14 @@
     <Grid ColumnDefinitions="1*,2*">
         <StackPanel Grid.Column="0" Margin="10">
             <TextBlock Text="Task Selection" FontSize="20" Margin="10"/>
-            <ListBox Margin="10" >
-                <ListBoxItem Content="Base Task" Padding="20"/>
-                <ListBoxItem Content="Noted Task" Padding="20"/>
-            </ListBox>
+            <StackPanel>
+                <MenuItem Header="Base Task"
+                          Padding="10"
+                          Margin="10,5,10,5"/>
+                <MenuItem Header="Noted Task"
+                          Padding="10"
+                          Margin="10,5,10,5"/>
+            </StackPanel>   
         </StackPanel>   
 
         <StackPanel Grid.Column="1" Margin="10" Spacing="10" HorizontalAlignment="Stretch" >
