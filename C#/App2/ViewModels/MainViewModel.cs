@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using App2.Views;
-using System;
-using System.Text.Json;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace App2.ViewModels;
 
@@ -10,9 +10,11 @@ public class MainViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
     public TaskGroupViewModel? TaskGroupView { get; private set; }
-    public ObservableCollection<GroupList> GroupedList { get; set; }
+    private ObservableCollection<GroupList> _groupedList = new();
+    public ObservableCollection<GroupList> FilteredGroupedList { get; set; }
+    public ICommand AddQuickTaskCommand { get; } //Button only
     //public ICommand AddGroupDialogCommand { get; } //Button only
-    private GroupList ? _selectedGroup;
+    private GroupList? _selectedGroup;
     public GroupList ? SelectedGroup
     {
         get => _selectedGroup;
@@ -32,35 +34,42 @@ public class MainViewModel : ViewModelBase
     public MainViewModel(MainWindowViewModel main)
     {
         _mainWindowViewModel = main;
-        GroupedList = TaskHelpers.Load();
+        _groupedList = TaskHelpers.Load();
+
         HookSaveOnIsDoneChange();
+        AddQuickTaskCommand = new RelayCommand<string>(OpenAddTaskView);
+        FilteredGroupedList = new ObservableCollection<GroupList>(_groupedList.Where(g => g.List != "Quick"));
         //AddGroupDialogCommand = new RelayCommand(OpenAddTaskView);
     }
 
     private void HookSaveOnIsDoneChange()
     {
-        foreach (var list in GroupedList)
+        foreach (var list in _groupedList)
         foreach (var group in list.Groups)
         foreach (var task in group.Tasks)
-            TaskHelpers.HookSaveToTask(GroupedList, task);
+            TaskHelpers.HookSaveToTask(_groupedList, task);
     }
 
-    private void OpenAddTaskView()
+    private void OpenAddTaskView(string? listName)
     {
-        var addVM = new AddTaskViewModel(_mainWindowViewModel);
-        addVM.OnTaskCreated = task =>
+        if (listName != null)
         {
-            
-        };
-        _mainWindowViewModel.MainView = addVM;
+            var addVM = new AddTaskViewModel(_mainWindowViewModel, listName);
+            addVM.OnTaskCreated = task =>
+            {
+                TaskHelpers.AddTaskToCategory(task, _groupedList);
+            };
+            _mainWindowViewModel.MainView = addVM;  
+        }
     }
 
-    private void OpenGroup(GroupList  list)
+    private void OpenGroup(GroupList list)
     {
         TaskGroupView = new TaskGroupViewModel(_mainWindowViewModel, list.Groups);
+        TaskGroupView.OnTaskCreate = OpenAddTaskView;
         TaskGroupView.OnTaskDetele = task =>
         {
-            TaskHelpers.DeleteTask(task, GroupedList);
+            TaskHelpers.DeleteTask(task, _groupedList);
         };
         OnPropertyChanged(nameof(TaskGroupView));
     }

@@ -15,15 +15,16 @@ public static class TaskHelpers
         if (group != null)
         {
             group.Tasks.Add(task);
-            return;
         }
-
-        // Create new category group if it doesn't exist
-        list.Groups.Add(new TaskGroup
+        else
         {
-            Category = task.Category,
-            Tasks = new ObservableCollection<BaseTask> { task }
-        });
+            // Create new category group if it doesn't exist
+            list.Groups.Add(new TaskGroup
+            {
+                Category = task.Category,
+                Tasks = new ObservableCollection<BaseTask> { task }
+            });
+        }
         Save(GroupList);
     }
 
@@ -54,10 +55,12 @@ public static class TaskHelpers
             }
         };
     }
+
     public static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
     {
         WriteIndented = true
     };
+    
     public static void Save(ObservableCollection<GroupList> GroupLists, string fileName = "tasks.json")
     {
         string json = JsonSerializer.Serialize(GroupLists, JsonOptions);

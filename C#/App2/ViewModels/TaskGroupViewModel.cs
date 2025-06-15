@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using App2.Views;
 using System;
+using App2.Views;
 
 namespace App2.ViewModels;
 
@@ -12,7 +12,8 @@ public class TaskGroupViewModel : ViewModelBase
     public TaskDetailViewModel? TaskDetailView { get; private set; }
     public ObservableCollection<TaskGroup> GroupedTasks { get; set; }
     public ICommand AddTaskViewCommand { get; } //Button only
-    public Action<BaseTask>? OnTaskDetele { get; set; } // callback
+    public Action<BaseTask>? OnTaskDetele { get; set; }
+    public Action<string>? OnTaskCreate { get; set; } // callback
     private BaseTask? _selectedTask;
     public BaseTask? SelectedTask
     {
@@ -34,17 +35,15 @@ public class TaskGroupViewModel : ViewModelBase
     {
         _mainWindowViewModel = main;
         GroupedTasks = groups;
-        AddTaskViewCommand = new RelayCommand(OpenAddTaskView);
+        AddTaskViewCommand = new RelayCommand<string>(OpenAddTaskView);
     }
 
-    private void OpenAddTaskView()
+    private void OpenAddTaskView(string? list)
     {
-        var addVM = new AddTaskViewModel(_mainWindowViewModel);
-        addVM.OnTaskCreated = task =>
+        if (list != null)
         {
-
-        };
-        _mainWindowViewModel.MainView = addVM;
+            OnTaskCreate?.Invoke(list);
+        }
     }
 
     private void OpenTask(BaseTask task)

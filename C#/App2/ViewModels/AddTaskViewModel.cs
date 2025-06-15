@@ -7,6 +7,7 @@ namespace App2.ViewModels;
 public class AddTaskViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
+    private readonly string _list;
     public Action<BaseTask>? OnTaskCreated { get; set; } // callback
     public Action? ShowEmptyNameDialog { get; set; }
     public string? NewTaskName { get; set; }
@@ -21,9 +22,10 @@ public class AddTaskViewModel : ViewModelBase
         return string.IsNullOrWhiteSpace(input) ? defaultValue : input;
     }
 
-    public AddTaskViewModel(MainWindowViewModel main)
+    public AddTaskViewModel(MainWindowViewModel main, string list)
     {
         _mainWindowViewModel = main;
+        _list = list;
         SaveTaskCommand = new RelayCommand(AddTask);
         CancelCommand = new RelayCommand(Cancel);
     }
@@ -52,7 +54,7 @@ public class AddTaskViewModel : ViewModelBase
         {
             Name = name,
             IsDone = false,
-            List = InputOrDefault(GroupList, "Quick"),
+            List = _list,
             Category = InputOrDefault(TaskCatalog, "Miscelanious"),
             Description = InputOrDefault(TaskDesc, "")
         };

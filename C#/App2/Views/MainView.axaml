@@ -8,6 +8,11 @@
         <!-- Left: Task List -->
         <Grid Grid.Column="0" RowDefinitions="Auto,Auto">
             <StackPanel Grid.Row="0" Margin="10">
+                <MenuItem Header="Quick Task"
+                            Command="{Binding AddQuickTaskCommand}"
+                            CommandParameter="Quick"
+                            Padding="20,10,10,10"
+                            Margin="10,0,10,0"/>
                 <Grid ColumnDefinitions="9*,1*" Margin="10">
                     <TextBlock Text="Group List" FontSize="20" Grid.Column="0"/>
                     <Button Grid.Column="1"
@@ -27,14 +32,15 @@
                     </Button>
                 </Grid>
                 <!-- Clickable Task Boxes -->
-                <ListBox ItemsSource="{Binding GroupedList}"
+                <ListBox ItemsSource="{Binding FilteredGroupedList}"
                          BorderThickness="0"
+                         Margin="10,0,10,0"
                          Background="Transparent"
                          SelectionMode="Single"
                          SelectedItem="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).SelectedGroup, Mode=TwoWay}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                            <StackPanel Orientation="Horizontal" >
                                 <TextBlock Text="{Binding List}" 
                                            VerticalAlignment="Center"
                                            FontSize="14"
