@@ -2,8 +2,48 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
+using System.Linq;
+
 public static class TaskHelpers
 {
+    public static void AddTaskToCategory(BaseTask task, ObservableCollection<GroupList> GroupList)
+    {
+        var list = GroupList.FirstOrDefault(l => l.List == task.List);
+        if (list == null) return;
+
+        var group = list.Groups.FirstOrDefault(g => g.Category == task.Category);
+        if (group != null)
+        {
+            group.Tasks.Add(task);
+            return;
+        }
+
+        // Create new category group if it doesn't exist
+        list.Groups.Add(new TaskGroup
+        {
+            Category = task.Category,
+            Tasks = new ObservableCollection<BaseTask> { task }
+        });
+        Save(GroupList);
+    }
+
+    public static void DeleteTask(BaseTask task, ObservableCollection<GroupList> GroupList)
+    {
+        var list = GroupList.FirstOrDefault(l => l.List == task.List);
+        if (list == null) return;
+
+        var group = list.Groups.FirstOrDefault(g => g.Category == task.Category);
+        if (group == null) return;
+
+        group.Tasks.Remove(task);
+
+        if (group.Tasks.Count == 0)
+        {
+            list.Groups.Remove(group);
+        }
+        Save(GroupList);
+    }
+
     public static void HookSaveToTask(ObservableCollection<GroupList> GroupLists, BaseTask task)
     {
         task.PropertyChanged += (s, e) =>
@@ -14,7 +54,7 @@ public static class TaskHelpers
             }
         };
     }
-    private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+    public static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
     {
         WriteIndented = true
     };
