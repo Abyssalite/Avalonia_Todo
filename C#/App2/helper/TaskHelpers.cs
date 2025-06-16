@@ -28,13 +28,13 @@ public static class TaskHelpers
         Save(GroupList);
     }
 
-    public static void DeleteTask(BaseTask task, ObservableCollection<GroupList> GroupList)
+    public static ObservableCollection<GroupList> DeleteTask(BaseTask task, ObservableCollection<GroupList> GroupList)
     {
         var list = GroupList.FirstOrDefault(l => l.List == task.List);
-        if (list == null) return;
+        if (list == null) return GroupList;
 
         var group = list.Groups.FirstOrDefault(g => g.Category == task.Category);
-        if (group == null) return;
+        if (group == null) return GroupList;
 
         group.Tasks.Remove(task);
 
@@ -43,6 +43,7 @@ public static class TaskHelpers
             list.Groups.Remove(group);
         }
         Save(GroupList);
+        return GroupList;
     }
 
     public static void HookSaveToTask(ObservableCollection<GroupList> GroupLists, BaseTask task)
@@ -55,12 +56,10 @@ public static class TaskHelpers
             }
         };
     }
-
     public static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
     {
         WriteIndented = true
     };
-    
     public static void Save(ObservableCollection<GroupList> GroupLists, string fileName = "tasks.json")
     {
         string json = JsonSerializer.Serialize(GroupLists, JsonOptions);
@@ -80,7 +79,14 @@ public static class TaskHelpers
         {
             Console.WriteLine("Error loading tasks: " + ex.Message);
             Console.WriteLine("Creating...");
-            return [];
+            return new ObservableCollection<GroupList>
+            {
+                new GroupList
+                {
+                    List = "Quick",
+                    Groups = new ObservableCollection<TaskGroup>()
+                }
+            };
         }
     }
 }

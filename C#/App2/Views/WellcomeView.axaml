@@ -1,0 +1,14 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:App2.ViewModels"
+    x:Class="App2.Views.WellcomeView"
+    x:DataType="vm:WellcomeViewModel"> 
+        <Grid RowDefinitions="5*,5*">
+            <TextBlock Text="{Binding Text}" 
+                       FontSize="40" 
+                       VerticalAlignment="Bottom" 
+                       HorizontalAlignment="Center" 
+                       Grid.Column="0"/>
+        </Grid>
+</UserControl>

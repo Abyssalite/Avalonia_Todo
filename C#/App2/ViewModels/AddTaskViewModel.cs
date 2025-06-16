@@ -7,25 +7,25 @@ namespace App2.ViewModels;
 public class AddTaskViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
-    private readonly string _list;
+    private readonly string _listName;
     public Action<BaseTask>? OnTaskCreated { get; set; } // callback
     public Action? ShowEmptyNameDialog { get; set; }
+    public ICommand SaveTaskCommand { get; } //Button only
+    public ICommand CancelCommand { get; }
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
     public string? GroupList { get; set; }
-    public ICommand SaveTaskCommand { get; } //Button only
-    public ICommand CancelCommand { get; }
 
     private string InputOrDefault(string? input, string defaultValue)
     {
         return string.IsNullOrWhiteSpace(input) ? defaultValue : input;
     }
 
-    public AddTaskViewModel(MainWindowViewModel main, string list)
+    public AddTaskViewModel(MainWindowViewModel main, string listName)
     {
         _mainWindowViewModel = main;
-        _list = list;
+        _listName = listName;
         SaveTaskCommand = new RelayCommand(AddTask);
         CancelCommand = new RelayCommand(Cancel);
     }
@@ -50,11 +50,10 @@ public class AddTaskViewModel : ViewModelBase
             return;
         }
         var task = new BaseTask
-
         {
             Name = name,
             IsDone = false,
-            List = _list,
+            List = _listName,
             Category = InputOrDefault(TaskCatalog, "Miscelanious"),
             Description = InputOrDefault(TaskDesc, "")
         };

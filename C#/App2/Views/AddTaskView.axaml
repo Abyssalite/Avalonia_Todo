@@ -17,7 +17,7 @@
                           Margin="10,5,10,5"/>
             </StackPanel>   
         </StackPanel>   
-
+        
         <StackPanel Grid.Column="1" Margin="10" Spacing="10" HorizontalAlignment="Stretch" >
             <TextBlock Text="New Task" FontSize="30" Margin="10" HorizontalAlignment="Center"/>
             <TextBox Watermark="Task name" Text="{Binding NewTaskName}" Margin="8"/>

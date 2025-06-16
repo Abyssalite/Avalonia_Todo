@@ -8,12 +8,13 @@ namespace App2.ViewModels;
 
 public class TaskGroupViewModel : ViewModelBase
 {
-    private readonly MainWindowViewModel _mainWindowViewModel;
-    public TaskDetailViewModel? TaskDetailView { get; private set; }
+    private readonly MainViewModel _mainViewModel;
+    public TaskDetailViewModel?  TaskDetailView { get; private set; }
     public ObservableCollection<TaskGroup> GroupedTasks { get; set; }
     public ICommand AddTaskViewCommand { get; } //Button only
     public Action<BaseTask>? OnTaskDetele { get; set; }
     public Action<string>? OnTaskCreate { get; set; } // callback
+    public string ListName { get; set; }
     private BaseTask? _selectedTask;
     public BaseTask? SelectedTask
     {
@@ -25,34 +26,35 @@ public class TaskGroupViewModel : ViewModelBase
                 _selectedTask = value;
                 OpenTask(value);
                 OnPropertyChanged(nameof(SelectedTask));
-
-                SelectedTask = null; // reset to allow re-selection
             }
         }
     }
-
-    public TaskGroupViewModel(MainWindowViewModel main, ObservableCollection<TaskGroup> groups)
+   
+    public TaskGroupViewModel(MainViewModel main, ObservableCollection<TaskGroup> groups, string listName)
     {
-        _mainWindowViewModel = main;
+        _mainViewModel = main;
+        ListName = listName;
         GroupedTasks = groups;
-        AddTaskViewCommand = new RelayCommand<string>(OpenAddTaskView);
+        AddTaskViewCommand = new RelayCommand(OpenAddTaskView);
     }
 
-    private void OpenAddTaskView(string? list)
+    private void OpenAddTaskView()
     {
-        if (list != null)
+        if (ListName != null)
         {
-            OnTaskCreate?.Invoke(list);
+            OnTaskCreate?.Invoke(ListName);
         }
     }
 
     private void OpenTask(BaseTask task)
     {
-        TaskDetailView = new TaskDetailViewModel(_mainWindowViewModel,task);
+        _selectedTask = null;
+        OnPropertyChanged(nameof(SelectedTask));
+        TaskDetailView = new TaskDetailViewModel(_mainViewModel, this, task);
         TaskDetailView.OnTaskDetele = task =>
         {
             OnTaskDetele?.Invoke(task);
         };
-        OnPropertyChanged(nameof(TaskDetailView));
+        _mainViewModel.SideView = TaskDetailView;
     }
 }

@@ -6,22 +6,26 @@ namespace App2.ViewModels;
 
 public class TaskDetailViewModel : ViewModelBase
 {
-    private readonly MainWindowViewModel _mainWindowViewModel;
-    public ICommand DeleteTaskCommand { get; }
-    public Action<BaseTask>? OnTaskDetele { get; set; } // callback
-    public Action? ShowDeleteDialog { get; set; }
+    private readonly MainViewModel _mainViewModel;
+    private readonly TaskGroupViewModel _taskGroupViewModel;
     public BaseTask Task { get; }
+    public ICommand DeleteTaskCommand { get; }
+    public ICommand BackCommand { get; }
+    public Action? ShowDeleteDialog { get; set; }
+    public Action<BaseTask>? OnTaskDetele { get; set; }
 
-    public TaskDetailViewModel(MainWindowViewModel main, BaseTask task)
+    public TaskDetailViewModel(MainViewModel main, TaskGroupViewModel taskGroupViewModel, BaseTask task)
     {
-        _mainWindowViewModel = main;
+        _mainViewModel = main;
+        _taskGroupViewModel = taskGroupViewModel;
         Task = task;
         DeleteTaskCommand = new RelayCommand(() => ShowDeleteDialog?.Invoke());
+        BackCommand = new RelayCommand(() =>  _mainViewModel.SideView = _taskGroupViewModel);
     }
 
     public void DeleteTask()
     {
         OnTaskDetele?.Invoke(Task);
-        _mainWindowViewModel.MainView = new MainViewModel(_mainWindowViewModel);
+         _mainViewModel.SideView = _taskGroupViewModel;
     }
 }
