@@ -1,7 +1,7 @@
-﻿using Avalonia;
-using System;
+﻿using System;
+using Avalonia;
 
-namespace App2;
+namespace App1.Desktop;
 
 sealed class Program
 {
