@@ -26,6 +26,7 @@ public class TaskDetailViewModel : ViewModelBase
     public void DeleteTask()
     {
         OnTaskDetele?.Invoke(Task);
-         _mainViewModel.SideView = _taskGroupViewModel;
+        _mainViewModel.SideView = _taskGroupViewModel;
+        OnPropertyChanged(nameof(_mainViewModel.SideView));
     }
 }

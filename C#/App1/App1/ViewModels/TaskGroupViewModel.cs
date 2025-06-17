@@ -8,11 +8,10 @@ namespace App1.ViewModels;
 public class TaskGroupViewModel : ViewModelBase
 {
     private readonly MainViewModel _mainViewModel;
-    public TaskDetailViewModel?  TaskDetailView { get; private set; }
     public ObservableCollection<TaskGroup> GroupedTasks { get; set; }
     public ICommand AddTaskViewCommand { get; } //Button only
     public Action<BaseTask>? OnTaskDetele { get; set; }
-    public Action<string>? OnTaskCreate { get; set; } // callback
+    public Action<TaskGroupViewModel, string>? OnTaskCreate { get; set; } // callback
     public string ListName { get; set; }
     private BaseTask? _selectedTask;
     public BaseTask? SelectedTask
@@ -41,7 +40,7 @@ public class TaskGroupViewModel : ViewModelBase
     {
         if (ListName != null)
         {
-            OnTaskCreate?.Invoke(ListName);
+            OnTaskCreate?.Invoke(this, ListName);
         }
     }
 
@@ -49,11 +48,13 @@ public class TaskGroupViewModel : ViewModelBase
     {
         _selectedTask = null;
         OnPropertyChanged(nameof(SelectedTask));
-        TaskDetailView = new TaskDetailViewModel(_mainViewModel, this, task);
+        var TaskDetailView = new TaskDetailViewModel(_mainViewModel, this, task);
         TaskDetailView.OnTaskDetele = task =>
         {
             OnTaskDetele?.Invoke(task);
         };
         _mainViewModel.SideView = TaskDetailView;
+        OnPropertyChanged(nameof(_mainViewModel.SideView));
+
     }
 }

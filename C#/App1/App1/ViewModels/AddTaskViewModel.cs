@@ -6,7 +6,8 @@ namespace App1.ViewModels;
 
 public class AddTaskViewModel : ViewModelBase
 {
-    private readonly MainWindowViewModel _mainWindowViewModel;
+    private readonly MainViewModel _mainViewModel;
+    private readonly TaskGroupViewModel _taskGroupViewModel;
     private readonly string _listName;
     public Action<BaseTask>? OnTaskCreated { get; set; } // callback
     public Action? ShowEmptyNameDialog { get; set; }
@@ -22,15 +23,16 @@ public class AddTaskViewModel : ViewModelBase
         return string.IsNullOrWhiteSpace(input) ? defaultValue : input;
     }
 
-    public AddTaskViewModel(MainWindowViewModel main, string listName)
+    public AddTaskViewModel(MainViewModel main, TaskGroupViewModel taskGroupViewModel, string listName)
     {
-        _mainWindowViewModel = main;
+        _mainViewModel = main;
+        _taskGroupViewModel = taskGroupViewModel;
         _listName = listName;
         SaveTaskCommand = new RelayCommand(AddTask);
-        CancelCommand = new RelayCommand(Cancel);
+        CancelCommand = new RelayCommand(Clear);
     }
 
-    private void Cancel()
+    private void Clear()
     {
         NewTaskName = string.Empty;
         OnPropertyChanged(nameof(NewTaskName));
@@ -38,7 +40,7 @@ public class AddTaskViewModel : ViewModelBase
         OnPropertyChanged(nameof(TaskCatalog));
         TaskDesc = string.Empty;
         OnPropertyChanged(nameof(TaskDesc));
-        _mainWindowViewModel.MainView = new MainViewModel(_mainWindowViewModel);
+        _mainViewModel.SideView = _taskGroupViewModel;
     }
     
     private void AddTask()
@@ -57,14 +59,7 @@ public class AddTaskViewModel : ViewModelBase
             Category = InputOrDefault(TaskCatalog, "Miscelanious"),
             Description = InputOrDefault(TaskDesc, "")
         };
-        NewTaskName = string.Empty;
-        OnPropertyChanged(nameof(NewTaskName));
-        TaskCatalog = string.Empty;
-        OnPropertyChanged(nameof(TaskCatalog));
-        TaskDesc = string.Empty;
-        OnPropertyChanged(nameof(TaskDesc));
-
         OnTaskCreated?.Invoke(task); // Call back to MainViewModel
-        _mainWindowViewModel.MainView = new MainViewModel(_mainWindowViewModel);
+        Clear();
     }
 }

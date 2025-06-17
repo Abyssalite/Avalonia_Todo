@@ -1,11 +1,11 @@
-<UserControl
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:vm="using:App1.ViewModels"
-    xmlns:local="clr-namespace:App1.Views"
-    xmlns:backend="clr-namespace:App1.ViewModels"
-    x:Class="App1.Views.MainView"
-    x:DataType="vm:MainViewModel"> 
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:App1.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="App1.Views.MainView"
+             x:DataType="vm:MainViewModel"> 
     <Grid ColumnDefinitions="1*,2*">
         <!-- Left: Task List -->
         <Grid Grid.Column="0" RowDefinitions="Auto,Auto">
@@ -72,8 +72,7 @@
         </Grid>
 
         <!-- Right: Task Detail -->
-        <ContentControl Grid.Column="1"
-                        Content="{Binding SideView}" />
+        <ContentControl Grid.Column="1" Content="{Binding SideView}" />
     </Grid>
 
 </UserControl>
