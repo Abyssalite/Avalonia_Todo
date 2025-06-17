@@ -4,11 +4,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         MinWidth="1280" MinHeight="720"
-        xmlns:vm="using:App2.ViewModels"
-        x:Class="App2.Views.MainWindow"
+        xmlns:vm="using:App1.ViewModels"
+        x:Class="App1.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="App2">
+        Title="App1">
 
     <ContentControl Content="{Binding MainView}" />
 </Window>

@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-namespace App2.Views;
+namespace App1.Views;
 
 public partial class CustomDialog : Window
 {

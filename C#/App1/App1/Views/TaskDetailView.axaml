@@ -2,8 +2,8 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
-    xmlns:vm="using:App2.ViewModels"
-    x:Class="App2.Views.TaskDetailView"
+    xmlns:vm="using:App1.ViewModels"
+    x:Class="App1.Views.TaskDetailView"
     x:DataType="vm:TaskDetailViewModel">
 
     <UserControl.Styles>
@@ -32,7 +32,7 @@
                     BorderBrush="Transparent"
                     Background="#FAAA"
                     Command="{Binding BackCommand}">
-                <Image Source="avares://App2/Assets/icons8-back-100.png"
+                <Image Source="avares://App1/Assets/icons8-back-100.png"
                     Stretch="Uniform"
                     Width="40"
                     Height="40" />
@@ -48,7 +48,7 @@
                     VerticalContentAlignment="Center"
                     BorderBrush="Transparent"
                     Background="#FAAA">
-                <Image Source="avares://App2/Assets/icons8-menu-100.png"
+                <Image Source="avares://App1/Assets/icons8-menu-100.png"
                     Stretch="Uniform"
                     Width="40"
                     Height="40" />

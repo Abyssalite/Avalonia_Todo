@@ -2,7 +2,7 @@ using System;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
-namespace App2.ViewModels;
+namespace App1.ViewModels;
 
 public class AddTaskViewModel : ViewModelBase
 {

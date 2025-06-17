@@ -1,8 +1,8 @@
 <UserControl
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:vm="using:App2.ViewModels"
-    x:Class="App2.Views.TaskGroupView"
+    xmlns:vm="using:App1.ViewModels"
+    x:Class="App1.Views.TaskGroupView"
     x:DataType="vm:TaskGroupViewModel"> 
         <Grid RowDefinitions="*,Auto">
             <StackPanel Grid.Row="0" Margin="10">
@@ -55,7 +55,7 @@
                     BorderBrush="Transparent"
                     Background="#FAAA"
                     Command="{Binding AddTaskViewCommand}">
-                <Image Source="avares://App2/Assets/icons8-plus-100.png"
+                <Image Source="avares://App1/Assets/icons8-plus-100.png"
                     Stretch="Uniform"
                     Width="50"
                     Height="50" />

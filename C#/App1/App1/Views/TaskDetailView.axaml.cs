@@ -1,9 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.VisualTree;
 using System;
-using App2.ViewModels;
+using App1.ViewModels;
 
-namespace App2.Views;
+namespace App1.Views;
 
 public partial class TaskDetailView : UserControl
 {

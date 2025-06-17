@@ -1,8 +1,10 @@
 <UserControl
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:vm="using:App2.ViewModels"
-    x:Class="App2.Views.MainView"
+    xmlns:vm="using:App1.ViewModels"
+    xmlns:local="clr-namespace:App1.Views"
+    xmlns:backend="clr-namespace:App1.ViewModels"
+    x:Class="App1.Views.MainView"
     x:DataType="vm:MainViewModel"> 
     <Grid ColumnDefinitions="1*,2*">
         <!-- Left: Task List -->
@@ -24,7 +26,7 @@
                             VerticalContentAlignment="Center"
                             BorderBrush="Transparent"
                             Background="#FAAA">
-                        <Image Source="avares://App2/Assets/icons8-done-100.png"
+                        <Image Source="avares://App1/Assets/icons8-done-100.png"
                             Stretch="Uniform"
                             Width="30"
                             Height="30" />
@@ -62,7 +64,7 @@
                     VerticalContentAlignment="Center"
                     BorderBrush="Transparent"
                     Background="#FAAA">
-                <Image Source="avares://App2/Assets/icons8-plus-100.png"
+                <Image Source="avares://App1/Assets/icons8-plus-100.png"
                     Stretch="Uniform"
                     Width="50"
                     Height="50" />
