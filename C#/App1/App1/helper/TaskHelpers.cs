@@ -46,15 +46,16 @@ public static class TaskHelpers
         return GroupList;
     }
 
-    public static void HookSaveToTask(ObservableCollection<GroupList> GroupLists, BaseTask task)
+    public static void HookSaveToTask(Store store, BaseTask task)
     {
-        task.PropertyChanged += (s, e) =>
+        task.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(BaseTask.IsDone))
             {
-                Save(GroupLists);
+                Save(store.GroupedList);
             }
         };
+
     }
     public static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
     {

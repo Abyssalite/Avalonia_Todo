@@ -5,20 +5,7 @@
              xmlns:vm="clr-namespace:App1.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="App1.Views.AddTaskView"
-             x:DataType="vm:AddTaskViewModel"> 
-
-    <Grid ColumnDefinitions="1*,2*">
-        <StackPanel Grid.Column="0" Margin="10">
-            <TextBlock Text="Task Selection" FontSize="20" Margin="10"/>
-            <StackPanel>
-                <MenuItem Header="Base Task"
-                          Padding="10"
-                          Margin="10,5,10,5"/>
-                <MenuItem Header="Noted Task"
-                          Padding="10"
-                          Margin="10,5,10,5"/>
-            </StackPanel>   
-        </StackPanel>   
+             x:DataType="vm:AddTaskViewModel">   
         
         <StackPanel Grid.Column="1" Margin="10" Spacing="10" HorizontalAlignment="Stretch" >
             <TextBlock Text="New Task" FontSize="30" Margin="10" HorizontalAlignment="Center"/>
@@ -38,5 +25,4 @@
                     Margin="10"/>   
             </Grid>
         </StackPanel>         
-    </Grid>
 </UserControl>

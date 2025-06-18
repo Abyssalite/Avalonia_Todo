@@ -8,6 +8,8 @@ public class AddTaskViewModel : ViewModelBase
 {
     private readonly MainViewModel _mainViewModel;
     private readonly TaskGroupViewModel _taskGroupViewModel;
+    private readonly GroupListViewModel _grouplistViewModel;
+
     private readonly string _listName;
     public Action<BaseTask>? OnTaskCreated { get; set; } // callback
     public Action? ShowEmptyNameDialog { get; set; }
@@ -16,17 +18,17 @@ public class AddTaskViewModel : ViewModelBase
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
-    public string? GroupList { get; set; }
 
     private string InputOrDefault(string? input, string defaultValue)
     {
         return string.IsNullOrWhiteSpace(input) ? defaultValue : input;
     }
 
-    public AddTaskViewModel(MainViewModel main, TaskGroupViewModel taskGroupViewModel, string listName)
+    public AddTaskViewModel(MainViewModel main, GroupListViewModel grouplist, TaskGroupViewModel taskGroup, string listName)
     {
         _mainViewModel = main;
-        _taskGroupViewModel = taskGroupViewModel;
+        _taskGroupViewModel = taskGroup;
+        _grouplistViewModel = grouplist;
         _listName = listName;
         SaveTaskCommand = new RelayCommand(AddTask);
         CancelCommand = new RelayCommand(Clear);
@@ -40,7 +42,10 @@ public class AddTaskViewModel : ViewModelBase
         OnPropertyChanged(nameof(TaskCatalog));
         TaskDesc = string.Empty;
         OnPropertyChanged(nameof(TaskDesc));
-        _mainViewModel.SideView = _taskGroupViewModel;
+        _mainViewModel.RightView = _taskGroupViewModel;
+        OnPropertyChanged(nameof(_mainViewModel.RightView));
+        _mainViewModel.LeftView = _grouplistViewModel;
+        OnPropertyChanged(nameof(_mainViewModel.LeftView));
     }
     
     private void AddTask()

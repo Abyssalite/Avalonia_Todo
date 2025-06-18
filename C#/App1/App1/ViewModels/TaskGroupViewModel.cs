@@ -1,18 +1,17 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using System;
 
 namespace App1.ViewModels;
 
 public class TaskGroupViewModel : ViewModelBase
 {
     private readonly MainViewModel _mainViewModel;
-    public ObservableCollection<TaskGroup> GroupedTasks { get; set; }
+    private readonly GroupListViewModel _groupListViewModel;
+    private Store _store { get; }
+    public ObservableCollection<TaskGroup> GroupedTasks { get; }
+    public string ListName { get; }
     public ICommand AddTaskViewCommand { get; } //Button only
-    public Action<BaseTask>? OnTaskDetele { get; set; }
-    public Action<TaskGroupViewModel, string>? OnTaskCreate { get; set; } // callback
-    public string ListName { get; set; }
     private BaseTask? _selectedTask;
     public BaseTask? SelectedTask
     {
@@ -27,12 +26,14 @@ public class TaskGroupViewModel : ViewModelBase
             }
         }
     }
-   
-    public TaskGroupViewModel(MainViewModel main, ObservableCollection<TaskGroup> groups, string listName)
+
+    public TaskGroupViewModel(MainViewModel main, GroupListViewModel groupList, Store store, GroupList list)
     {
         _mainViewModel = main;
-        ListName = listName;
-        GroupedTasks = groups;
+        _groupListViewModel = groupList;
+        _store = store;
+        ListName = list.List;
+        GroupedTasks = list.Groups;
         AddTaskViewCommand = new RelayCommand(OpenAddTaskView);
     }
 
@@ -40,7 +41,15 @@ public class TaskGroupViewModel : ViewModelBase
     {
         if (ListName != null)
         {
-            OnTaskCreate?.Invoke(this, ListName);
+            var addVM = new AddTaskViewModel(_mainViewModel, _groupListViewModel ,this, ListName);
+            addVM.OnTaskCreated = task =>
+            {
+                TaskHelpers.AddTaskToCategory(task, _store.GroupedList);
+            };
+            _mainViewModel.RightView = addVM;
+            OnPropertyChanged(nameof(_mainViewModel.RightView));
+            _mainViewModel.LeftView = new NewTaskOptionViewModel(_mainViewModel, _groupListViewModel);
+            OnPropertyChanged(nameof(_mainViewModel.LeftView));
         }
     }
 
@@ -51,10 +60,11 @@ public class TaskGroupViewModel : ViewModelBase
         var TaskDetailView = new TaskDetailViewModel(_mainViewModel, this, task);
         TaskDetailView.OnTaskDetele = task =>
         {
-            OnTaskDetele?.Invoke(task);
+            _store.GroupedList = TaskHelpers.DeleteTask(task, _store.GroupedList);
         };
-        _mainViewModel.SideView = TaskDetailView;
-        OnPropertyChanged(nameof(_mainViewModel.SideView));
+        _mainViewModel.RightView = TaskDetailView;
+        OnPropertyChanged(nameof(_mainViewModel.RightView));
 
     }
+    
 }

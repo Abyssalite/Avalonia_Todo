@@ -14,19 +14,19 @@ public class TaskDetailViewModel : ViewModelBase
     public Action? ShowDeleteDialog { get; set; }
     public Action<BaseTask>? OnTaskDetele { get; set; }
 
-    public TaskDetailViewModel(MainViewModel main, TaskGroupViewModel taskGroupViewModel, BaseTask task)
+    public TaskDetailViewModel(MainViewModel main, TaskGroupViewModel taskGroup, BaseTask task)
     {
         _mainViewModel = main;
-        _taskGroupViewModel = taskGroupViewModel;
+        _taskGroupViewModel = taskGroup;
         Task = task;
         DeleteTaskCommand = new RelayCommand(() => ShowDeleteDialog?.Invoke());
-        BackCommand = new RelayCommand(() =>  _mainViewModel.SideView = _taskGroupViewModel);
+        BackCommand = new RelayCommand(() =>  _mainViewModel.RightView = _taskGroupViewModel);
     }
 
     public void DeleteTask()
     {
         OnTaskDetele?.Invoke(Task);
-        _mainViewModel.SideView = _taskGroupViewModel;
-        OnPropertyChanged(nameof(_mainViewModel.SideView));
+        _mainViewModel.RightView = _taskGroupViewModel;
+        OnPropertyChanged(nameof(_mainViewModel.RightView));
     }
 }

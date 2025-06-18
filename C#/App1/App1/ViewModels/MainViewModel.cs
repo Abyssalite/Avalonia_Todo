@@ -1,98 +1,35 @@
-using System.Collections.ObjectModel;
-using System.Windows.Input;
-using CommunityToolkit.Mvvm.Input;
-using System.Linq;
-
 namespace App1.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    private ViewModelBase _sideView;
-    public ViewModelBase SideView
+    private ViewModelBase _rightView;
+    public ViewModelBase RightView
     {
-        get => _sideView;
-        set => SetProperty(ref _sideView, value);
+        get => _rightView;
+        set => SetProperty(ref _rightView, value);
     }
-
-    public ICommand OpenQuickTaskCommand { get; } //Button only
-    //public ICommand AddGroupDialogCommand { get; } //Button only
-    public ObservableCollection<GroupList> FilteredGroupedList { get; set; } = new();
-    private ObservableCollection<GroupList> _groupedList = new();
-    public ObservableCollection<GroupList> GroupedList
+    private ViewModelBase _leftView;
+    public ViewModelBase LeftView
     {
-        get => _groupedList;
-        set
-        {
-            if (value != null)
-            {
-                _groupedList = value;
-                FilteredGroupedList = new ObservableCollection<GroupList>(_groupedList.Where(g => g.List != "Quick"));
-            }
-        }
+        get => _leftView;
+        set => SetProperty(ref _leftView, value);
     }
-    private GroupList? _selectedGroup;
-    public GroupList ? SelectedGroup
-    {
-        get => _selectedGroup;
-        set
-        {
-            if (value != null && value != _selectedGroup)
-            {
-                _selectedGroup = value;
-                OpenGroup(_selectedGroup, _selectedGroup.List);
-                OnPropertyChanged(nameof(SelectedGroup));
-            }
-        }
-    }
+    private Store _store { get; } = new();
 
     public MainViewModel()
     {
-        GroupedList = TaskHelpers.Load();
+        _store.GroupedList = TaskHelpers.Load();
         HookSaveOnIsDoneChange();
-        _sideView = new WellcomeViewModel("Wellcome");
-
-        OpenQuickTaskCommand = new RelayCommand(() =>
-        {
-            var quick = _groupedList.FirstOrDefault(l => l.List == "Quick");
-            if (quick != null)
-                OpenGroup(quick, "Quick");
-                _selectedGroup = null;
-                OnPropertyChanged(nameof(SelectedGroup));
-        });
-        //AddGroupDialogCommand = new RelayCommand(OpenAddTaskView);
+        _rightView = new WellcomeViewModel("Wellcome");
+        _leftView = new GroupListViewModel(this, _store);
     }
 
     private void HookSaveOnIsDoneChange()
-    {
-        foreach (var list in _groupedList)
-        foreach (var group in list.Groups)
-        foreach (var task in group.Tasks)
-            TaskHelpers.HookSaveToTask(_groupedList, task);
-    }
+{
+    foreach (var list in _store.GroupedList)
+    foreach (var group in list.Groups)
+    foreach (var task in group.Tasks)
+        TaskHelpers.HookSaveToTask(_store, task);
 
-    private void OpenAddTaskView(TaskGroupViewModel viewModel, string? listName)
-    {
-        if (listName != null)
-        {
-            var addVM = new AddTaskViewModel(this, viewModel, listName);
-            addVM.OnTaskCreated = task =>
-            {
-                TaskHelpers.AddTaskToCategory(task, _groupedList);
-            };
-            _sideView = addVM;
-            OnPropertyChanged(nameof(SideView));
-        }
-    }
-
-    private void OpenGroup(GroupList list, string listName)
-    {
-        var TaskGroupView = new TaskGroupViewModel(this, list.Groups, listName);
-        TaskGroupView.OnTaskCreate = OpenAddTaskView;
-        TaskGroupView.OnTaskDetele = task =>
-        {
-            _groupedList = TaskHelpers.DeleteTask(task, _groupedList);
-        };
-        _sideView = TaskGroupView;
-        OnPropertyChanged(nameof(SideView));
-    }
+}
 }
