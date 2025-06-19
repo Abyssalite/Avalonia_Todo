@@ -1,5 +1,7 @@
-Rust/target/
+**/target/
 **/bin/
 **/obj/
 **/bin/
 **/node_modules
+**/.vscode/
+**/.run/
