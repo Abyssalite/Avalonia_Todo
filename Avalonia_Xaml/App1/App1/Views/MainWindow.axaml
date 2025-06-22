@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:App1.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        MinWidth="1280" MinHeight="720"
+        MinWidth="300" MinHeight="200"
         xmlns:views="clr-namespace:App1.Views"
         x:Class="App1.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
