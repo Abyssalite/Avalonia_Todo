@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="AppUno.Views.TaskDetailView"
+﻿<Page x:Class="AppUno.Views.TaskDetailView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:AppUno.Views"
@@ -8,13 +8,31 @@
       xmlns:uen="using:Uno.Extensions.Navigation.UI"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Grid RowDefinitions="Auto,*">
+        <utu:NavigationBar Content="Second Page">
+            <utu:NavigationBar.SecondaryCommands>
+                <AppBarButton Icon="Setting" Label="Edit" />
+                <AppBarButton Icon="Help" Label="Delete"/>
+                <!-- Add more as needed -->
+            </utu:NavigationBar.SecondaryCommands>
+        </utu:NavigationBar>
+        <StackPanel Grid.Row="1" HorizontalAlignment="Stretch" Margin="10">
+                
+            <Grid ColumnDefinitions="150,*" Margin="20">
+                <TextBlock Text="Name" Grid.Column="0"/>
+                <TextBlock Text="{Binding Task.Name}" Grid.Column="1"/>
+            </Grid>
 
-    <StackPanel 
-          HorizontalAlignment="Center"
-          VerticalAlignment="Center">
-        <TextBox Text="{Binding Name}"
-          PlaceholderText="Enter your name:" />
-        <Button Content="Go" />
-    </StackPanel>
+            <Grid ColumnDefinitions="150,*" Margin="20">
+                <TextBlock Text="Description" Grid.Column="0"/>
+                <TextBlock Text="{Binding Task.Description}" Grid.Column="1"/>
+            </Grid>
 
-</UserControl>
+            <Grid ColumnDefinitions="150,*" Margin="20">
+                <TextBlock Text="Category" Grid.Column="0"/>
+                <TextBlock Text="{Binding Task.Category}" Grid.Column="1"/>
+            </Grid>
+        </StackPanel>
+    </Grid>
+
+</Page>

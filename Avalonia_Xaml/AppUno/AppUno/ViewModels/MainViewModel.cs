@@ -18,13 +18,12 @@ public partial class MainViewModel : ViewModelBase
     {
         try
         {
-            await _navigator.NavigateRouteAsync(this, "/Right/WellcomeView", data: "Wellcome");
-            await _navigator.NavigateRouteAsync(this, "/Left/GroupListView", data: _store);
+            await _navigator.NavigateViewModelAsync<WellcomeViewModel>(this, "Right/", data: "Wellcome");
+            await _navigator.NavigateViewModelAsync<GroupListViewModel>(this, "Left/", data: _store);
         }
         catch (Exception ex)
         {
                 Console.WriteLine($"An error occurred: {ex.Message}");
-
         }
 
     }

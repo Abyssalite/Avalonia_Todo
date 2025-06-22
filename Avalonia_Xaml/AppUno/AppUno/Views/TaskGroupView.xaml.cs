@@ -1,6 +1,6 @@
 ﻿namespace AppUno.Views;
 
-public sealed partial class TaskGroupView : UserControl
+public sealed partial class TaskGroupView : Page
 {
 
     public TaskGroupView()

@@ -1,6 +1,6 @@
 ﻿namespace AppUno.Views;
 
-public sealed partial class TaskDetailView : UserControl
+public sealed partial class TaskDetailView : Page
 {
     public TaskDetailView()
     {

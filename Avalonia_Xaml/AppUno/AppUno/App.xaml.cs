@@ -94,8 +94,8 @@ public partial class App : Application
             new ViewMap<MainView, MainViewModel>(),
             new DataViewMap<WellcomeView, WellcomeViewModel, string>(),
             new DataViewMap<GroupListView, GroupListViewModel, Store>(),
-            new DataViewMap<TaskDetailView, TaskDetailViewModel, Store>(),
-            new DataViewMap<TaskGroupView, TaskGroupViewModel, Entity.TaskGroup>()
+            new DataViewMap<TaskGroupView, TaskGroupViewModel, Store>(),
+            new DataViewMap<TaskDetailView, TaskDetailViewModel, Store>()
 
         );
 
@@ -109,11 +109,15 @@ public partial class App : Application
                             new ("Left", View: views.FindByViewModel<MainViewModel>(),
                                 Nested:
                                 [
+                                    new ("GroupList", View: views.FindByViewModel<GroupListViewModel>())
                                 ]
                             ),
                             new ("Right", View: views.FindByViewModel<MainViewModel>(),
                                 Nested:
                                 [
+                                    new ("TaskGroup", View: views.FindByViewModel<TaskGroupViewModel>()),
+                                    new ("TaskDetail", View: views.FindByViewModel<TaskDetailViewModel>()),
+                                    new ("Wellcome", View: views.FindByViewModel<WellcomeViewModel>())
                                 ]
                             )
 

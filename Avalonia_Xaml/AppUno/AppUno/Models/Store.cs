@@ -5,6 +5,8 @@ using System.Linq;
 public class Store : INotifyPropertyChanged
 {
     private ObservableCollection<GroupList> _groupedList = new();
+    public GroupList? SelectedList { get; set; }
+    public BaseTask? SelectedTask { get; set; }
     public ObservableCollection<GroupList> FilteredGroupedList { get; set; } = new();
     public ObservableCollection<GroupList> GroupedList
     {

@@ -1,6 +1,6 @@
 namespace AppUno.Views;
 
-public sealed partial class WellcomeView : UserControl
+public sealed partial class WellcomeView : Page
 {
 
     public WellcomeView()

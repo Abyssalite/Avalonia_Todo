@@ -10,7 +10,7 @@ public class GroupListViewModel : ViewModelBase
     private INavigator _navigator;
     public ObservableCollection<GroupList> FilteredGroupedList { get; } = new();
     public ICommand OpenQuickTaskCommand { get; }
-    public ICommand? GoToSecond { get; }
+    public ICommand? AddListCommand { get; }
     private GroupList? _selectedGroup;
     public GroupList? SelectedGroup
     {
@@ -42,7 +42,8 @@ public class GroupListViewModel : ViewModelBase
     }
     private async void OpenGroup(GroupList groupedList)
     {
-        await _navigator.NavigateRouteAsync(this, "/Right/TaskGroupView", data:new Entity.TaskGroup(_store, groupedList));
+        _store.SelectedList = groupedList;
+        await _navigator.NavigateViewModelAsync<TaskGroupViewModel>(this, "Right/", data: _store);
     }
     
 }

@@ -27,9 +27,9 @@
                             <Button Content="☰" 
                                 HorizontalAlignment="Right"/>
                             <ContentControl uen:Region.Attached="True"
-                                            uen:Region.Name="Left"
-                                            HorizontalContentAlignment="Stretch"
-                                            VerticalContentAlignment="Stretch" />
+                                        uen:Region.Name="Left"
+                                        HorizontalContentAlignment="Stretch"
+                                        VerticalContentAlignment="Stretch" />
                         </StackPanel>
                     </Border>
                 </SplitView.Pane>
@@ -37,9 +37,9 @@
                 <SplitView.Content>
                     <Grid> 
                         <ContentControl uen:Region.Attached="True"
-                                        uen:Region.Name="Right"
-                                        HorizontalContentAlignment="Stretch"
-                                        VerticalContentAlignment="Stretch" />
+                                    uen:Region.Name="Right"
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalContentAlignment="Stretch" />
                     </Grid>
                 </SplitView.Content>
             </SplitView>

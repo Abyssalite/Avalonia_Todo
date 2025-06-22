@@ -10,8 +10,9 @@
 
     <Grid RowDefinitions="Auto,Auto">
         <StackPanel Grid.Row="0" Margin="10">
-            <!-- MenuItem becomes AppBarButton in Uno -->
-            <AppBarButton Label="Quick Task"
+            <Button Content="Quick Task"
+                          HorizontalAlignment="Stretch"
+                          HorizontalContentAlignment="Left"
                           Command="{Binding OpenQuickTaskCommand}"
                           Padding="20,10,10,10"
                           Margin="10,5,10,5"/>
@@ -24,18 +25,17 @@
                         Padding="0"
                         CornerRadius="30"
                         VerticalAlignment="Top"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
                         BorderBrush="Transparent"
                         Background="#FFAAAAAA">
                     <Image Source="/Assets/Icons/icons8-done-100.png"
                            Stretch="Uniform"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
                            Width="30"
                            Height="30"/>
                 </Button>
             </Grid>
 
-            <!-- ListBox becomes ListView in Uno -->
             <ListView ItemsSource="{Binding FilteredGroupedList}"
                       BorderThickness="0"
                       Margin="10,0,10,0"
@@ -63,12 +63,12 @@
                 Padding="0"
                 CornerRadius="30"
                 VerticalAlignment="Center"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
                 BorderBrush="Transparent"
-                Command="{Binding GoToSecond}"
+                Command="{Binding AddListCommand}"
                 Background="#FFAAAAAA">
             <Image Source="/Assets/Icons/icons8-plus-100.png"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
                    Stretch="Uniform"
                    Width="50"
                    Height="50"/>
