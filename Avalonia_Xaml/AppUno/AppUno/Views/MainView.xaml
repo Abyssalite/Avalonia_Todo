@@ -9,25 +9,25 @@
       NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid utu:SafeArea.Insets="VisibleBounds">
+    <Grid utu:SafeArea.Insets="VisibleBounds" >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" /> 
         </Grid.RowDefinitions>
         
             <SplitView Grid.Row="1"
-                    IsPaneOpen="True"
+                    x:Name="LeftPane"
                     DisplayMode="Inline"
-                    OpenPaneLength="250"
-                    CompactPaneLength="50">
-                
+                    OpenPaneLength="250">
                 <SplitView.Pane>
                     <Border Background="#FF2D2D30">
                         <StackPanel>
                             <Button Content="☰" 
+                                Click="TogglePane_Click"
+                                x:Name="toggleClose" 
                                 HorizontalAlignment="Right"/>
                             <ContentControl uen:Region.Attached="True"
-                                        uen:Region.Name="Left"
+                                        uen:Region.Name="Pane"
                                         HorizontalContentAlignment="Stretch"
                                         VerticalContentAlignment="Stretch" />
                         </StackPanel>
@@ -35,9 +35,16 @@
                 </SplitView.Pane>
 
                 <SplitView.Content>
-                    <Grid> 
-                        <ContentControl uen:Region.Attached="True"
-                                    uen:Region.Name="Right"
+                    <Grid ColumnDefinitions="Auto,*"> 
+                        <StackPanel Grid.Column="0" x:Name="LeftBar" >
+                            <Button Content="☰" 
+                                Click="TogglePane_Click"
+                                x:Name="toggleOpen" 
+                                HorizontalAlignment="Right"/>
+                        </StackPanel>
+                        <ContentControl Grid.Column="1"
+                                    uen:Region.Attached="True"
+                                    uen:Region.Name="App"
                                     HorizontalContentAlignment="Stretch"
                                     VerticalContentAlignment="Stretch" />
                     </Grid>

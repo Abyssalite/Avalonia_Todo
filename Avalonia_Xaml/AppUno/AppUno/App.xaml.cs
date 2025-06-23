@@ -63,13 +63,14 @@ public partial class App : Application
                         .EmbeddedSource<App>()
                         .Section<AppConfig>()
                 )
-                .UseHttp((context, services) => {
+                .UseHttp((context, services) =>
+                {
 #if DEBUG
-                // DelegatingHandler will be automatically injected
-                services.AddTransient<DelegatingHandler, DebugHttpHandler>();
+                    // DelegatingHandler will be automatically injected
+                    services.AddTransient<DelegatingHandler, DebugHttpHandler>();
 #endif
 
-})
+                })
                 .ConfigureServices((context, services) =>
                 {
                     // TODO: Register your services
@@ -79,10 +80,11 @@ public partial class App : Application
             );
         MainWindow = builder.Window;
 
-        #if DEBUG
+
+#if DEBUG
         MainWindow.UseStudio();
 #endif
-                MainWindow.SetWindowIcon();
+        MainWindow.SetWindowIcon();
 
         Host = await builder.NavigateAsync<Shell>();
     }
@@ -95,8 +97,8 @@ public partial class App : Application
             new DataViewMap<WellcomeView, WellcomeViewModel, string>(),
             new DataViewMap<GroupListView, GroupListViewModel, Store>(),
             new DataViewMap<TaskGroupView, TaskGroupViewModel, Store>(),
-            new DataViewMap<TaskDetailView, TaskDetailViewModel, Store>()
-
+            new DataViewMap<TaskDetailView, TaskDetailViewModel, Store>(),
+            new DataViewMap<AddTaskView, AddTaskViewModel, Store>()
         );
 
         routes.Register(
@@ -106,17 +108,18 @@ public partial class App : Application
                     new ("Main", View: views.FindByViewModel<MainViewModel>(),
                         Nested:
                         [
-                            new ("Left", View: views.FindByViewModel<MainViewModel>(),
+                            new ("Pane", View: views.FindByViewModel<MainViewModel>(),
                                 Nested:
                                 [
                                     new ("GroupList", View: views.FindByViewModel<GroupListViewModel>())
                                 ]
                             ),
-                            new ("Right", View: views.FindByViewModel<MainViewModel>(),
+                            new ("App", View: views.FindByViewModel<MainViewModel>(),
                                 Nested:
                                 [
                                     new ("TaskGroup", View: views.FindByViewModel<TaskGroupViewModel>()),
                                     new ("TaskDetail", View: views.FindByViewModel<TaskDetailViewModel>()),
+                                    new ("AddTask", View: views.FindByViewModel<AddTaskViewModel>()),
                                     new ("Wellcome", View: views.FindByViewModel<WellcomeViewModel>())
                                 ]
                             )

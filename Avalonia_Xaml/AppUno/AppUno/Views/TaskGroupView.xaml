@@ -9,23 +9,25 @@
       xmlns:vm="using:AppUno.ViewModels"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid RowDefinitions="Auto,*,Auto">
-        <utu:NavigationBar Content="Main" />
-        <StackPanel Grid.Row="1">
-            <TextBlock Text="{Binding ListName}" 
-                    FontSize="20"
-                    Margin="0,0,0,10"/>
+    <Grid RowDefinitions="Auto,*,Auto" Margin="10">
+        <utu:NavigationBar Content="{Binding ListName}" FontSize="25">
+            <utu:NavigationBar.SecondaryCommands>
+                <AppBarButton Icon="Delete" Label="Delete" Command="{Binding DeleteListCommand}"/>
+                <!-- Add more as needed -->
+            </utu:NavigationBar.SecondaryCommands>
+        </utu:NavigationBar>
 
+        <StackPanel Grid.Row="1">
             <ItemsControl ItemsSource="{Binding GroupedTasks}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
                             <!-- Category Header -->
                             <TextBlock Text="{Binding Category}" 
-                                    FontSize="16"
+                                    FontSize="20"
                                     FontWeight="Bold"
                                     Padding="5"
-                                    Margin="5,0,0,5"/>
+                                    Margin="5"/>
 
                             <!-- Task List -->
                             <ItemsControl ItemsSource="{Binding Tasks}">
@@ -38,18 +40,18 @@
                                                 Background="Transparent"
                                                 BorderThickness="0"
                                                 Padding="5"
-                                                Margin="5,2"
+                                                Margin="10"
                                                 Command="{utu:AncestorBinding AncestorType=UserControl, Path=DataContext.OpenTaskCommand}"
                                                 CommandParameter="{Binding}">
                                                 <Grid ColumnDefinitions="40,*">
                                                     <CheckBox Grid.Column="0"
-                                                            IsChecked="{Binding IsDone}"
+                                                            IsChecked="{Binding IsDone, Mode=TwoWay}"
                                                             VerticalAlignment="Center"
-                                                            Margin="0,0,5,0"/>
+                                                            Margin="10,0,10,0"/>
                                                     <TextBlock Grid.Column="1"
                                                             Text="{Binding Name}"
                                                             VerticalAlignment="Center"
-                                                            FontSize="14"/>
+                                                            FontSize="15"/>
                                                 </Grid>
                                             </Button>
                                         </StackPanel>

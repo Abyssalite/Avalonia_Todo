@@ -1,14 +1,16 @@
-using System;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Text.Json;
-using System.Linq;
 
 public static class TaskHelpers
 {
-    public static void AddTaskToCategory(BaseTask task, ObservableCollection<GroupList> GroupList)
+    public static string InputOrDefault(string? input, string defaultValue)
     {
-        var list = GroupList.FirstOrDefault(l => l.List == task.List);
+        return string.IsNullOrWhiteSpace(input) ? defaultValue : input;
+    }
+    
+    public static void AddTaskToCategory(BaseTask task, Store store)
+    {
+        var list = store.GroupedList.FirstOrDefault(l => l.List == task.List);
         if (list == null) return;
 
         var group = list.Groups.FirstOrDefault(g => g.Category == task.Category);
@@ -25,16 +27,33 @@ public static class TaskHelpers
                 Tasks = new ObservableCollection<BaseTask> { task }
             });
         }
-        Save(GroupList);
+        _ = SaveAsync(store.GroupedList);
+    }
+    
+    public static void AddList(string listName, Store store)
+    {
+        var list = store.GroupedList.FirstOrDefault(l => l.List == listName);
+        if (list != null || listName == "")
+        {
+            return;
+        }
+
+        // Create new list group if it doesn't exist
+        store.GroupedList.Add(new GroupList
+        {
+            List = listName,
+            Groups = new ObservableCollection<TaskGroup>()
+        });
+        _ = SaveAsync(store.GroupedList);
     }
 
-    public static ObservableCollection<GroupList> DeleteTask(BaseTask task, ObservableCollection<GroupList> GroupList)
+    public static void DeleteTask(BaseTask task,  Store store)
     {
-        var list = GroupList.FirstOrDefault(l => l.List == task.List);
-        if (list == null) return GroupList;
+        var list = store.GroupedList.FirstOrDefault(l => l.List == task.List);
+        if (list == null) return;
 
         var group = list.Groups.FirstOrDefault(g => g.Category == task.Category);
-        if (group == null) return GroupList;
+        if (group == null) return;
 
         group.Tasks.Remove(task);
 
@@ -42,52 +61,80 @@ public static class TaskHelpers
         {
             list.Groups.Remove(group);
         }
-        Save(GroupList);
-        return GroupList;
+        _ = SaveAsync(store.GroupedList);
+    }
+
+    public static void DeleteList(string listName,  Store store)
+    {
+        var list = store.GroupedList.FirstOrDefault(l => l.List == listName);
+        if (list == null) return;
+
+        store.GroupedList.Remove(list);
+        _ = SaveAsync(store.GroupedList);
+    }
+
+    public static void print(object data)
+    {
+        Console.WriteLine(JsonSerializer.Serialize(data, JsonOptions));
     }
 
     public static void HookSaveToTask(Store store, BaseTask task)
     {
-        task.PropertyChanged += (_, e) =>
+        task.PropertyChanged += async (_, e) =>
         {
             if (e.PropertyName == nameof(BaseTask.IsDone))
             {
-                Save(store.GroupedList);
+                await SaveAsync(store.GroupedList);
             }
         };
-
     }
+
     public static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
     {
         WriteIndented = true
     };
-    public static void Save(ObservableCollection<GroupList> GroupLists, string fileName = "tasks.json")
+
+   public static async Task SaveAsync(ObservableCollection<GroupList> groupLists, string fileName = "tasks.json")
     {
-        string json = JsonSerializer.Serialize(GroupLists, JsonOptions);
-        File.WriteAllText(fileName, json);
-        Console.WriteLine("Saving tasks.json to: " + Directory.GetCurrentDirectory());
+        string json = JsonSerializer.Serialize(groupLists, JsonOptions);
+
+        StorageFile file = await ApplicationData.Current.LocalFolder.CreateFileAsync(
+            fileName,
+            CreationCollisionOption.ReplaceExisting);
+
+        await FileIO.WriteTextAsync(file, json);
+
+        Console.WriteLine("Saved to: " + ApplicationData.Current.LocalFolder.Path);
     }
-    
-    public static ObservableCollection<GroupList> Load(string filename = "tasks.json")
+
+    public static async Task<ObservableCollection<GroupList>> LoadAsync(string fileName = "tasks.json")
     {
         try
         {
-            string json = File.ReadAllText(filename);
-            Console.WriteLine($"Tasks loaded from {filename}.");
-            return JsonSerializer.Deserialize<ObservableCollection<GroupList>>(json, JsonOptions) ?? [];
+            StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileName);
+            string json = await FileIO.ReadTextAsync(file);
+            Console.WriteLine("Loaded from: " + file.Path);
+
+            return JsonSerializer.Deserialize<ObservableCollection<GroupList>>(json, JsonOptions)
+                   ?? new ObservableCollection<GroupList>();
+        }
+        catch (FileNotFoundException)
+        {
+            Console.WriteLine("File not found. Creating new list.");
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error loading tasks: " + ex.Message);
-            Console.WriteLine("Creating...");
-            return new ObservableCollection<GroupList>
-            {
-                new GroupList
-                {
-                    List = "Quick",
-                    Groups = new ObservableCollection<TaskGroup>()
-                }
-            };
+            Console.WriteLine("Error loading file: " + ex.Message);
         }
+
+        // Default fallback list
+        return new ObservableCollection<GroupList>
+        {
+            new GroupList
+            {
+                List = "Quick",
+                Groups = new ObservableCollection<TaskGroup>()
+            }
+        };
     }
 }

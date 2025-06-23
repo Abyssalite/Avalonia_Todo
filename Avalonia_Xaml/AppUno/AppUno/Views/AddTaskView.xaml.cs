@@ -1,10 +1,9 @@
 ﻿namespace AppUno.Views;
 
-public sealed partial class TaskGroupView : Page
+public sealed partial class AddTaskView : Page
 {
-    public TaskGroupView()
+    public AddTaskView()
     {
         this.InitializeComponent();
     }
 }
-

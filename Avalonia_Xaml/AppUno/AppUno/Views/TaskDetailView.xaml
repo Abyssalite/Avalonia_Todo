@@ -9,15 +9,15 @@
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid RowDefinitions="Auto,*">
-        <utu:NavigationBar Content="Second Page">
+        <utu:NavigationBar Content="Detail" FontSize="25">
             <utu:NavigationBar.SecondaryCommands>
-                <AppBarButton Icon="Setting" Label="Edit" />
-                <AppBarButton Icon="Help" Label="Delete"/>
+                <AppBarButton Icon="Edit" Label="Edit" />
+                <AppBarButton Icon="Delete" Label="Delete" Command="{Binding DeleteTaskCommand}"/>
                 <!-- Add more as needed -->
             </utu:NavigationBar.SecondaryCommands>
         </utu:NavigationBar>
+
         <StackPanel Grid.Row="1" HorizontalAlignment="Stretch" Margin="10">
-                
             <Grid ColumnDefinitions="150,*" Margin="20">
                 <TextBlock Text="Name" Grid.Column="0"/>
                 <TextBlock Text="{Binding Task.Name}" Grid.Column="1"/>
@@ -34,5 +34,4 @@
             </Grid>
         </StackPanel>
     </Grid>
-
 </Page>

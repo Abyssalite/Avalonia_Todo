@@ -8,8 +8,10 @@
       xmlns:uen="using:Uno.Extensions.Navigation.UI"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-        <TextBlock Text="{Binding Text}" 
+      <Grid>
+          <TextBlock Text="{Binding Text}" 
             FontSize="40"
             VerticalAlignment="Center" 
             HorizontalAlignment="Center"/>
+      </Grid>
 </Page>
