@@ -7,12 +7,12 @@ namespace App1.ViewModels;
 
 public class NewTaskOptionViewModel : ViewModelBase
 {
-    private readonly MainViewModel _mainViewModel;
-    private readonly GroupListViewModel _groupListViewModel;
+    private Store _store { get; }
+    private readonly IViewHost _host;
 
-    public NewTaskOptionViewModel(MainViewModel main, GroupListViewModel groupList)
+    public NewTaskOptionViewModel(IViewHost host, Store store)
     {
-        _mainViewModel = main;
-        _groupListViewModel = groupList;
+        _store = store;
+        _host = host;
     }
 }

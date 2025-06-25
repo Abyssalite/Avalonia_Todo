@@ -64,8 +64,12 @@ public class GroupListViewModel : ViewModelBase
     
     private async void OpenGroup(GroupList groupedList)
     {
-        _store.SelectedList = groupedList;
-        _store.ListName = groupedList.List;
-        await _navigator.NavigateViewModelAsync<TaskGroupViewModel>(this, "App/", data: _store);
+        if (_store.ListName != groupedList.List)
+        {
+            _store.SelectedList = groupedList;
+            _store.ListName = groupedList.List;
+            await _navigator.NavigateViewModelAsync<TaskGroupViewModel>(this, "App/", data: _store);
+        }
+
     }
 }

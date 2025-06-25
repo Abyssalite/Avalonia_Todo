@@ -7,7 +7,7 @@
              x:Class="App1.Views.AddTaskView"
              x:DataType="vm:AddTaskViewModel">   
         
-        <StackPanel Grid.Column="1" Margin="10" Spacing="10" HorizontalAlignment="Stretch" >
+        <StackPanel Margin="5" HorizontalAlignment="Stretch" >
             <TextBlock Text="New Task" FontSize="30" Margin="10" HorizontalAlignment="Center"/>
             <TextBox Watermark="Task name" Text="{Binding NewTaskName}" Margin="8"/>
             <TextBox Watermark="Description" Text="{Binding TaskDesc}" Margin="8"/>

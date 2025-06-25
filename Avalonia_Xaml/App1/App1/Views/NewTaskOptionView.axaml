@@ -6,7 +6,7 @@
              x:Class="App1.Views.NewTaskOptionView"
              x:DataType="vm:NewTaskOptionViewModel"> 
 
-        <StackPanel Grid.Column="0" Margin="10">
+        <StackPanel Grid.Column="0" Margin="5" >
             <TextBlock Text="Task Selection" FontSize="20" Margin="10"/>
             <StackPanel>
                 <MenuItem Header="Base Task"

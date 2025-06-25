@@ -16,7 +16,8 @@ public partial class MainViewModel : ViewModelBase
     public async Task InitializeAsync()
     {
         _store.GroupedList = await TaskHelpers.LoadAsync();
-        InitializeNavigation();
+        await _navigator.NavigateViewModelAsync<GroupListViewModel>(this, "Pane/", data: _store);
+        await _navigator.NavigateViewModelAsync<WellcomeViewModel>(this, "App/", data: "Wellcome");
         HookSaveOnIsDoneChange();
     }
 
@@ -26,18 +27,5 @@ public partial class MainViewModel : ViewModelBase
             foreach (var group in list.Groups)
                 foreach (var task in group.Tasks)
                     TaskHelpers.HookSaveToTask(_store, task);
-    }
-
-    private async void InitializeNavigation()
-    {
-        try
-        {
-            await _navigator.NavigateViewModelAsync<GroupListViewModel>(this, "Pane/", data: _store);
-            await _navigator.NavigateViewModelAsync<WellcomeViewModel>(this, "App/", data: "Wellcome");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred: {ex.Message}");
-        }
     }
 }

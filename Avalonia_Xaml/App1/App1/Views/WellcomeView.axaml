@@ -6,11 +6,10 @@
              x:Class="App1.Views.WellcomeView"
              x:DataType="vm:WellcomeViewModel"> 
 
-        <Grid RowDefinitions="5*,5*">
+        <Grid Margin="5" >
             <TextBlock Text="{Binding Text}" 
                        FontSize="40" 
-                       VerticalAlignment="Bottom" 
-                       HorizontalAlignment="Center" 
-                       Grid.Column="0"/>
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center" />
         </Grid>
 </UserControl>

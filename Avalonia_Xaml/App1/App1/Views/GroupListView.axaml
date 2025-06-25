@@ -6,12 +6,13 @@
              x:Class="App1.Views.GroupListView"
              x:DataType="vm:GroupListViewModel"> 
 
-        <Grid Grid.Column="0" RowDefinitions="Auto,Auto">
+        <Grid RowDefinitions="Auto,Auto" Margin="5" >
             <StackPanel Grid.Row="0" Margin="10">
                 <MenuItem Header="Quick Task"
-                            Command="{Binding OpenQuickTaskCommand}"
-                            Padding="20,10,10,10"
-                            Margin="10,5,10,5"/>
+                        Command="{Binding OpenQuickTaskCommand}"
+                        Padding="20,10,10,10"
+                        Margin="5,5,20,5"/>
+
                 <Grid ColumnDefinitions="9*,1*" Margin="10">
                     <TextBlock Text="Group List" FontSize="20" Grid.Column="0"/>
                     <Button Grid.Column="1"
@@ -27,10 +28,10 @@
                         <Image Source="avares://App1/Assets/icons8-done-100.png"
                             Stretch="Uniform"
                             Width="30"
-                            Height="30" />
+                            Height="30"/>
                     </Button>
                 </Grid>
-                <!-- Clickable Task Boxes -->
+
                 <ListBox ItemsSource="{Binding FilteredGroupedList}"
                          BorderThickness="0"
                          Margin="10,0,10,0"
@@ -39,12 +40,12 @@
                          SelectedItem="{Binding $parent[UserControl].((vm:GroupListViewModel)DataContext).SelectedGroup, Mode=TwoWay}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" >
+                            <StackPanel>
                                 <TextBlock Text="{Binding List}" 
-                                           VerticalAlignment="Center"
-                                           FontSize="14"
-                                           Background="Transparent"
-                                           Padding="10"/>
+                                        VerticalAlignment="Center"
+                                        FontSize="15"
+                                        Background="Transparent"
+                                        Padding="10"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

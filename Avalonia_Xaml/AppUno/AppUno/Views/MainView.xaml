@@ -36,12 +36,13 @@
 
                 <SplitView.Content>
                     <Grid ColumnDefinitions="Auto,*"> 
-                        <StackPanel Grid.Column="0" x:Name="LeftBar" >
+                        <Grid Grid.Column="0" x:Name="LeftBar" >
                             <Button Content="☰" 
                                 Click="TogglePane_Click"
                                 x:Name="toggleOpen" 
-                                HorizontalAlignment="Right"/>
-                        </StackPanel>
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"/>
+                        </Grid>
                         <ContentControl Grid.Column="1"
                                     uen:Region.Attached="True"
                                     uen:Region.Name="App"

@@ -6,35 +6,37 @@
              x:Class="App1.Views.TaskGroupView"
              x:DataType="vm:TaskGroupViewModel"> 
 
-        <Grid RowDefinitions="*,Auto">
+        <Grid RowDefinitions="*,Auto" Margin="5" >
             <StackPanel Grid.Row="0" Margin="10">
-                <TextBlock Text="{Binding ListName}" FontSize="20" Grid.Column="0"/>
-                <ItemsControl ItemsSource="{Binding GroupedTasks}" Margin="10">
+                <TextBlock Text="{Binding ListName}" FontSize="25"/>
+                <ItemsControl ItemsSource="{Binding GroupedTasks}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <!-- Category Header (non-clickable) -->
-                                <TextBlock  Text="{Binding Category}" 
-                                            FontSize="16" 
-                                            Background="Transparent"
-                                            FontWeight="Bold"
-                                            Padding="5" 
-                                            Margin="5,0,0,0"/>
-                                <!-- Clickable Task Boxes -->
+                                <TextBlock Text="{Binding Category}" 
+                                        FontSize="20" 
+                                        Background="Transparent"
+                                        FontWeight="Bold"
+                                        Padding="5" 
+                                        Margin="5"/>
+
                                 <ListBox ItemsSource="{Binding Tasks}"
                                         BorderThickness="0"
+                                        Padding="5"
+                                        Margin="10"
                                         Background="Transparent"
                                         SelectionMode="Single"
                                         SelectedItem="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext).SelectedTask, Mode=TwoWay}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
-                                                <CheckBox IsChecked="{Binding IsDone}" VerticalAlignment="Center"/>
+                                            <StackPanel Orientation="Horizontal" Margin="10">
+                                                <CheckBox IsChecked="{Binding IsDone}" 
+                                                        VerticalAlignment="Center"
+                                                        Margin="10,0,10,0"/>
                                                 <TextBlock Text="{Binding Name}" 
                                                         VerticalAlignment="Center"
-                                                        FontSize="14"
-                                                        Background="Transparent"
-                                                        Padding="10"/>
+                                                        FontSize="15"
+                                                        Background="Transparent"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -51,7 +53,7 @@
                     Margin="10"
                     Padding="0"
                     CornerRadius="30"
-                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     BorderBrush="Transparent"

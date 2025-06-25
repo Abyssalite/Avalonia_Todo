@@ -111,6 +111,7 @@ public static class TaskHelpers
     {
         try
         {
+            Console.WriteLine("Loading...");
             StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileName);
             string json = await FileIO.ReadTextAsync(file);
             Console.WriteLine("Loaded from: " + file.Path);

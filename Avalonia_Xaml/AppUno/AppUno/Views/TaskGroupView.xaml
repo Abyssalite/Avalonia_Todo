@@ -13,11 +13,10 @@
         <utu:NavigationBar Content="{Binding ListName}" FontSize="25">
             <utu:NavigationBar.SecondaryCommands>
                 <AppBarButton Icon="Delete" Label="Delete" Command="{Binding DeleteListCommand}"/>
-                <!-- Add more as needed -->
             </utu:NavigationBar.SecondaryCommands>
         </utu:NavigationBar>
 
-        <StackPanel Grid.Row="1">
+        <StackPanel Grid.Row="1" x:Name="TaskGroupPanel">
             <ItemsControl ItemsSource="{Binding GroupedTasks}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

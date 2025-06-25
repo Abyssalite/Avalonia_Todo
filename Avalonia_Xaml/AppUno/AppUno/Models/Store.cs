@@ -6,6 +6,7 @@ public class Store : INotifyPropertyChanged
 {
     private ObservableCollection<GroupList> _groupedList = new();
     public string? ListName { set; get; }
+    public bool Initialized { set; get; } = false;
     public GroupList? SelectedList { get; set; }
     public BaseTask? SelectedTask { get; set; }
     public ObservableCollection<GroupList> FilteredGroupedList { get; set; } = new();
@@ -38,7 +39,6 @@ public class Store : INotifyPropertyChanged
 
     private void OnGroupedListChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        // When GroupedList changes, update FilteredGroupedList
         FilteredGroupedList = new ObservableCollection<GroupList>(
             GroupedList.Where(g => g.List != "Quick")
         );

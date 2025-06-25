@@ -13,25 +13,26 @@
             <utu:NavigationBar.SecondaryCommands>
                 <AppBarButton Icon="Edit" Label="Edit" />
                 <AppBarButton Icon="Delete" Label="Delete" Command="{Binding DeleteTaskCommand}"/>
-                <!-- Add more as needed -->
             </utu:NavigationBar.SecondaryCommands>
         </utu:NavigationBar>
 
-        <StackPanel Grid.Row="1" HorizontalAlignment="Stretch" Margin="10">
-            <Grid ColumnDefinitions="150,*" Margin="20">
-                <TextBlock Text="Name" Grid.Column="0"/>
-                <TextBlock Text="{Binding Task.Name}" Grid.Column="1"/>
-            </Grid>
+        <Border Grid.Row="1" x:Name="TaskDetailPanel">
+            <StackPanel HorizontalAlignment="Stretch">
+                <Grid ColumnDefinitions="150,*" Margin="20">
+                    <TextBlock Text="Name" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Task.Name}" Grid.Column="1"/>
+                </Grid>
 
-            <Grid ColumnDefinitions="150,*" Margin="20">
-                <TextBlock Text="Description" Grid.Column="0"/>
-                <TextBlock Text="{Binding Task.Description}" Grid.Column="1"/>
-            </Grid>
+                <Grid ColumnDefinitions="150,*" Margin="20">
+                    <TextBlock Text="Description" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Task.Description}" Grid.Column="1"/>
+                </Grid>
 
-            <Grid ColumnDefinitions="150,*" Margin="20">
-                <TextBlock Text="Category" Grid.Column="0"/>
-                <TextBlock Text="{Binding Task.Category}" Grid.Column="1"/>
-            </Grid>
-        </StackPanel>
+                <Grid ColumnDefinitions="150,*" Margin="20">
+                    <TextBlock Text="Category" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Task.Category}" Grid.Column="1"/>
+                </Grid>
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>

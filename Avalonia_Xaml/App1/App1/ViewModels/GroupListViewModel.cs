@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
@@ -7,10 +8,12 @@ namespace App1.ViewModels;
 
 public class GroupListViewModel : ViewModelBase
 {
-    private readonly MainViewModel _mainViewModel;
     private Store _store { get; }
-    public ObservableCollection<GroupList> FilteredGroupedList { get; } = new();
+    private readonly IViewHost _host;
+    public ObservableCollection<GroupList>? FilteredGroupedList { get; set; } = new();
     public ICommand OpenQuickTaskCommand { get; } //Button only
+    public ICommand? AddListCommand { get; }
+    public Action? OnSaveAddList { get; set; }
     private GroupList? _selectedGroup;
     public GroupList? SelectedGroup
     {
@@ -26,11 +29,20 @@ public class GroupListViewModel : ViewModelBase
         }
     }
 
-    public GroupListViewModel(MainViewModel main, Store store)
+    public GroupListViewModel(IViewHost host, Store store)
     {
-        _mainViewModel = main;
         _store = store;
+        _host = host;
         FilteredGroupedList = _store.FilteredGroupedList;
+        _store.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(Store.FilteredGroupedList))
+            {
+                FilteredGroupedList.Clear();
+                FilteredGroupedList = _store.FilteredGroupedList;
+                OnPropertyChanged(nameof(FilteredGroupedList));
+            }
+        };
 
         OpenQuickTaskCommand = new RelayCommand(() =>
         {
@@ -40,12 +52,25 @@ public class GroupListViewModel : ViewModelBase
             _selectedGroup = null;
             OnPropertyChanged(nameof(SelectedGroup));
         });
+        AddListCommand = new RelayCommand<string>(AddList);
+    }
+
+    private void AddList(string? newListName)
+    {
+        OnSaveAddList?.Invoke();
+        if (newListName != null)
+        {
+            TaskHelpers.AddList(newListName, _store);
+        }
     }
 
     private void OpenGroup(GroupList groupedList)
     {
-        var TaskGroupView = new TaskGroupViewModel(_mainViewModel, this, _store, groupedList);
-        _mainViewModel.RightView = TaskGroupView;
-        OnPropertyChanged(nameof(_mainViewModel.RightView));
+        if (_store.ListName != groupedList.List)
+        {
+            _store.SelectedList = groupedList;
+            _store.ListName = groupedList.List;
+            _host.NavigateRight(new TaskGroupViewModel(_host, _store));
+        }
     }
 }

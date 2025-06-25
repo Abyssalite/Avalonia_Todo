@@ -6,30 +6,21 @@ namespace App1.ViewModels;
 
 public class AddTaskViewModel : ViewModelBase
 {
-    private readonly MainViewModel _mainViewModel;
-    private readonly TaskGroupViewModel _taskGroupViewModel;
-    private readonly GroupListViewModel _grouplistViewModel;
-
-    private readonly string _listName;
-    public Action<BaseTask>? OnTaskCreated { get; set; } // callback
+    private Store _store { get; }
+    private readonly IViewHost _host;
+    private ViewModelBase _viewModel;
     public Action? ShowEmptyNameDialog { get; set; }
-    public ICommand SaveTaskCommand { get; } //Button only
+    public ICommand SaveTaskCommand { get; }
     public ICommand CancelCommand { get; }
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
 
-    private string InputOrDefault(string? input, string defaultValue)
+    public AddTaskViewModel(IViewHost host, ViewModelBase viewModel,  Store store)
     {
-        return string.IsNullOrWhiteSpace(input) ? defaultValue : input;
-    }
-
-    public AddTaskViewModel(MainViewModel main, GroupListViewModel grouplist, TaskGroupViewModel taskGroup, string listName)
-    {
-        _mainViewModel = main;
-        _taskGroupViewModel = taskGroup;
-        _grouplistViewModel = grouplist;
-        _listName = listName;
+        _store = store;
+        _host = host;
+        _viewModel = viewModel;
         SaveTaskCommand = new RelayCommand(AddTask);
         CancelCommand = new RelayCommand(Clear);
     }
@@ -42,15 +33,13 @@ public class AddTaskViewModel : ViewModelBase
         OnPropertyChanged(nameof(TaskCatalog));
         TaskDesc = string.Empty;
         OnPropertyChanged(nameof(TaskDesc));
-        _mainViewModel.RightView = _taskGroupViewModel;
-        OnPropertyChanged(nameof(_mainViewModel.RightView));
-        _mainViewModel.LeftView = _grouplistViewModel;
-        OnPropertyChanged(nameof(_mainViewModel.LeftView));
+        _host.NavigateLeft(new GroupListViewModel(_host,_store));
+        _host.NavigateRight(_viewModel);
     }
-    
+
     private void AddTask()
     {
-        string name = InputOrDefault(NewTaskName, "");
+        string name = TaskHelpers.InputOrDefault(NewTaskName, "");
         if (name == "")
         {
             ShowEmptyNameDialog?.Invoke();
@@ -60,11 +49,11 @@ public class AddTaskViewModel : ViewModelBase
         {
             Name = name,
             IsDone = false,
-            List = _listName,
-            Category = InputOrDefault(TaskCatalog, "Miscelanious"),
-            Description = InputOrDefault(TaskDesc, "")
+            List = TaskHelpers.InputOrDefault(_store.ListName, "Quick"),
+            Category = TaskHelpers.InputOrDefault(TaskCatalog, "Miscelanious"),
+            Description = TaskHelpers.InputOrDefault(TaskDesc, "")
         };
-        OnTaskCreated?.Invoke(task); // Call back to MainViewModel
+        TaskHelpers.AddTaskToCategory(task, _store);
         Clear();
     }
 }

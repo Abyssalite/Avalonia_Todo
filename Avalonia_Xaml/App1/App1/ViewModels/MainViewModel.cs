@@ -1,6 +1,8 @@
+using System.Collections.ObjectModel;
+
 namespace App1.ViewModels;
 
-public class MainViewModel : ViewModelBase
+public class MainViewModel : ViewModelBase, IViewHost
 {
     private ViewModelBase _rightView;
     public ViewModelBase RightView
@@ -18,18 +20,33 @@ public class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
-        _store.GroupedList = TaskHelpers.Load();
-        HookSaveOnIsDoneChange();
+        InitializeAsync();
         _rightView = new WellcomeViewModel("Wellcome");
         _leftView = new GroupListViewModel(this, _store);
     }
+    
+        public async void InitializeAsync()
+    {
+        _store.GroupedList = await TaskHelpers.LoadAsync();
+        HookSaveOnIsDoneChange(_store.GroupedList);
+    }
 
-    private void HookSaveOnIsDoneChange()
-{
-    foreach (var list in _store.GroupedList)
-    foreach (var group in list.Groups)
-    foreach (var task in group.Tasks)
-        TaskHelpers.HookSaveToTask(_store, task);
+    private void HookSaveOnIsDoneChange(ObservableCollection<GroupList> groupedList)
+    {
+        foreach (var list in groupedList)
+            foreach (var group in list.Groups)
+                foreach (var task in group.Tasks)
+                    TaskHelpers.HookSaveToTask(_store, task);
 
-}
+    }
+
+    public void NavigateLeft(ViewModelBase viewModel)
+    {
+        LeftView = viewModel;
+    }
+
+    public void NavigateRight(ViewModelBase viewModel)
+    {
+        RightView = viewModel;
+    }
 }

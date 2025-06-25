@@ -6,12 +6,12 @@ namespace App1.ViewModels;
 
 public class TaskGroupViewModel : ViewModelBase
 {
-    private readonly MainViewModel _mainViewModel;
-    private readonly GroupListViewModel _groupListViewModel;
     private Store _store { get; }
-    public ObservableCollection<TaskGroup> GroupedTasks { get; }
-    public string ListName { get; }
-    public ICommand AddTaskViewCommand { get; } //Button only
+    private readonly IViewHost _host;
+    public ObservableCollection<TaskGroup>? GroupedTasks { get; }
+    public string? ListName { get; }
+    public ICommand AddTaskViewCommand { get; }
+    public ICommand DeleteListCommand { get; }
     private BaseTask? _selectedTask;
     public BaseTask? SelectedTask
     {
@@ -27,29 +27,34 @@ public class TaskGroupViewModel : ViewModelBase
         }
     }
 
-    public TaskGroupViewModel(MainViewModel main, GroupListViewModel groupList, Store store, GroupList list)
+    public TaskGroupViewModel(IViewHost host, Store store)
     {
-        _mainViewModel = main;
-        _groupListViewModel = groupList;
         _store = store;
-        ListName = list.List;
-        GroupedTasks = list.Groups;
+        _host = host;
+        if (store.SelectedList != null)
+        {
+            ListName = store.ListName;
+            GroupedTasks = store.SelectedList.Groups;
+        }
+
         AddTaskViewCommand = new RelayCommand(OpenAddTaskView);
+        DeleteListCommand = new RelayCommand(DeleteList);
+    }
+    
+        private void DeleteList()
+    {
+        if (ListName != null && ListName != "Quick")
+        { 
+            TaskHelpers.DeleteList(ListName, _store);
+        }
     }
 
     private void OpenAddTaskView()
     {
         if (ListName != null)
         {
-            var addVM = new AddTaskViewModel(_mainViewModel, _groupListViewModel ,this, ListName);
-            addVM.OnTaskCreated = task =>
-            {
-                TaskHelpers.AddTaskToCategory(task, _store.GroupedList);
-            };
-            _mainViewModel.RightView = addVM;
-            OnPropertyChanged(nameof(_mainViewModel.RightView));
-            _mainViewModel.LeftView = new NewTaskOptionViewModel(_mainViewModel, _groupListViewModel);
-            OnPropertyChanged(nameof(_mainViewModel.LeftView));
+            _host.NavigateRight(new AddTaskViewModel(_host, _host.RightView, _store));
+            _host.NavigateLeft(new NewTaskOptionViewModel(_host, _store));
         }
     }
 
@@ -57,14 +62,9 @@ public class TaskGroupViewModel : ViewModelBase
     {
         _selectedTask = null;
         OnPropertyChanged(nameof(SelectedTask));
-        var TaskDetailView = new TaskDetailViewModel(_mainViewModel, this, task);
-        TaskDetailView.OnTaskDetele = task =>
-        {
-            _store.GroupedList = TaskHelpers.DeleteTask(task, _store.GroupedList);
-        };
-        _mainViewModel.RightView = TaskDetailView;
-        OnPropertyChanged(nameof(_mainViewModel.RightView));
 
-    }
+        _store.SelectedTask = task;
+        _host.NavigateRight(new TaskDetailViewModel(_host,_host.RightView, _store));
+    } 
     
 }

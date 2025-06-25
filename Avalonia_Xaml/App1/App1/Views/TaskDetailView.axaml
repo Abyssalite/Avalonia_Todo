@@ -19,8 +19,8 @@
         </Style>
     </UserControl.Styles>
     
-    <StackPanel HorizontalAlignment="Stretch" Margin="10">
-        <Grid ColumnDefinitions="1*,8*,1*" Margin="20">
+    <StackPanel HorizontalAlignment="Stretch" Margin="5" >
+        <Grid ColumnDefinitions="1*,8*,1*" Margin="10">
             <Button Grid.Column="0"
                     Width="40" 
                     Height="40" 
