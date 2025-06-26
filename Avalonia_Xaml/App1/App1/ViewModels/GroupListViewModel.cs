@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
@@ -11,8 +12,8 @@ public class GroupListViewModel : ViewModelBase
     private Store _store { get; }
     private readonly IViewHost _host;
     public ObservableCollection<GroupList>? FilteredGroupedList { get; set; } = new();
-    public ICommand OpenQuickTaskCommand { get; } //Button only
-    public ICommand? AddListCommand { get; }
+    public ICommand OpenQuickTaskCommand { get; }
+    public ICommand AddListCommand { get; }
     public Action? OnSaveAddList { get; set; }
     private GroupList? _selectedGroup;
     public GroupList? SelectedGroup
@@ -23,7 +24,7 @@ public class GroupListViewModel : ViewModelBase
             if (value != null && value != _selectedGroup)
             {
                 _selectedGroup = value;
-                OpenGroup(_selectedGroup);
+                _ = OpenGroupAsync(_selectedGroup);
                 OnPropertyChanged(nameof(SelectedGroup));
             }
         }
@@ -44,33 +45,33 @@ public class GroupListViewModel : ViewModelBase
             }
         };
 
-        OpenQuickTaskCommand = new RelayCommand(() =>
+        OpenQuickTaskCommand = new RelayCommand(async () =>
         {
             var quick = _store.GroupedList.FirstOrDefault(l => l.List == "Quick");
             if (quick != null)
-                OpenGroup(quick);
+                await OpenGroupAsync(quick);
             _selectedGroup = null;
             OnPropertyChanged(nameof(SelectedGroup));
         });
-        AddListCommand = new RelayCommand<string>(AddList);
+        AddListCommand = new AsyncRelayCommand<string>(AddList);
     }
 
-    private void AddList(string? newListName)
+    private async Task AddList(string? newListName)
     {
         OnSaveAddList?.Invoke();
         if (newListName != null)
         {
-            TaskHelpers.AddList(newListName, _store);
+            await TaskHelpers.AddList(newListName, _store);
         }
     }
 
-    private void OpenGroup(GroupList groupedList)
+    private async Task OpenGroupAsync(GroupList groupedList)
     {
         if (_store.ListName != groupedList.List)
         {
             _store.SelectedList = groupedList;
             _store.ListName = groupedList.List;
-            _host.NavigateRight(new TaskGroupViewModel(_host, _store));
+            await _host.NavigateRight(new TaskGroupViewModel(_host, _store));
         }
     }
 }

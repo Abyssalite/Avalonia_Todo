@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace App1.ViewModels;
 
@@ -20,12 +21,12 @@ public class MainViewModel : ViewModelBase, IViewHost
 
     public MainViewModel()
     {
-        InitializeAsync();
+        _ = InitializeAsync();
         _rightView = new WellcomeViewModel("Wellcome");
         _leftView = new GroupListViewModel(this, _store);
     }
     
-        public async void InitializeAsync()
+        public async Task InitializeAsync()
     {
         _store.GroupedList = await TaskHelpers.LoadAsync();
         HookSaveOnIsDoneChange(_store.GroupedList);
@@ -37,16 +38,17 @@ public class MainViewModel : ViewModelBase, IViewHost
             foreach (var group in list.Groups)
                 foreach (var task in group.Tasks)
                     TaskHelpers.HookSaveToTask(_store, task);
-
     }
 
-    public void NavigateLeft(ViewModelBase viewModel)
+    Task IViewHost.NavigateLeft(ViewModelBase viewModel)
     {
         LeftView = viewModel;
+        return Task.CompletedTask;
     }
 
-    public void NavigateRight(ViewModelBase viewModel)
+    Task IViewHost.NavigateRight(ViewModelBase viewModel)
     {
         RightView = viewModel;
+        return Task.CompletedTask;
     }
 }

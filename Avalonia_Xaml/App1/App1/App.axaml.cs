@@ -6,6 +6,7 @@ using System.Linq;
 using Avalonia.Markup.Xaml;
 using App1.ViewModels;
 using App1.Views;
+using Semi.Avalonia;
 
 namespace App1;
 
@@ -35,7 +36,8 @@ public partial class App : Application
                 DataContext = new MainViewModel()
             };
         }
-
+        
+        this.RegisterFollowSystemTheme();
         base.OnFrameworkInitializationCompleted();
     }
 

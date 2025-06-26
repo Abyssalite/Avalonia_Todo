@@ -27,6 +27,7 @@
                     Padding="0"
                     CornerRadius="30"
                     VerticalAlignment="Top"
+                    HorizontalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     BorderBrush="Transparent"
@@ -44,6 +45,7 @@
                     Padding="0"
                     CornerRadius="30"
                     VerticalAlignment="Top"
+                    HorizontalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     BorderBrush="Transparent"
@@ -53,7 +55,7 @@
                     Width="40"
                     Height="40" />
                 <Button.Flyout>
-                    <Flyout FlyoutPresenterClasses="DropDown">
+                    <Flyout FlyoutPresenterClasses="DropDown" Placement="BottomEdgeAlignedRight">
                         <Flyout.Content>
                             <StackPanel>
                                 <MenuItem Header="Edit" Foreground="Black"/>
@@ -64,20 +66,24 @@
                 </Button.Flyout>
             </Button>
         </Grid>
-            
-        <Grid ColumnDefinitions="150,*" Margin="20">
-            <TextBlock Text="Name" Grid.Column="0"/>
-            <TextBlock Text="{Binding Task.Name}" Grid.Column="1"/>
-        </Grid>
 
-        <Grid ColumnDefinitions="150,*" Margin="20">
-            <TextBlock Text="Description" Grid.Column="0"/>
-            <TextBlock Text="{Binding Task.Description}" Grid.Column="1"/>
-        </Grid>
+        <Border x:Name="TaskDetailPanel" Background="#FF2D2D30" CornerRadius="10">      
+            <StackPanel Margin="10">  
+                <Grid ColumnDefinitions="150,*" Margin="15">
+                    <TextBlock Text="Name" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Task.Name}" Grid.Column="1"/>
+                </Grid>
 
-        <Grid ColumnDefinitions="150,*" Margin="20">
-            <TextBlock Text="Category" Grid.Column="0"/>
-            <TextBlock Text="{Binding Task.Category}" Grid.Column="1"/>
-        </Grid>
+                <Grid ColumnDefinitions="150,*" Margin="15">
+                    <TextBlock Text="Description" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Task.Description}" Grid.Column="1"/>
+                </Grid>
+
+                <Grid ColumnDefinitions="150,*" Margin="15">
+                    <TextBlock Text="Category" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Task.Category}" Grid.Column="1"/>
+                </Grid>
+            </StackPanel>
+        </Border>    
     </StackPanel>
 </UserControl>

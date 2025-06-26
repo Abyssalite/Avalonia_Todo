@@ -8,29 +8,31 @@
              x:DataType="vm:MainViewModel"> 
 
     <SplitView IsPaneOpen="false"
-            x:Name="LeftPane"
-            DisplayMode="Inline"
-            OpenPaneLength="250">
+            x:Name="MainSplitView"
+            OpenPaneLength="300" PointerPressed="MainContent_Pressed">
         <SplitView.Pane>
-            <StackPanel>
-                <Button Content="☰" 
-                    Click="TogglePane_Click"
-                    x:Name="toggleClose" 
-                    HorizontalAlignment="Right"/>
-                <ContentControl Content="{Binding LeftView}" />
-            </StackPanel>
+            <Border Background="#FF2D2D30">
+                <StackPanel>
+                    <Button Content="☰" 
+                        Margin="10,10,10,5"
+                        Click="TogglePane_Click"
+                        x:Name="toggleClose" 
+                        HorizontalAlignment="Right"/>
+                    <ContentControl Content="{Binding LeftView}" />
+                </StackPanel>
+            </Border>
         </SplitView.Pane>
 
-        <Grid ColumnDefinitions="Auto,*"> 
-                <Grid Grid.Column="0" x:Name="LeftBar" >
+        <Grid x:Name="ContentGrid">  
+            <Border Background="#FF2D2D30">
+                <StackPanel  x:Name="LeftBar" Margin="10" Spacing="10">
                     <Button Content="☰" 
                         Click="TogglePane_Click"
-                        x:Name="toggleOpen" 
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"/>
-                </Grid>
-            <ContentControl Grid.Column="1" Content="{Binding RightView}" />
+                        x:Name="toggleOpen"/>
+                    <Button Content="0" />
+                </StackPanel>
+            </Border>
+            <ContentControl x:Name="MainContent" Grid.Column="1" Content="{Binding RightView}" />
         </Grid>
     </SplitView>
-
 </UserControl>

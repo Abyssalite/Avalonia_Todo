@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
@@ -21,11 +22,11 @@ public class AddTaskViewModel : ViewModelBase
         _store = store;
         _host = host;
         _viewModel = viewModel;
-        SaveTaskCommand = new RelayCommand(AddTask);
-        CancelCommand = new RelayCommand(Clear);
+        SaveTaskCommand = new AsyncRelayCommand(AddTask);
+        CancelCommand = new AsyncRelayCommand(ClearAsync);
     }
 
-    private void Clear()
+    private async Task ClearAsync()
     {
         NewTaskName = string.Empty;
         OnPropertyChanged(nameof(NewTaskName));
@@ -33,11 +34,11 @@ public class AddTaskViewModel : ViewModelBase
         OnPropertyChanged(nameof(TaskCatalog));
         TaskDesc = string.Empty;
         OnPropertyChanged(nameof(TaskDesc));
-        _host.NavigateLeft(new GroupListViewModel(_host,_store));
-        _host.NavigateRight(_viewModel);
+        await _host.NavigateLeft(new GroupListViewModel(_host,_store));
+        await _host.NavigateRight(_viewModel);
     }
 
-    private void AddTask()
+    private async Task AddTask()
     {
         string name = TaskHelpers.InputOrDefault(NewTaskName, "");
         if (name == "")
@@ -53,7 +54,7 @@ public class AddTaskViewModel : ViewModelBase
             Category = TaskHelpers.InputOrDefault(TaskCatalog, "Miscelanious"),
             Description = TaskHelpers.InputOrDefault(TaskDesc, "")
         };
-        TaskHelpers.AddTaskToCategory(task, _store);
-        Clear();
+        await TaskHelpers.AddTaskToCategory(task, _store);
+        await ClearAsync();
     }
 }

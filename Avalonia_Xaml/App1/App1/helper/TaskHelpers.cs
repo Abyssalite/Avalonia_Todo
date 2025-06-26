@@ -12,7 +12,7 @@ public static class TaskHelpers
         return string.IsNullOrWhiteSpace(input) ? defaultValue : input;
     }
     
-    public static void AddTaskToCategory(BaseTask task, Store store)
+    public static async Task AddTaskToCategory(BaseTask task, Store store)
     {
         var list = store.GroupedList.FirstOrDefault(l => l.List == task.List);
         if (list == null) return;
@@ -31,10 +31,10 @@ public static class TaskHelpers
                 Tasks = new ObservableCollection<BaseTask> { task }
             });
         }
-        _ = SaveAsync(store.GroupedList);
+        await SaveAsync(store.GroupedList);
     }
     
-    public static void AddList(string listName, Store store)
+    public static async Task AddList(string listName, Store store)
     {
         var list = store.GroupedList.FirstOrDefault(l => l.List == listName);
         if (list != null || listName == "")
@@ -48,10 +48,10 @@ public static class TaskHelpers
             List = listName,
             Groups = new ObservableCollection<TaskGroup>()
         });
-        _ = SaveAsync(store.GroupedList);
+        await SaveAsync(store.GroupedList);
     }
 
-    public static void DeleteTask(BaseTask task,  Store store)
+    public static async Task DeleteTask(BaseTask task,  Store store)
     {
         var list = store.GroupedList.FirstOrDefault(l => l.List == task.List);
         if (list == null) return;
@@ -65,16 +65,16 @@ public static class TaskHelpers
         {
             list.Groups.Remove(group);
         }
-        _ = SaveAsync(store.GroupedList);
+        await SaveAsync(store.GroupedList);
     }
 
-    public static void DeleteList(string listName,  Store store)
+    public static async Task DeleteList(string listName,  Store store)
     {
         var list = store.GroupedList.FirstOrDefault(l => l.List == listName);
         if (list == null) return;
 
         store.GroupedList.Remove(list);
-        _ = SaveAsync(store.GroupedList);
+        await SaveAsync(store.GroupedList);
     }
 
     public static void print(object data)

@@ -3,18 +3,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:App1.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
              x:Class="App1.Views.GroupListView"
              x:DataType="vm:GroupListViewModel"> 
 
-        <Grid RowDefinitions="Auto,Auto" Margin="5" >
-            <StackPanel Grid.Row="0" Margin="10">
-                <MenuItem Header="Quick Task"
+    <Grid RowDefinitions="Auto,Auto"  Margin="5,0,5,5" >
+        <StackPanel Grid.Row="0" Margin="10">
+                <Button Content="Quick Task"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
                         Command="{Binding OpenQuickTaskCommand}"
-                        Padding="20,10,10,10"
-                        Margin="5,5,20,5"/>
+                        Padding="10,5,5,5"
+                        Margin="5,5,25,5"/>
 
                 <Grid ColumnDefinitions="9*,1*" Margin="10">
-                    <TextBlock Text="Group List" FontSize="20" Grid.Column="0"/>
+                    <TextBlock Text="Group List" FontSize="22" Grid.Column="0"/>
                     <Button Grid.Column="1"
                             Width="30" 
                             Height="30" 
@@ -34,39 +37,41 @@
 
                 <ListBox ItemsSource="{Binding FilteredGroupedList}"
                          BorderThickness="0"
-                         Margin="10,0,10,0"
+                         Margin="5,0,25,0"
                          Background="Transparent"
                          SelectionMode="Single"
+                         CornerRadius="6"
                          SelectedItem="{Binding $parent[UserControl].((vm:GroupListViewModel)DataContext).SelectedGroup, Mode=TwoWay}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel>
+                             <StackPanel Orientation="Horizontal" Margin="5,6,5,6">
                                 <TextBlock Text="{Binding List}" 
                                         VerticalAlignment="Center"
                                         FontSize="15"
-                                        Background="Transparent"
-                                        Padding="10"/>
+                                        Background="Transparent"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>     
-            </StackPanel>   
+        </StackPanel>   
                          
-            <Button Grid.Row="1"
-                    Width="50" 
-                    Height="50" 
-                    Margin="10"
-                    Padding="0"
-                    CornerRadius="30"
-                    VerticalAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    BorderBrush="Transparent"
-                    Background="#FAAA">
-                <Image Source="avares://App1/Assets/icons8-plus-100.png"
-                    Stretch="Uniform"
-                    Width="50"
-                    Height="50" />
+        <StackPanel Grid.Row="1" Margin="15,5,15,5">
+            <TextBox 
+                x:Name="NewListBox" 
+                Watermark="New List" 
+                Margin="0,5,25,5"/>
+            <Button 
+                Content="Add List"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left" 
+                Padding="10,5,10,5"
+                Margin="0,0,80,0"
+                VerticalAlignment="Center"
+                BorderBrush="Transparent"
+                Command="{Binding AddListCommand}"
+                CommandParameter="{Binding Text, ElementName=NewListBox}"
+                Background="#FFAAAAAA">
             </Button>
-        </Grid>
+        </StackPanel>   
+    </Grid>
 </UserControl>

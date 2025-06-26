@@ -2,8 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:App1"
              x:Class="App1.App"
-             xmlns:sty="using:FluentAvalonia.Styling"
-             RequestedThemeVariant="Default">
+             xmlns:semi="https://irihi.tech/semi"
+             xmlns:u-semi="https://irihi.tech/ursa/themes/semi"
+                 RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
@@ -11,6 +12,7 @@
     </Application.DataTemplates>
 
     <Application.Styles>
-        <sty:FluentAvaloniaTheme />
+        <semi:SemiTheme Locale="en-US" />
+        <u-semi:SemiTheme Locale="en-US"/>    
     </Application.Styles>
 </Application>

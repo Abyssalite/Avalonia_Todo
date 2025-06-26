@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
@@ -22,16 +23,16 @@ public class TaskDetailViewModel : ViewModelBase
         if (store.SelectedTask != null)
             Task = store.SelectedTask;
 
-        DeleteTaskCommand = new RelayCommand(DeleteTask);
-        BackCommand = new RelayCommand(() =>  _host.NavigateRight(_viewModel));
+        DeleteTaskCommand = new AsyncRelayCommand(DeleteTaskAsync);
+        BackCommand = new RelayCommand(async() =>  await host.NavigateRight(_viewModel));
     }
 
-    public void DeleteTask()
+    public async Task DeleteTaskAsync()
     {
         if (Task != null)
         {
-            TaskHelpers.DeleteTask(Task, _store);
-            _host.NavigateRight(_viewModel);
+            await TaskHelpers.DeleteTask(Task, _store);
+            await _host.NavigateRight(_viewModel);
         }
     }
 }
