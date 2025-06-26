@@ -1,10 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using WindowNotificationManager = Ursa.Controls.WindowNotificationManager;
 
 namespace App1.ViewModels;
 
-public class MainViewModel : ViewModelBase, IViewHost
+public partial class MainViewModel : ViewModelBase, IViewHost
 {
+    public WindowNotificationManager? NotificationManager { get; set; }
     private ViewModelBase _rightView;
     public ViewModelBase RightView
     {

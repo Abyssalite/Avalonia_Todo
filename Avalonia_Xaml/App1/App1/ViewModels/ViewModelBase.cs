@@ -2,6 +2,6 @@
 
 namespace App1.ViewModels;
 
-public class ViewModelBase : ObservableObject
+public partial class ViewModelBase : ObservableObject
 {
 }

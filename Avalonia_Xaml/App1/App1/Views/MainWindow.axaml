@@ -1,14 +1,28 @@
-<Window xmlns="https://github.com/avaloniaui"
+<Window x:Class="App1.Views.MainWindow"
+        xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:helpers="clr-namespace:Irihi.Avalonia.Shared.Helpers;assembly=Irihi.Avalonia.Shared"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="using:App1.ViewModels"
+        xmlns:u="https://irihi.tech/ursa"
+        xmlns:viewModels="clr-namespace:App1.ViewModels"
+        xmlns:views="clr-namespace:App1.Views"
+        Title="App1"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         MinWidth="400" MinHeight="300"
-        xmlns:views="clr-namespace:App1.Views"
-        x:Class="App1.Views.MainWindow"
+        WindowStartupLocation="CenterScreen"
         Icon="/Assets/avalonia-logo.ico"
-        Title="App1">
+        IsFullScreenButtonVisible="{OnPlatform {x:True}, macOS={x:False}}"
+        IsManagedResizerVisible="{OnPlatform {x:False}, Linux={x:True}}">
 
+        <u:UrsaWindow.Styles>
+        <!--This style is created to demonstrate Dialog StyleClass feature. This style is applied to dialogs in MainWindow OverlayDialogHost -->
+            <Style Selector="u|DefaultDialogControl.Custom">
+                <Style Selector="^ /template/ Button#PART_OKButton">
+                        <Setter Property="Content" Value="CUSTOM" />
+                        <Setter Property="helpers:ClassHelper.Classes" Value="Warning" />
+                </Style>
+            </Style>
+        </u:UrsaWindow.Styles>
         <views:MainView />
 </Window>

@@ -1,9 +1,11 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl x:Class="App1.Views.TaskDetailView"
+             xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:App1.ViewModels"
-             x:Class="App1.Views.TaskDetailView"
+             xmlns:iri="https://irihi.tech/shared"
+             xmlns:u="https://irihi.tech/ursa"
              x:DataType="vm:TaskDetailViewModel">
 
     <UserControl.Styles>
@@ -19,7 +21,7 @@
         </Style>
     </UserControl.Styles>
     
-    <StackPanel HorizontalAlignment="Stretch" Margin="5" >
+    <StackPanel HorizontalAlignment="Stretch">
         <Grid ColumnDefinitions="1*,8*,1*" Margin="10">
             <Button Grid.Column="0"
                     Width="40" 
@@ -59,7 +61,7 @@
                         <Flyout.Content>
                             <StackPanel>
                                 <MenuItem Header="Edit" Foreground="Black"/>
-                                <MenuItem Header="Delete" Foreground="Black" Command="{Binding DeleteTaskCommand}"/>
+                                <MenuItem Header="Delete" Foreground="Black" Command="{Binding ShowDialogCommand}"/>
                             </StackPanel>
                         </Flyout.Content>
                     </Flyout>

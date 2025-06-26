@@ -1,20 +1,24 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using Ursa.Common;
 using Ursa.Controls;
+using Ursa.Controls.Options;
+using App1.Dialogs;
 
 namespace App1.ViewModels;
 
-public class TaskGroupViewModel : ViewModelBase
+public partial class TaskGroupViewModel : ViewModelBase
 {
     private Store _store { get; }
     private readonly IViewHost _host;
+    private readonly IDialogHelper _dialogHelper;
     public ObservableCollection<TaskGroup>? GroupedTasks { get; }
     public string? ListName { get; }
     public ICommand AddTaskViewCommand { get; }
-    public ICommand DeleteListCommand { get; }
-    public ICommand OkCancelCommand { get; set; }
+    public ICommand ShowDialogCommand { get; }
     private BaseTask? _selectedTask;
     public BaseTask? SelectedTask
     {
@@ -30,20 +34,11 @@ public class TaskGroupViewModel : ViewModelBase
         }
     }
 
-    private string _message = "Hello";
-    private string? _title = "Hello";
-    private MessageBoxIcon _selectedIcon = MessageBoxIcon.Question;
-    private MessageBoxResult _result;
-    public MessageBoxResult Result
-    {
-        get => _result;
-        set => SetProperty(ref _result, value);
-    }
-
     public TaskGroupViewModel(IViewHost host, Store store)
     {
         _store = store;
         _host = host;
+        _dialogHelper = new DialogHelper();
         if (store.SelectedList != null)
         {
             ListName = store.ListName;
@@ -51,13 +46,12 @@ public class TaskGroupViewModel : ViewModelBase
         }
 
         AddTaskViewCommand = new AsyncRelayCommand(OpenAddTaskView);
-        DeleteListCommand = new AsyncRelayCommand(DeleteList);
-        OkCancelCommand = new AsyncRelayCommand(OnOkCancelAsync);
+        ShowDialogCommand = new AsyncRelayCommand(OnShowDialogAsync);
     }
-    
-        private async Task DeleteList()
+
+    private async Task DeleteList()
     {
-        if (ListName != null && ListName != "Quick")
+        if (ListName != null)
         {
             await TaskHelpers.DeleteList(ListName, _store);
             await _host.NavigateRight(new WellcomeViewModel("Wellcome"));
@@ -79,16 +73,13 @@ public class TaskGroupViewModel : ViewModelBase
         OnPropertyChanged(nameof(SelectedTask));
 
         _store.SelectedTask = task;
-        await _host.NavigateRight(new TaskDetailViewModel(_host,_host.RightView, _store));
-    } 
-
-    private async Task OnOkCancelAsync()
-    {
-        await Show(MessageBoxButton.OKCancel);
+        await _host.NavigateRight(new TaskDetailViewModel(_host, _host.RightView, _store));
     }
-    
-    private async Task Show(MessageBoxButton button)
+
+    private async Task OnShowDialogAsync()
     {
-         Result = await MessageBox.ShowAsync(_message, _title, icon: _selectedIcon, button: button);
+        if (ListName == "Quick") return;
+        bool? confirmed = await _dialogHelper.ShowDialogAsync("Do you want to Delete?");
+        if(confirmed == true) await DeleteList();
     }
 }

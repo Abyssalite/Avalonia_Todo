@@ -1,12 +1,14 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl x:Class="App1.Views.WellcomeView"
+xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:App1.ViewModels"
-             x:Class="App1.Views.WellcomeView"
+             xmlns:iri="https://irihi.tech/shared"
+             xmlns:u="https://irihi.tech/ursa"
              x:DataType="vm:WellcomeViewModel"> 
 
-        <Grid Margin="5" >
+        <Grid>
             <TextBlock Text="{Binding Text}" 
                        FontSize="40" 
                        VerticalAlignment="Center" 

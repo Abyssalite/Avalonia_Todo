@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace App1.ViewModels;
 
-public class GroupListViewModel : ViewModelBase
+public partial class GroupListViewModel : ViewModelBase
 {
     private Store _store { get; }
     private readonly IViewHost _host;

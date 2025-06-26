@@ -5,6 +5,8 @@ using Avalonia.Interactivity;
 using Avalonia;
 using Semi.Avalonia;
 using CommunityToolkit.Mvvm.Input;
+using App1.ViewModels;
+using Ursa.Controls;
 
 namespace App1.Views;
 
@@ -13,12 +15,15 @@ public partial class MainView : UserControl
     private bool _isPaneOpen;
     private bool _isSetted = false;
     private bool _isOverride = false;
+    private MainViewModel? _viewModel;
+
 
     public MainView()
     {
         InitializeComponent();
         if (OperatingSystem.IsAndroid())
         {
+            MainSplitView.Margin = new Thickness(0);
             ContentGrid.RowDefinitions.Clear();
             ContentGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
             ContentGrid.RowDefinitions.Add(new RowDefinition(new GridLength(1, GridUnitType.Star)));
@@ -29,6 +34,7 @@ public partial class MainView : UserControl
         }
         else
         {
+            MainSplitView.Margin = new Thickness(0,30,0,0);
             ContentGrid.ColumnDefinitions.Clear();
             ContentGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
             ContentGrid.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
@@ -56,6 +62,18 @@ public partial class MainView : UserControl
                 }
             }
         };
+    }
+
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        _viewModel = DataContext as MainViewModel;
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel is null || _viewModel is null)
+            return;
+        _viewModel.NotificationManager = WindowNotificationManager.TryGetNotificationManager(topLevel, out var manager)
+            ? manager
+            : new WindowNotificationManager(topLevel);
     }
 
     [RelayCommand]

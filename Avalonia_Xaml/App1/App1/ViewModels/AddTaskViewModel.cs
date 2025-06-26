@@ -5,12 +5,12 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace App1.ViewModels;
 
-public class AddTaskViewModel : ViewModelBase
+public partial class AddTaskViewModel : ViewModelBase
 {
     private Store _store { get; }
     private readonly IViewHost _host;
+    private readonly IDialogHelper _dialogHelper;
     private ViewModelBase _viewModel;
-    public Action? ShowEmptyNameDialog { get; set; }
     public ICommand SaveTaskCommand { get; }
     public ICommand CancelCommand { get; }
     public string? NewTaskName { get; set; }
@@ -21,6 +21,7 @@ public class AddTaskViewModel : ViewModelBase
     {
         _store = store;
         _host = host;
+        _dialogHelper = new DialogHelper();
         _viewModel = viewModel;
         SaveTaskCommand = new AsyncRelayCommand(AddTask);
         CancelCommand = new AsyncRelayCommand(ClearAsync);
@@ -43,7 +44,7 @@ public class AddTaskViewModel : ViewModelBase
         string name = TaskHelpers.InputOrDefault(NewTaskName, "");
         if (name == "")
         {
-            ShowEmptyNameDialog?.Invoke();
+            bool? confirmed = await _dialogHelper.ShowDialogAsync("Name cannot be Empty");
             return;
         }
         var task = new BaseTask

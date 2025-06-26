@@ -1,38 +1,53 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl x:Class="App1.Views.MainView"
+             xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:iri="https://irihi.tech/shared"
+             xmlns:u="https://irihi.tech/ursa"
              xmlns:vm="clr-namespace:App1.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="App1.Views.MainView"
              x:DataType="vm:MainViewModel"> 
 
-    <SplitView IsPaneOpen="false"
-            x:Name="MainSplitView"
-            OpenPaneLength="300" PointerPressed="MainContent_Pressed">
-        <SplitView.Pane>
-            <Border Background="#FF2D2D30">
-                <StackPanel>
-                    <Button Content="☰" 
-                        Margin="10,10,10,5"
-                        Click="TogglePane_Click"
-                        x:Name="toggleClose" 
-                        HorizontalAlignment="Right"/>
-                    <ContentControl Content="{Binding LeftView}" />
-                </StackPanel>
-            </Border>
-        </SplitView.Pane>
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
+    <UserControl.Resources>
+    </UserControl.Resources>
+     <Panel>
+        <Panel.Styles>
+            <Style Selector="SplitView.Blur">
+                <Setter Property="Effect" Value="blur(10)" />
+            </Style>
+        </Panel.Styles>
+        <SplitView IsPaneOpen="false"
+                x:Name="MainSplitView"
+                OpenPaneLength="300" PointerPressed="MainContent_Pressed"
+                Classes.Blur="{Binding $parent[u:UrsaWindow].(u:OverlayDialogHost.IsInModalStatus)}">
+            <SplitView.Pane>
+                <Border Background="#FF2D2D30">
+                    <StackPanel Margin="10">
+                        <Button Content="☰" 
+                            Margin="0,0,0,10"
+                            Click="TogglePane_Click"
+                            x:Name="toggleClose" 
+                            HorizontalAlignment="Right"/>
+                        <ContentControl Content="{Binding LeftView}" />
+                    </StackPanel>
+                </Border>
+            </SplitView.Pane>
 
-        <Grid x:Name="ContentGrid">  
-            <Border Background="#FF2D2D30">
-                <StackPanel  x:Name="LeftBar" Margin="10" Spacing="10">
-                    <Button Content="☰" 
-                        Click="TogglePane_Click"
-                        x:Name="toggleOpen"/>
-                    <Button Content="0" />
-                </StackPanel>
-            </Border>
-            <ContentControl x:Name="MainContent" Grid.Column="1" Content="{Binding RightView}" />
-        </Grid>
-    </SplitView>
+            <Grid x:Name="ContentGrid">  
+                <Border Background="#FF2D2D30">
+                    <StackPanel  x:Name="LeftBar" Margin="10" Spacing="10">
+                        <Button Content="☰" 
+                            Click="TogglePane_Click"
+                            x:Name="toggleOpen"/>
+                        <Button Content="0" />
+                    </StackPanel>
+                </Border>
+                <ContentControl x:Name="MainContent" Grid.Column="1" Content="{Binding RightView}" Margin="5"/>
+            </Grid>
+        </SplitView>
+    </Panel>
 </UserControl>

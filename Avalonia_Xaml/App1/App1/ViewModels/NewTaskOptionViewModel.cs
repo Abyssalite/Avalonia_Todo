@@ -1,6 +1,6 @@
 namespace App1.ViewModels;
 
-public class NewTaskOptionViewModel : ViewModelBase
+public partial class NewTaskOptionViewModel : ViewModelBase
 {
     private Store _store { get; }
     private readonly IViewHost _host;
