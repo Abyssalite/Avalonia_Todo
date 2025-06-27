@@ -2,27 +2,27 @@ using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
+using Ursa.Controls;
 
 namespace App1.ViewModels;
 
 public partial class AddTaskViewModel : ViewModelBase
 {
-    private Store _store { get; }
-    private readonly IViewHost _host;
-    private readonly IDialogHelper _dialogHelper;
-    private ViewModelBase _viewModel;
+    private Store _store;
+    private IViewHost _host;
+    private readonly IDialogService _dialogService;
     public ICommand SaveTaskCommand { get; }
     public ICommand CancelCommand { get; }
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
 
-    public AddTaskViewModel(IViewHost host, ViewModelBase viewModel,  Store store)
+    public AddTaskViewModel(IViewHost host, Store store,IDialogService dialogService)
     {
         _store = store;
         _host = host;
-        _dialogHelper = new DialogHelper();
-        _viewModel = viewModel;
+        _dialogService = dialogService;
         SaveTaskCommand = new AsyncRelayCommand(AddTask);
         CancelCommand = new AsyncRelayCommand(ClearAsync);
     }
@@ -35,8 +35,8 @@ public partial class AddTaskViewModel : ViewModelBase
         OnPropertyChanged(nameof(TaskCatalog));
         TaskDesc = string.Empty;
         OnPropertyChanged(nameof(TaskDesc));
-        await _host.NavigateLeft(new GroupListViewModel(_host,_store));
-        await _host.NavigateRight(_viewModel);
+        await _host.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>());
+        await _host.NavigateLeft(App.Services?.GetRequiredService<GroupListViewModel>());
     }
 
     private async Task AddTask()
@@ -44,7 +44,7 @@ public partial class AddTaskViewModel : ViewModelBase
         string name = TaskHelpers.InputOrDefault(NewTaskName, "");
         if (name == "")
         {
-            bool? confirmed = await _dialogHelper.ShowDialogAsync("Name cannot be Empty");
+            _dialogService.ShowNotification("Name cannot be Empty", "TopCenter");
             return;
         }
         var task = new BaseTask

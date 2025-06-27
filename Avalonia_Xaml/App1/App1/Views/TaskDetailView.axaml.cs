@@ -1,7 +1,5 @@
 using Avalonia.Controls;
-using Avalonia.VisualTree;
 using System;
-using App1.ViewModels;
 using Avalonia;
 
 namespace App1.Views;

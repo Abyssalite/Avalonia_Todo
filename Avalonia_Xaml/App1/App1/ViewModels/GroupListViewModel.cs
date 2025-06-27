@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace App1.ViewModels;
 
 public partial class GroupListViewModel : ViewModelBase
 {
-    private Store _store { get; }
-    private readonly IViewHost _host;
+    private Store _store;
+    private IViewHost _host;
     public ObservableCollection<GroupList>? FilteredGroupedList { get; set; } = new();
     public ICommand OpenQuickTaskCommand { get; }
     public ICommand AddListCommand { get; }
@@ -71,7 +72,7 @@ public partial class GroupListViewModel : ViewModelBase
         {
             _store.SelectedList = groupedList;
             _store.ListName = groupedList.List;
-            await _host.NavigateRight(new TaskGroupViewModel(_host, _store));
+            await _host.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>());
         }
     }
 }

@@ -51,7 +51,8 @@
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     BorderBrush="Transparent"
-                    Background="#FAAA">
+                    Background="#FAAA"
+                    x:Name="ButtonFlyout">
                 <Image Source="avares://App1/Assets/icons8-menu-100.png"
                     Stretch="Uniform"
                     Width="40"
@@ -61,7 +62,10 @@
                         <Flyout.Content>
                             <StackPanel>
                                 <MenuItem Header="Edit" Foreground="Black"/>
-                                <MenuItem Header="Delete" Foreground="Black" Command="{Binding ShowDialogCommand}"/>
+                                <MenuItem Header="Delete" 
+                                        Foreground="Black" 
+                                        Command="{Binding ShowDialogCommand}"
+                                        CommandParameter="{Binding ElementName=ButtonFlyout}"/>
                             </StackPanel>
                         </Flyout.Content>
                     </Flyout>

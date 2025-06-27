@@ -5,11 +5,17 @@ using Ursa.Common;
 using Ursa.Controls;
 using Ursa.Controls.Options;
 
-public class DialogHelper : IDialogHelper
+public class DialogService : IDialogService
 {
-    public async Task<bool?> ShowDialogAsync(string message)
+    public void ShowNotification(string message, string? pos)
     {
-        var vm = new CustomDialogViewModel(message);
+        var vm = new CustomDialogViewModel(message, pos); 
+        vm.ShowNotification();
+    }
+
+    public async Task<bool?> ShowDialogAsync(string message, string? pos)
+    {
+        var vm = new CustomDialogViewModel(message, pos);
         var tcs = new TaskCompletionSource<bool?>();
         var drawerOptions = new DrawerOptions
         {
@@ -44,10 +50,11 @@ public class DialogHelper : IDialogHelper
             await OverlayDialog.ShowCustomModal<CustomDialog, CustomDialogViewModel, bool>(vm, null, dialogOptions);
         }
         return await tcs.Task;
-    }
+    } 
 }
 
-public interface IDialogHelper
+public interface IDialogService
 {
-    Task<bool?> ShowDialogAsync(string message);
+    Task<bool?> ShowDialogAsync(string message, string? pos);
+    void ShowNotification(string message, string? pos);
 }

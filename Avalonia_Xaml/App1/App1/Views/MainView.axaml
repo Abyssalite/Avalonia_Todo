@@ -32,7 +32,7 @@
                             Click="TogglePane_Click"
                             x:Name="toggleClose" 
                             HorizontalAlignment="Right"/>
-                        <ContentControl Content="{Binding LeftView}" />
+                        <ContentControl Content="{Binding ViewHost.LeftView}" />
                     </StackPanel>
                 </Border>
             </SplitView.Pane>
@@ -46,7 +46,7 @@
                         <Button Content="0" />
                     </StackPanel>
                 </Border>
-                <ContentControl x:Name="MainContent" Grid.Column="1" Content="{Binding RightView}" Margin="5"/>
+                <ContentControl x:Name="MainContent" Grid.Column="1" Content="{Binding ViewHost.RightView}" Margin="5"/>
             </Grid>
         </SplitView>
     </Panel>

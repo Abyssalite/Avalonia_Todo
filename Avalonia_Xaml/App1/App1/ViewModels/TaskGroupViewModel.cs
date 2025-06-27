@@ -1,20 +1,17 @@
-using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using Ursa.Common;
-using Ursa.Controls;
-using Ursa.Controls.Options;
-using App1.Dialogs;
+using Avalonia.Controls;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace App1.ViewModels;
 
 public partial class TaskGroupViewModel : ViewModelBase
 {
-    private Store _store { get; }
-    private readonly IViewHost _host;
-    private readonly IDialogHelper _dialogHelper;
+    private Store _store;
+    private IViewHost _host;
+    private readonly IDialogService _dialogService;
     public ObservableCollection<TaskGroup>? GroupedTasks { get; }
     public string? ListName { get; }
     public ICommand AddTaskViewCommand { get; }
@@ -34,11 +31,11 @@ public partial class TaskGroupViewModel : ViewModelBase
         }
     }
 
-    public TaskGroupViewModel(IViewHost host, Store store)
+    public TaskGroupViewModel(IViewHost host, Store store, IDialogService dialogService)
     {
         _store = store;
         _host = host;
-        _dialogHelper = new DialogHelper();
+        _dialogService = dialogService;
         if (store.SelectedList != null)
         {
             ListName = store.ListName;
@@ -46,7 +43,7 @@ public partial class TaskGroupViewModel : ViewModelBase
         }
 
         AddTaskViewCommand = new AsyncRelayCommand(OpenAddTaskView);
-        ShowDialogCommand = new AsyncRelayCommand(OnShowDialogAsync);
+        ShowDialogCommand = new AsyncRelayCommand<object>(OnShowDialogAsync);
     }
 
     private async Task DeleteList()
@@ -54,7 +51,7 @@ public partial class TaskGroupViewModel : ViewModelBase
         if (ListName != null)
         {
             await TaskHelpers.DeleteList(ListName, _store);
-            await _host.NavigateRight(new WellcomeViewModel("Wellcome"));
+            await _host.NavigateRight(App.Services?.GetRequiredService<WellcomeViewModel>());
         }
     }
 
@@ -62,8 +59,8 @@ public partial class TaskGroupViewModel : ViewModelBase
     {
         if (ListName != null)
         {
-            await _host.NavigateRight(new AddTaskViewModel(_host, _host.RightView, _store));
-            await _host.NavigateLeft(new NewTaskOptionViewModel(_host, _store));
+            await _host.NavigateRight(App.Services?.GetRequiredService<AddTaskViewModel>());
+            await _host.NavigateLeft(App.Services?.GetRequiredService<NewTaskOptionViewModel>());
         }
     }
 
@@ -73,13 +70,23 @@ public partial class TaskGroupViewModel : ViewModelBase
         OnPropertyChanged(nameof(SelectedTask));
 
         _store.SelectedTask = task;
-        await _host.NavigateRight(new TaskDetailViewModel(_host, _host.RightView, _store));
+        await _host.NavigateRight(App.Services?.GetRequiredService<TaskDetailViewModel>());
+
     }
 
-    private async Task OnShowDialogAsync()
+    private async Task OnShowDialogAsync(object? parameter)
     {
+        if (parameter is Button button)
+        {
+            button.Flyout?.Hide();
+        }
+
         if (ListName == "Quick") return;
-        bool? confirmed = await _dialogHelper.ShowDialogAsync("Do you want to Delete?");
-        if(confirmed == true) await DeleteList();
+
+        bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?", null);
+        if (confirmed == true)
+        {
+            await DeleteList();
+        }
     }
 }

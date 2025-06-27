@@ -3,8 +3,8 @@ namespace App1.ViewModels;
 public partial class WellcomeViewModel : ViewModelBase
 {
     public string Text { get; }
-    public WellcomeViewModel(string text)
+    public WellcomeViewModel(Store store)
     {
-        Text = text;
+        Text = store.WellcomeText;
     }
 }

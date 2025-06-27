@@ -7,6 +7,7 @@ public class Store : INotifyPropertyChanged
 {
     private ObservableCollection<GroupList> _groupedList = new();
     public string? ListName { set; get; }
+    public string WellcomeText { set; get; } = "Wellcome";
     public bool Initialized { set; get; } = false;
     public GroupList? SelectedList { get; set; }
     public BaseTask? SelectedTask { get; set; }

@@ -48,7 +48,6 @@
                 Command="{Binding CancelCommand}"
                 Content="Cancel"
                 Theme="{DynamicResource SolidButton}" />
-
         </StackPanel>
     </Grid>
 

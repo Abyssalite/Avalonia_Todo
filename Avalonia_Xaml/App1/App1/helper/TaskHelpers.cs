@@ -77,7 +77,7 @@ public static class TaskHelpers
         await SaveAsync(store.GroupedList);
     }
 
-    public static void print(object data)
+    public static void print(object? data)
     {
         Console.WriteLine(JsonSerializer.Serialize(data, JsonOptions));
     }
