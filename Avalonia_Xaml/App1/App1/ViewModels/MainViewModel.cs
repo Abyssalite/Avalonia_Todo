@@ -1,13 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using WindowNotificationManager = Ursa.Controls.WindowNotificationManager;
 
 namespace App1.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    public WindowNotificationManager? NotificationManager { get; set; }
     private Store _store;
     private IViewHost _host;
     public IViewHost ViewHost => _host;

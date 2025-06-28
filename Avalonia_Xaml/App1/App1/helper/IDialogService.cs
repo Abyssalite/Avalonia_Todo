@@ -10,6 +10,7 @@ public class DialogService : IDialogService
     public void ShowNotification(string message, string? pos)
     {
         var vm = new CustomDialogViewModel(message, pos); 
+        OverlayDialog.ShowCustomModal<CustomDialog, CustomDialogViewModel, bool>(vm);
         vm.ShowNotification();
     }
 
