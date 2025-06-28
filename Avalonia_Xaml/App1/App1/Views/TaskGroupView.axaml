@@ -24,14 +24,14 @@
         <Grid RowDefinitions="*,Auto">
             <StackPanel Grid.Row="0" Margin="10">
                 <Grid ColumnDefinitions="1*,8*,1*">
-                    <TextBlock Grid.Column="1"  Text="{Binding ListName}" FontSize="30" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="1"  Text="{Binding ListName}" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <Button Grid.Column="2"
                             Width="40" 
                             Height="40" 
                             Padding="0"
                             CornerRadius="30"
-                            VerticalAlignment="Top"
-                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center"
                             BorderBrush="Transparent"

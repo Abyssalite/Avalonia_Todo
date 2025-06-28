@@ -3,7 +3,6 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Irihi.Avalonia.Shared.Contracts;
-using Ursa.Controls;
 
 namespace App1.Dialogs;
 
@@ -12,22 +11,17 @@ public partial class CustomDialogViewModel : ObservableObject, IDialogContext
     [ObservableProperty] private string? _owner;
     [ObservableProperty] private string? _target;
     [ObservableProperty] private string _text;
-    private readonly string? _pos;
-    public WindowNotificationManager? NotificationManager { get; set; }
-    public WindowToastManager? ToastManager { get; set; }
     public event EventHandler<object?>? RequestClose;
     public Action<bool?>? OnClose { get; set; }
     public ICommand OKCommand { get; set; }
     public ICommand CancelCommand { get; set; }
 
-    public CustomDialogViewModel(string message, string? pos)
+    public CustomDialogViewModel(string message)
     {
-        _pos = pos;
         _text = message;
         OKCommand = new RelayCommand(OK);
         CancelCommand = new RelayCommand(Cancel);
     }
-
 
     public void Close()
     {
@@ -45,16 +39,5 @@ public partial class CustomDialogViewModel : ObservableObject, IDialogContext
     {
         OnClose?.Invoke(false);
         RequestClose?.Invoke(this, false);
-    }
-
-    public void ShowNotification()
-    {
-        if (NotificationManager is not null)
-        {
-            Enum.TryParse<Avalonia.Controls.Notifications.NotificationPosition>(_pos, out var notificationPosition);
-            NotificationManager.Position = notificationPosition;
-        }
-        NotificationManager?.Show(Text);
-
     }
 }

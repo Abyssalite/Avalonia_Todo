@@ -33,14 +33,12 @@ public static class TaskHelpers
         }
         await SaveAsync(store.GroupedList);
     }
-    
-    public static async Task AddList(string listName, Store store)
+
+    public static async Task<bool> AddList(string listName, Store store)
     {
         var list = store.GroupedList.FirstOrDefault(l => l.List == listName);
         if (list != null || listName == "")
-        {
-            return;
-        }
+            return true;
 
         // Create new list group if it doesn't exist
         store.GroupedList.Add(new GroupList
@@ -49,6 +47,7 @@ public static class TaskHelpers
             Groups = new ObservableCollection<TaskGroup>()
         });
         await SaveAsync(store.GroupedList);
+        return false;
     }
 
     public static async Task DeleteTask(BaseTask task,  Store store)
@@ -62,9 +61,8 @@ public static class TaskHelpers
         group.Tasks.Remove(task);
 
         if (group.Tasks.Count == 0)
-        {
             list.Groups.Remove(group);
-        }
+
         await SaveAsync(store.GroupedList);
     }
 
@@ -80,17 +78,6 @@ public static class TaskHelpers
     public static void print(object? data)
     {
         Console.WriteLine(JsonSerializer.Serialize(data, JsonOptions));
-    }
-
-    public static void HookSaveToTask(Store store, BaseTask task)
-    {
-        task.PropertyChanged += async (_, e) =>
-        {
-            if (e.PropertyName == nameof(BaseTask.IsDone))
-            {
-                await SaveAsync(store.GroupedList);
-            }
-        };
     }
 
  private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions

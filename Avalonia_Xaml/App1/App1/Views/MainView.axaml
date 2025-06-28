@@ -14,40 +14,46 @@
     </Design.DataContext>
     <UserControl.Resources>
     </UserControl.Resources>
-     <Panel>
-        <Panel.Styles>
-            <Style Selector="SplitView.Blur">
-                <Setter Property="Effect" Value="blur(10)" />
-            </Style>
-        </Panel.Styles>
-        <SplitView IsPaneOpen="false"
-                x:Name="MainSplitView"
-                OpenPaneLength="300" PointerPressed="MainContent_Pressed"
-                Classes.Blur="{Binding $parent[u:UrsaWindow].(u:OverlayDialogHost.IsInModalStatus)}">
-            <SplitView.Pane>
-                <Border Background="#FF2D2D30">
-                    <StackPanel Margin="10">
-                        <Button Content="☰" 
-                            Margin="0,0,0,10"
-                            Click="TogglePane_Click"
-                            x:Name="toggleClose" 
-                            HorizontalAlignment="Right"/>
-                        <ContentControl Content="{Binding ViewHost.LeftView}" />
-                    </StackPanel>
-                </Border>
-            </SplitView.Pane>
 
-            <Grid x:Name="ContentGrid">  
-                <Border Background="#FF2D2D30">
-                    <StackPanel  x:Name="LeftBar" Margin="10" Spacing="10">
-                        <Button Content="☰" 
-                            Click="TogglePane_Click"
-                            x:Name="toggleOpen"/>
-                        <Button Content="0" />
-                    </StackPanel>
-                </Border>
-                <ContentControl x:Name="MainContent" Grid.Column="1" Content="{Binding ViewHost.RightView}" Margin="5"/>
-            </Grid>
-        </SplitView>
-    </Panel>
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Background="#FF3D3D3D" x:Name="TopBorder"/>
+        <Panel Grid.Row="1" >
+            <Panel.Styles>
+                <Style Selector="SplitView.Blur">
+                    <Setter Property="Effect" Value="blur(10)" />
+                </Style>
+            </Panel.Styles>
+            <SplitView x:Name="MainSplitView"
+                    OpenPaneLength="300" 
+                    Classes.Blur="{Binding $parent[u:UrsaWindow].(u:OverlayDialogHost.IsInModalStatus)}">
+                <SplitView.Pane>
+                    <Border Background="#FF2D2D2D">
+                        <StackPanel Margin="10">
+                            <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,10" >
+                                <TextBlock Grid.Column="0" Margin="10,0,10,0" Text="Text" FontSize="20" VerticalAlignment="Center"/>
+                                <Button Content="☰" 
+                                    Grid.Column="1" 
+                                    Click="TogglePane_Click"
+                                    x:Name="toggleClose" 
+                                    VerticalAlignment="Center"/>
+                            </Grid>
+                            <ContentControl Content="{Binding ViewHost.LeftView}" />
+                        </StackPanel>
+                    </Border>
+                </SplitView.Pane>
+
+                <Grid x:Name="ContentGrid">  
+                    <Border Background="#FF2D2D2D">
+                        <StackPanel  x:Name="LeftBar" Margin="10,15,10,10" Spacing="10">
+                            <Button Content="☰" 
+                                Click="TogglePane_Click"
+                                x:Name="toggleOpen"/>
+                            <Button Content="0" />
+                        </StackPanel>
+                    </Border>
+                    <ContentControl x:Name="MainContent" Grid.Column="1" Content="{Binding ViewHost.RightView}" Margin="5,10,5,5"/>
+                </Grid>
+            </SplitView>
+        </Panel>
+    </Grid>
 </UserControl>

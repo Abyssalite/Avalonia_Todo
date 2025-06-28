@@ -9,14 +9,6 @@ public partial class AddTaskView : UserControl
     public AddTaskView()
     {
         InitializeComponent();
-        if (OperatingSystem.IsAndroid())
-        {
-            AddTaskPanel.Margin = new Thickness(10);
-        }
-        else
-        { 
-            AddTaskPanel.Margin = new Thickness(60, 20, 60, 20);
-        }
+        AddTaskPanel.Margin = OperatingSystem.IsAndroid() ? new Thickness(10) : new Thickness(100, 30, 100, 20);
     }
-    
 }

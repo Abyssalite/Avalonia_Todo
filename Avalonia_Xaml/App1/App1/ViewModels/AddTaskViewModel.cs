@@ -1,28 +1,26 @@
-using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
-using Ursa.Controls;
 
 namespace App1.ViewModels;
 
 public partial class AddTaskViewModel : ViewModelBase
 {
-    private Store _store;
-    private IViewHost _host;
-    private readonly IDialogService _dialogService;
+    private readonly Store _store;
+    private readonly IViewHost _host;
+    public INotificationService Notificate  { get; set; }
     public ICommand SaveTaskCommand { get; }
     public ICommand CancelCommand { get; }
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
 
-    public AddTaskViewModel(IViewHost host, Store store,IDialogService dialogService)
+    public AddTaskViewModel(IViewHost host, Store store, INotificationService notificate)
     {
         _store = store;
         _host = host;
-        _dialogService = dialogService;
+        Notificate = notificate;
         SaveTaskCommand = new AsyncRelayCommand(AddTask);
         CancelCommand = new AsyncRelayCommand(ClearAsync);
     }
@@ -44,7 +42,7 @@ public partial class AddTaskViewModel : ViewModelBase
         string name = TaskHelpers.InputOrDefault(NewTaskName, "");
         if (name == "")
         {
-            _dialogService.ShowNotification("Name cannot be Empty", "TopCenter");
+            Notificate.ShowNotification("Task name cannot be Empty!");
             return;
         }
         var task = new BaseTask

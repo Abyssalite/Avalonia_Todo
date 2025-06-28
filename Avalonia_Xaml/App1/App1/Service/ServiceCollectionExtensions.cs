@@ -8,6 +8,8 @@ public static class ServiceCollectionExtensions
         collection.AddSingleton<IDialogService, DialogService>();
         collection.AddSingleton<Store>();
         collection.AddSingleton<IViewHost, ViewHost>();
+        collection.AddSingleton<INotificationService, NotificationService>();
+        collection.AddSingleton<IPaneService, PaneService>();
         collection.AddTransient<MainViewModel>();
         collection.AddTransient<TaskDetailViewModel>();
         collection.AddTransient<AddTaskViewModel>();

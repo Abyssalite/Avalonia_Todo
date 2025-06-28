@@ -13,11 +13,11 @@ public partial class CustomDialog : Window
         NoButton.IsVisible = isShow;
     }
 
-    private void OnYesClick(object? sender, RoutedEventArgs e)
+    private void OnYes_Click(object? sender, RoutedEventArgs e)
     {
         Close(true);
     }
-        private void OnNoClick(object? sender, RoutedEventArgs e)
+        private void OnNo_Click(object? sender, RoutedEventArgs e)
     {
         Close(false);
     }

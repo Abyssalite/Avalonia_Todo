@@ -8,8 +8,8 @@ namespace App1.ViewModels;
 
 public partial class TaskDetailViewModel : ViewModelBase
 {
-    private Store _store;
-    private IViewHost _host;
+    private readonly Store _store;
+    private readonly IViewHost _host;
     private readonly IDialogService _dialogService;
     public BaseTask? Task { get; }
     public ICommand ShowDialogCommand { get; }
@@ -39,10 +39,9 @@ public partial class TaskDetailViewModel : ViewModelBase
     private async Task OnShowDialogAsync(object? parameter)
     {
         if (parameter is Button button)
-        {
             button.Flyout?.Hide();
-        }
-        bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?", null);
-        if(confirmed == true) await DeleteTaskAsync();
+
+        bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
+        if (confirmed == true) await DeleteTaskAsync();
     }
 }

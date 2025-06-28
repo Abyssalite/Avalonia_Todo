@@ -7,16 +7,9 @@ using Ursa.Controls.Options;
 
 public class DialogService : IDialogService
 {
-    public void ShowNotification(string message, string? pos)
+    public async Task<bool?> ShowDialogAsync(string message)
     {
-        var vm = new CustomDialogViewModel(message, pos); 
-        OverlayDialog.ShowCustomModal<CustomDialog, CustomDialogViewModel, bool>(vm);
-        vm.ShowNotification();
-    }
-
-    public async Task<bool?> ShowDialogAsync(string message, string? pos)
-    {
-        var vm = new CustomDialogViewModel(message, pos);
+        var vm = new CustomDialogViewModel(message);
         var tcs = new TaskCompletionSource<bool?>();
         var drawerOptions = new DrawerOptions
         {
@@ -43,19 +36,15 @@ public class DialogService : IDialogService
         };
 
         if (OperatingSystem.IsAndroid())
-        {
             await Drawer.ShowCustomModal<CustomDialog, CustomDialogViewModel, object?>(vm, null, drawerOptions);
-        }
         else
-        {
             await OverlayDialog.ShowCustomModal<CustomDialog, CustomDialogViewModel, bool>(vm, null, dialogOptions);
-        }
+            
         return await tcs.Task;
     } 
 }
 
 public interface IDialogService
 {
-    Task<bool?> ShowDialogAsync(string message, string? pos);
-    void ShowNotification(string message, string? pos);
+    Task<bool?> ShowDialogAsync(string message);
 }

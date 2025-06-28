@@ -23,13 +23,8 @@ public class Store : INotifyPropertyChanged
                 _groupedList = value;
                 _groupedList.CollectionChanged += OnGroupedListChanged;
 
-                // Update FilteredGroupedList
-                FilteredGroupedList = new ObservableCollection<GroupList>(
-                    value.Where(g => g.List != "Quick")
-                );
-
+                UpdateFilteredList();
                 OnPropertyChanged(nameof(GroupedList));
-                OnPropertyChanged(nameof(FilteredGroupedList));
             }
         }
     }
@@ -39,14 +34,24 @@ public class Store : INotifyPropertyChanged
         GroupedList.CollectionChanged += OnGroupedListChanged;
     }
 
-    private void OnGroupedListChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    private void OnGroupedListChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+        UpdateFilteredList();
+    
+    private void UpdateFilteredList()
     {
+        foreach (var list in GroupedList)
+            list.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(BaseTask.IsDone))
+                    OnPropertyChanged(nameof(BaseTask.IsDone));
+            };
+            
         FilteredGroupedList = new ObservableCollection<GroupList>(
             GroupedList.Where(g => g.List != "Quick")
         );
         OnPropertyChanged(nameof(FilteredGroupedList));
     }
-    
+
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

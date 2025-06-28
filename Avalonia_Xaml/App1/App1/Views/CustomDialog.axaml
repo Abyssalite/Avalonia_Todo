@@ -23,7 +23,7 @@
             <Button 
                 x:Name="YesButton" 
                 Content="Default" 
-                Click="OnYesClick"
+                Click="OnYes_Click"
                 Padding="10" 
                 Margin="50,0,0,20"
                 Grid.Column="0"/>
@@ -31,7 +31,7 @@
                 x:Name="NoButton" 
                 Content="Cancel" 
                 IsVisible="false"
-                Click="OnNoClick"
+                Click="OnNo_Click"
                 Padding="10" 
                 Margin="40,0,0,20"
                 Grid.Column="1"/>

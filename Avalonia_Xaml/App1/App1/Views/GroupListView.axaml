@@ -71,7 +71,7 @@
                 BorderBrush="Transparent"
                 Command="{Binding AddListCommand}"
                 CommandParameter="{Binding Text, ElementName=NewListBox}"
-                Background="#FFAAAAAA">
+                Background="#E555">
             </Button>
         </StackPanel>   
     </Grid>

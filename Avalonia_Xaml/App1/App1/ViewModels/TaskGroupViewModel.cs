@@ -9,8 +9,8 @@ namespace App1.ViewModels;
 
 public partial class TaskGroupViewModel : ViewModelBase
 {
-    private Store _store;
-    private IViewHost _host;
+    private readonly Store _store;
+    private readonly IViewHost _host;
     private readonly IDialogService _dialogService;
     public ObservableCollection<TaskGroup>? GroupedTasks { get; }
     public string? ListName { get; }
@@ -77,16 +77,11 @@ public partial class TaskGroupViewModel : ViewModelBase
     private async Task OnShowDialogAsync(object? parameter)
     {
         if (parameter is Button button)
-        {
             button.Flyout?.Hide();
-        }
 
         if (ListName == "Quick") return;
 
-        bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?", null);
-        if (confirmed == true)
-        {
-            await DeleteList();
-        }
+        bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
+        if (confirmed == true) await DeleteList();
     }
 }

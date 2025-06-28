@@ -10,12 +10,15 @@ namespace App1.ViewModels;
 
 public partial class GroupListViewModel : ViewModelBase
 {
-    private Store _store;
-    private IViewHost _host;
+    private readonly Store _store;
+    private readonly IViewHost _host;
+    public INotificationService Notificate  { get; set; }
+    private readonly IPaneService _paneService;
     public ObservableCollection<GroupList>? FilteredGroupedList { get; set; } = new();
     public ICommand OpenQuickTaskCommand { get; }
     public ICommand AddListCommand { get; }
     public Action? OnSaveAddList { get; set; }
+
     private GroupList? _selectedGroup;
     public GroupList? SelectedGroup
     {
@@ -25,16 +28,18 @@ public partial class GroupListViewModel : ViewModelBase
             if (value != null && value != _selectedGroup)
             {
                 _selectedGroup = value;
-                _ = OpenGroupAsync(_selectedGroup);
+                _ = OpenListAsync(_selectedGroup);
                 OnPropertyChanged(nameof(SelectedGroup));
             }
         }
     }
 
-    public GroupListViewModel(IViewHost host, Store store)
+    public GroupListViewModel(IViewHost host, Store store, INotificationService notificate, IPaneService paneService)
     {
         _store = store;
         _host = host;
+        Notificate = notificate;
+        _paneService = paneService;
         FilteredGroupedList = _store.FilteredGroupedList;
         _store.PropertyChanged += (_, e) =>
         {
@@ -50,7 +55,7 @@ public partial class GroupListViewModel : ViewModelBase
         {
             var quick = _store.GroupedList.FirstOrDefault(l => l.List == "Quick");
             if (quick != null)
-                await OpenGroupAsync(quick);
+                await OpenListAsync(quick);
             _selectedGroup = null;
             OnPropertyChanged(nameof(SelectedGroup));
         });
@@ -62,17 +67,19 @@ public partial class GroupListViewModel : ViewModelBase
         OnSaveAddList?.Invoke();
         if (newListName != null)
         {
-            await TaskHelpers.AddList(newListName, _store);
+            bool isExisted = await TaskHelpers.AddList(newListName, _store);
+            if (isExisted) Notificate.ShowNotification("The list is Existed");
         }
     }
 
-    private async Task OpenGroupAsync(GroupList groupedList)
+    private async Task OpenListAsync(GroupList groupedList)
     {
         if (_store.ListName != groupedList.List)
         {
             _store.SelectedList = groupedList;
             _store.ListName = groupedList.List;
             await _host.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>());
+            _paneService.OpenPane(false);
         }
     }
 }
