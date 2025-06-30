@@ -53,14 +53,15 @@ public static class TaskHelpers
 
     public static async Task DeleteTask(BaseTask task, Store store, bool isArchive = false)
     {
-        var list = store.Lists.FirstOrDefault(l => l.ListName == task.ListName);
+        var list = isArchive ?
+            store.Archive.ArchivedLists.FirstOrDefault(l => l.ListName == task.ListName) :
+            store.Lists.FirstOrDefault(l => l.ListName == task.ListName);
         if (list == null) return;
 
         var group = list.Groups.FirstOrDefault(g => g.Category == task.Category);
         if (group == null) return;
 
         group.Tasks.Remove(task);
-
         if (group.Tasks.Count == 0)
             list.Groups.Remove(group);
 
@@ -69,10 +70,14 @@ public static class TaskHelpers
 
     public static async Task DeleteList(string listName, Store store, bool isArchive = false)
     {
-        var list = store.Lists.FirstOrDefault(l => l.ListName == listName);
+        var list = isArchive ?
+            store.Archive.ArchivedLists.FirstOrDefault(l => l.ListName == listName) :
+            store.Lists.FirstOrDefault(l => l.ListName == listName);
+    
         if (list == null) return;
 
-        store.Lists.Remove(list);
+        var newList = isArchive ? store.Archive.ArchivedLists : store.Lists;
+        newList.Remove(list);
         await SaveAsync(store, isArchive);
     }
 

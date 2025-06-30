@@ -6,8 +6,14 @@
              xmlns:iri="https://irihi.tech/shared"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:vm="clr-namespace:App1.ViewModels"
+             xmlns:converters="clr-namespace:App1.Converters"
              x:DataType="vm:GroupListViewModel"> 
 
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:ArchiveEditTextConverter x:Key="ArchiveEditTextConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid RowDefinitions="Auto,Auto">
         <StackPanel Grid.Row="0" Margin="5">
             <StackPanel Margin="5,5,30,5" Spacing="10" IsVisible="{Binding !ToggleArchive}">
@@ -25,7 +31,13 @@
                         Padding="10,5,5,5" />
             </StackPanel>
             <Grid ColumnDefinitions="9*,1*" Margin="10">
-                <TextBlock Text="Group List" FontSize="22" Grid.Column="0" />
+                <TextBlock FontSize="22" Grid.Column="0">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource ArchiveEditTextConverter}" ConverterParameter="Title">
+                            <Binding Path="ToggleArchive" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
                 <ToggleButton Grid.Column="1"
                             Width="30" 
                             Height="30" 

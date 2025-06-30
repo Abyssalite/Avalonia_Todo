@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using Avalonia.Media;
 
 namespace App1.Views;
 
@@ -32,7 +33,7 @@ public partial class MainView : UserControl
         {
             _isPaneOpen = isOpen;
             if (OperatingSystem.IsAndroid()) return;
-                LeftBar.IsVisible = !_isPaneOpen;
+            LeftBar.IsVisible = !_isPaneOpen;
         });
 
         if (OperatingSystem.IsAndroid())
@@ -61,7 +62,7 @@ public partial class MainView : UserControl
             MainSplitView.DisplayMode = SplitViewDisplayMode.Inline;
         }
 
-        this.LayoutUpdated += (_, _) =>
+        this.LayoutUpdated += (_, __) =>
         {
             _resizeToken?.Cancel();
             _resizeToken = new CancellationTokenSource();
@@ -72,6 +73,17 @@ public partial class MainView : UserControl
                 if (t.IsCanceled) return;
                 Dispatcher.UIThread.InvokeAsync(AdjustPaneLayout);
             });
+        };
+        this.AttachedToVisualTree += (_, __) =>
+        {
+            var topLevel = TopLevel.GetTopLevel(this);
+            var insetsManager = topLevel?.InsetsManager;
+
+            if (insetsManager is not null)
+            {
+                insetsManager.SystemBarColor = Colors.Black;
+                insetsManager.DisplayEdgeToEdge = true;
+            }
         };
     }
 

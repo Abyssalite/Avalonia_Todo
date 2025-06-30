@@ -31,5 +31,4 @@ public partial class MainViewModel : ViewModelBase
         await _host.NavigateLeft(App.Services?.GetRequiredService<GroupListViewModel>());
         await _host.NavigateRight(App.Services?.GetRequiredService<WellcomeViewModel>());
     }
-
 }

@@ -9,12 +9,13 @@ public class ArchiveEditTextConverter : IMultiValueConverter
 {
     public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (values.Count >= 1 && values[0] is bool isNotInArchive)
+        if (values.Count >= 1 && values[0] is bool value)
         {
             return parameter switch
             {
-                "Edit" => isNotInArchive ? "Edit" : "UnArchive",
-                "Archive" => isNotInArchive ? "Archive" : "Delete",
+                "Edit" => value ? "Edit" : "UnArchive",
+                "Archive" => value ? "Archive" : "Delete",
+                "Title" => value ? "Archived" : "Lists",
                 _ => "Unknown"
             };
         }

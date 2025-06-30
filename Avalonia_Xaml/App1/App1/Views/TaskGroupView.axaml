@@ -60,7 +60,7 @@
                                         </MenuItem>
                                         <MenuItem Foreground="Black" 
                                                 IsEnabled="{Binding IsNotMainList}"
-                                                Command="{Binding ArchiveCommand}" 
+                                                Command="{Binding ArchiveOrDeleteCommand}" 
                                                 CommandParameter="{Binding ElementName=ButtonFlyout}">
                                             <MenuItem.Header>
                                                 <MultiBinding Converter="{StaticResource ArchiveEditTextConverter}" ConverterParameter="Archive">
