@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,11 +20,12 @@ public partial class MainViewModel : ViewModelBase
 
     public async Task InitializeAsync()
     {
-        _store.GroupedList = await TaskHelpers.LoadAsync();
+        _store.Lists = await TaskHelpers.LoadAsync();
+        _store.Archive.ArchivedLists = await TaskHelpers.LoadAsync(true);
+
         _store.PropertyChanged += async (_, e) =>
         {
-            if (e.PropertyName == nameof(BaseTask.IsDone)) await TaskHelpers.SaveAsync(_store.GroupedList);
-            
+            if (e.PropertyName == nameof(BaseTask.IsDone)) await TaskHelpers.SaveAsync(_store);
         };
 
         await _host.NavigateLeft(App.Services?.GetRequiredService<GroupListViewModel>());

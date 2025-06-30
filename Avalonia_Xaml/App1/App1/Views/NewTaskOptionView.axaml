@@ -9,18 +9,18 @@
              x:DataType="vm:NewTaskOptionViewModel"> 
 
         <StackPanel Grid.Column="0">
-            <TextBlock Text="Task Selection" FontSize="22" Margin="15"/>
+            <TextBlock Text="Task Selection" FontSize="22" Margin="15" />
             <StackPanel>
                 <Button Content="Base Task"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
                         Padding="10,5,5,5"
-                        Margin="20,5,25,5"/>
+                        Margin="20,5,25,5" />
                 <Button Content="Noted Task"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
                         Padding="10,5,5,5"
-                        Margin="20,5,25,5"/>                       
+                        Margin="20,5,25,5" />                       
             </StackPanel>   
         </StackPanel> 
 </UserControl>

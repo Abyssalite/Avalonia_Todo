@@ -18,7 +18,7 @@
                 FontSize="20"
                 Margin="0,0,0,10" 
                 VerticalAlignment="Center" 
-                HorizontalAlignment="Center"/>
+                HorizontalAlignment="Center" />
         <Grid Grid.Row="1" ColumnDefinitions="5*,5*">
             <Button 
                 x:Name="YesButton" 
@@ -26,7 +26,7 @@
                 Click="OnYes_Click"
                 Padding="10" 
                 Margin="50,0,0,20"
-                Grid.Column="0"/>
+                Grid.Column="0" />
             <Button 
                 x:Name="NoButton" 
                 Content="Cancel" 
@@ -34,7 +34,7 @@
                 Click="OnNo_Click"
                 Padding="10" 
                 Margin="40,0,0,20"
-                Grid.Column="1"/>
+                Grid.Column="1" />
         </Grid>
     </Grid>
 </Window>

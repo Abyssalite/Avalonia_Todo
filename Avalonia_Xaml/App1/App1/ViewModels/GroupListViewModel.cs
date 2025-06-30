@@ -14,22 +14,35 @@ public partial class GroupListViewModel : ViewModelBase
     private readonly IViewHost _host;
     public INotificationService Notificate  { get; set; }
     private readonly IPaneService _paneService;
-    public ObservableCollection<GroupList>? FilteredGroupedList { get; set; } = new();
-    public ICommand OpenQuickTaskCommand { get; }
+    public ObservableCollection<GroupList>? FilteredLists { get; set; } = new();
+    public ICommand OpenTaskCommand { get; }
     public ICommand AddListCommand { get; }
     public Action? OnSaveAddList { get; set; }
-
-    private GroupList? _selectedGroup;
-    public GroupList? SelectedGroup
+    private bool _toggleArchive = false;
+    public bool ToggleArchive
     {
-        get => _selectedGroup;
+        get => _toggleArchive;
         set
         {
-            if (value != null && value != _selectedGroup)
+            _toggleArchive = value;
+            if(_toggleArchive) FilteredLists = _store.Archive.ArchivedLists;
+            else FilteredLists = _store.FilteredLists;
+
+            OnPropertyChanged(nameof(FilteredLists));
+            OnPropertyChanged(nameof(ToggleArchive));
+        }
+    } 
+    private GroupList? _selectedList;
+    public GroupList? SelectedList
+    {
+        get => _selectedList;
+        set
+        {
+            if (value != null && value != _selectedList)
             {
-                _selectedGroup = value;
-                _ = OpenListAsync(_selectedGroup);
-                OnPropertyChanged(nameof(SelectedGroup));
+                _selectedList = value;
+                _ = OpenListAsync(_selectedList);
+                OnPropertyChanged(nameof(SelectedList));
             }
         }
     }
@@ -40,24 +53,24 @@ public partial class GroupListViewModel : ViewModelBase
         _host = host;
         Notificate = notificate;
         _paneService = paneService;
-        FilteredGroupedList = _store.FilteredGroupedList;
+        FilteredLists = _store.FilteredLists;
         _store.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(Store.FilteredGroupedList))
+            if (e.PropertyName == nameof(Store.FilteredLists) && !ToggleArchive)
             {
-                FilteredGroupedList.Clear();
-                FilteredGroupedList = _store.FilteredGroupedList;
-                OnPropertyChanged(nameof(FilteredGroupedList));
+                FilteredLists.Clear();
+                FilteredLists = _store.FilteredLists;
+                OnPropertyChanged(nameof(FilteredLists));
             }
         };
 
-        OpenQuickTaskCommand = new RelayCommand(async () =>
+        OpenTaskCommand = new RelayCommand<string>(async (listName) =>
         {
-            var quick = _store.GroupedList.FirstOrDefault(l => l.List == "Quick");
-            if (quick != null)
-                await OpenListAsync(quick);
-            _selectedGroup = null;
-            OnPropertyChanged(nameof(SelectedGroup));
+            var list = _store.Lists.FirstOrDefault(l => l.ListName == listName);
+            if (list != null)
+                await OpenListAsync(list);
+            _selectedList = null;
+            OnPropertyChanged(nameof(SelectedList));
         });
         AddListCommand = new AsyncRelayCommand<string>(AddList);
     }
@@ -74,10 +87,10 @@ public partial class GroupListViewModel : ViewModelBase
 
     private async Task OpenListAsync(GroupList groupedList)
     {
-        if (_store.ListName != groupedList.List)
+        if (_store.SelectedListName != groupedList.ListName)
         {
             _store.SelectedList = groupedList;
-            _store.ListName = groupedList.List;
+            _store.SelectedListName = groupedList.ListName;
             await _host.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>());
             _paneService.OpenPane(false);
         }

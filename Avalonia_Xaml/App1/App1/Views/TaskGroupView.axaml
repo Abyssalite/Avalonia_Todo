@@ -6,25 +6,31 @@
              xmlns:vm="clr-namespace:App1.ViewModels"
              xmlns:iri="https://irihi.tech/shared"
              xmlns:u="https://irihi.tech/ursa"
+             xmlns:converters="clr-namespace:App1.Converters"
              x:DataType="vm:TaskGroupViewModel"> 
 
+        <UserControl.Resources>
+            <ResourceDictionary>
+                <converters:ArchiveEditTextConverter x:Key="ArchiveEditTextConverter" />
+            </ResourceDictionary>
+        </UserControl.Resources>
         <UserControl.Styles>
             <Style Selector="FlyoutPresenter.DropDown">
-                <Setter Property="Background" Value="#FAAA"/>
-                <Setter Property="MinWidth" Value="150"/>
-                <Setter Property="MaxHeight" Value="400"/>
-                <Setter Property="Margin" Value="10"/>
-                <Setter Property="Padding" Value="10"/>
-                <Setter Property="BorderBrush" Value="White"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="CornerRadius" Value="10"/>
+                <Setter Property="Background" Value="#FAAA" />
+                <Setter Property="MinWidth" Value="150" />
+                <Setter Property="MaxHeight" Value="400" />
+                <Setter Property="Margin" Value="10" />
+                <Setter Property="Padding" Value="10" />
+                <Setter Property="BorderBrush" Value="White" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
             </Style>
         </UserControl.Styles>
 
         <Grid RowDefinitions="*,Auto">
             <StackPanel Grid.Row="0" Margin="10">
                 <Grid ColumnDefinitions="1*,8*,1*">
-                    <TextBlock Grid.Column="1"  Text="{Binding ListName}" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="1"  Text="{Binding ListName}" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     <Button Grid.Column="2"
                             Width="40" 
                             Height="40" 
@@ -45,10 +51,23 @@
                             <Flyout FlyoutPresenterClasses="DropDown" Placement="BottomEdgeAlignedRight">
                                 <Flyout.Content>
                                     <StackPanel>
-                                        <MenuItem Header="Delete" 
-                                                Foreground="Black" 
-                                                Command="{Binding ShowDialogCommand}" 
-                                                CommandParameter="{Binding ElementName=ButtonFlyout}"/>
+                                        <MenuItem Foreground="Black">
+                                            <MenuItem.Header>
+                                                <MultiBinding Converter="{StaticResource ArchiveEditTextConverter}" ConverterParameter="Edit">
+                                                    <Binding Path="IsNotInArchive" />
+                                                </MultiBinding>
+                                            </MenuItem.Header>
+                                        </MenuItem>
+                                        <MenuItem Foreground="Black" 
+                                                IsEnabled="{Binding IsNotMainList}"
+                                                Command="{Binding ArchiveCommand}" 
+                                                CommandParameter="{Binding ElementName=ButtonFlyout}">
+                                            <MenuItem.Header>
+                                                <MultiBinding Converter="{StaticResource ArchiveEditTextConverter}" ConverterParameter="Archive">
+                                                    <Binding Path="IsNotInArchive" />
+                                                </MultiBinding>
+                                            </MenuItem.Header>
+                                        </MenuItem>
                                     </StackPanel>
                                 </Flyout.Content>
                             </Flyout>
@@ -64,7 +83,7 @@
                                         FontSize="22" 
                                         Background="Transparent"
                                         FontWeight="Bold"
-                                        Margin="10,10,10,5"/>
+                                        Margin="10,10,10,5" />
 
                                 <ListBox ItemsSource="{Binding Tasks}"
                                         BorderThickness="0"
@@ -78,11 +97,11 @@
                                             <StackPanel Orientation="Horizontal" Margin="5,8,5,8">
                                                 <CheckBox IsChecked="{Binding IsDone}" 
                                                         VerticalAlignment="Center"
-                                                        Margin="0,0,10,0"/>
+                                                        Margin="0,0,10,0" />
                                                 <TextBlock Text="{Binding Name}" 
                                                         VerticalAlignment="Center"
                                                         FontSize="15"
-                                                        Background="Transparent"/>
+                                                        Background="Transparent" />
                                             </StackPanel>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -105,6 +124,7 @@
                     VerticalContentAlignment="Center"
                     BorderBrush="Transparent"
                     Background="#FAAA"
+                    IsEnabled="{Binding IsNotInArchive}"
                     Command="{Binding AddTaskViewCommand}">
                 <Image Source="avares://App1/Assets/icons8-plus-100.png"
                     Stretch="Uniform"

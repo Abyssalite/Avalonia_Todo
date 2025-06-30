@@ -19,7 +19,7 @@
         <u-semi:SemiTheme Locale="en-US" />
         <Style Selector="u|DefaultDialogWindow.Custom">
             <Style Selector="^ /template/ Button#PART_OKButton">
-                <Setter Property="Content" Value="CUSTOM"/>
+                <Setter Property="Content" Value="CUSTOM" />
                 <Setter Property="helpers:ClassHelper.Classes" Value="Warning"></Setter>
             </Style>
         </Style>

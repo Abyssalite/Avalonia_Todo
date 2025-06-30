@@ -14,8 +14,10 @@ public partial class TaskGroupViewModel : ViewModelBase
     private readonly IDialogService _dialogService;
     public ObservableCollection<TaskGroup>? GroupedTasks { get; }
     public string? ListName { get; }
+    public bool IsNotMainList { get; } = true;
+    public bool? IsNotInArchive { get; set; } = true;
     public ICommand AddTaskViewCommand { get; }
-    public ICommand ShowDialogCommand { get; }
+    public ICommand ArchiveCommand { get; }
     private BaseTask? _selectedTask;
     public BaseTask? SelectedTask
     {
@@ -38,21 +40,35 @@ public partial class TaskGroupViewModel : ViewModelBase
         _dialogService = dialogService;
         if (store.SelectedList != null)
         {
-            ListName = store.ListName;
+            ListName = store.SelectedListName;
             GroupedTasks = store.SelectedList.Groups;
+            IsNotMainList = !CheckMainList();
+            OnPropertyChanged(nameof(IsNotMainList));
+            IsNotInArchive = !store.SelectedList.IsArchived;
         }
+        _store.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(GroupList.IsArchived))
+            {
+                IsNotInArchive = !store.SelectedList?.IsArchived;
+                OnPropertyChanged(nameof(IsNotInArchive));
+            }
+        };
 
         AddTaskViewCommand = new AsyncRelayCommand(OpenAddTaskView);
-        ShowDialogCommand = new AsyncRelayCommand<object>(OnShowDialogAsync);
+        ArchiveCommand = new AsyncRelayCommand<object>(ArchiveList);
     }
 
-    private async Task DeleteList()
+    private bool CheckMainList() => ListName == "Quick" || ListName == "Important";
+
+    private async Task ArchiveList(object? parameter)
     {
+        if (parameter is Button button)
+            button.Flyout?.Hide();
+        if (!IsNotMainList) return;
+
         if (ListName != null)
-        {
-            await TaskHelpers.DeleteList(ListName, _store);
-            await _host.NavigateRight(App.Services?.GetRequiredService<WellcomeViewModel>());
-        }
+            await TaskHelpers.MoveToArchive(ListName, _store);
     }
 
     private async Task OpenAddTaskView()
@@ -71,17 +87,5 @@ public partial class TaskGroupViewModel : ViewModelBase
 
         _store.SelectedTask = task;
         await _host.NavigateRight(App.Services?.GetRequiredService<TaskDetailViewModel>());
-
-    }
-
-    private async Task OnShowDialogAsync(object? parameter)
-    {
-        if (parameter is Button button)
-            button.Flyout?.Hide();
-
-        if (ListName == "Quick") return;
-
-        bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
-        if (confirmed == true) await DeleteList();
     }
 }

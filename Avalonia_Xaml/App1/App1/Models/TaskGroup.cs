@@ -15,7 +15,7 @@ public class TaskGroup : INotifyPropertyChanged
             _tasks = value;
             _tasks.CollectionChanged += OnTasksChanged;
 
-            UpdateTasks();
+            HookChanges();
             OnPropertyChanged(nameof(Tasks));
         }
     }
@@ -27,9 +27,9 @@ public class TaskGroup : INotifyPropertyChanged
     }
 
     private void OnTasksChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
-        UpdateTasks();
+        HookChanges();
 
-    private void UpdateTasks()
+    private void HookChanges()
     {
         foreach (var task in Tasks)
             task.PropertyChanged += (_, e) =>

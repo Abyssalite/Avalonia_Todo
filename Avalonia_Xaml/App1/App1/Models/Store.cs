@@ -5,51 +5,64 @@ using System.Linq;
 
 public class Store : INotifyPropertyChanged
 {
-    private ObservableCollection<GroupList> _groupedList = new();
-    public string? ListName { set; get; }
+    private ObservableCollection<GroupList> _lists = new();
+    public string? SelectedListName { set; get; }
     public string WellcomeText { set; get; } = "Wellcome";
     public bool Initialized { set; get; } = false;
     public GroupList? SelectedList { get; set; }
     public BaseTask? SelectedTask { get; set; }
-    public ObservableCollection<GroupList> FilteredGroupedList { get; set; } = new();
-    public ObservableCollection<GroupList> GroupedList
+    public ArchivedList Archive { set; get; }
+    public ObservableCollection<GroupList> FilteredLists { get; set; } = new();
+    public ObservableCollection<GroupList> Lists
     {
-        get => _groupedList;
+        get => _lists;
         set
         {
             if (value != null)
             {
-                _groupedList.CollectionChanged -= OnGroupedListChanged;
-                _groupedList = value;
-                _groupedList.CollectionChanged += OnGroupedListChanged;
+                _lists.CollectionChanged -= OnListsChanged;
+                _lists = value;
+                _lists.CollectionChanged += OnListsChanged;
 
-                UpdateFilteredList();
-                OnPropertyChanged(nameof(GroupedList));
+                HookChanges();
+                OnPropertyChanged(nameof(Lists));
             }
         }
     }
-    
+
     public Store()
     {
-        GroupedList.CollectionChanged += OnGroupedListChanged;
+        Lists.CollectionChanged += OnListsChanged;
+        Archive = new();
     }
 
-    private void OnGroupedListChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
-        UpdateFilteredList();
+    private void OnListsChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+        HookChanges();
     
-    private void UpdateFilteredList()
+    private void HookChanges()
     {
-        foreach (var list in GroupedList)
+        foreach (var list in Lists)
             list.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName == nameof(BaseTask.IsDone))
                     OnPropertyChanged(nameof(BaseTask.IsDone));
+                if (e.PropertyName == nameof(GroupList.IsArchived))
+                    OnPropertyChanged(nameof(GroupList.IsArchived));
             };
-            
-        FilteredGroupedList = new ObservableCollection<GroupList>(
-            GroupedList.Where(g => g.List != "Quick")
+        Archive.PropertyChanged +=  (_, e) =>
+            {
+                if (e.PropertyName == nameof(ArchivedList.ArchivedLists))
+                    OnPropertyChanged(nameof(ArchivedList.ArchivedLists));
+            };
+        UpdateFilteredList();
+    }
+
+    private void UpdateFilteredList()
+    {
+        FilteredLists = new ObservableCollection<GroupList>(
+            Lists.Where(g => g.ListName != "Quick" && g.ListName != "Important")
         );
-        OnPropertyChanged(nameof(FilteredGroupedList));
+        OnPropertyChanged(nameof(FilteredLists));
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

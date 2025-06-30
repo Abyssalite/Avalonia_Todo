@@ -8,7 +8,6 @@ using System.Diagnostics;
 using Avalonia.Controls.Primitives;
 using Avalonia.VisualTree;
 using Ursa.Controls;
-using WindowNotificationManager = Ursa.Controls.WindowNotificationManager;
 using App1.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading;

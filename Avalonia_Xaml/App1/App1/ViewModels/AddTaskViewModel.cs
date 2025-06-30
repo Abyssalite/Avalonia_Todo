@@ -49,7 +49,7 @@ public partial class AddTaskViewModel : ViewModelBase
         {
             Name = name,
             IsDone = false,
-            List = TaskHelpers.InputOrDefault(_store.ListName, "Quick"),
+            ListName = TaskHelpers.InputOrDefault(_store.SelectedListName, "Quick"),
             Category = TaskHelpers.InputOrDefault(TaskCatalog, "Miscelanious"),
             Description = TaskHelpers.InputOrDefault(TaskDesc, "")
         };

@@ -10,14 +10,14 @@
 
     <UserControl.Styles>
         <Style Selector="FlyoutPresenter.DropDown">
-            <Setter Property="Background" Value="#FAAA"/>
-            <Setter Property="MinWidth" Value="150"/>
-            <Setter Property="MaxHeight" Value="400"/>
-            <Setter Property="Margin" Value="10"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="BorderBrush" Value="White"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Background" Value="#FAAA" />
+            <Setter Property="MinWidth" Value="150" />
+            <Setter Property="MaxHeight" Value="400" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="BorderBrush" Value="White" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
         </Style>
     </UserControl.Styles>
     
@@ -40,7 +40,7 @@
                     Width="40"
                     Height="40" />
             </Button>
-            <TextBlock Grid.Column="1" Text="Task Detail" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Text="Task Detail" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center" />
             <Button Grid.Column="2"
                     Width="40" 
                     Height="40" 
@@ -61,11 +61,13 @@
                     <Flyout FlyoutPresenterClasses="DropDown" Placement="BottomEdgeAlignedRight">
                         <Flyout.Content>
                             <StackPanel>
-                                <MenuItem Header="Edit" Foreground="Black"/>
+                                <MenuItem Header="Edit" 
+                                        IsEnabled="{Binding IsNotInArchive}"
+                                        Foreground="Black" />
                                 <MenuItem Header="Delete" 
                                         Foreground="Black" 
                                         Command="{Binding ShowDialogCommand}"
-                                        CommandParameter="{Binding ElementName=ButtonFlyout}"/>
+                                        CommandParameter="{Binding ElementName=ButtonFlyout}" />
                             </StackPanel>
                         </Flyout.Content>
                     </Flyout>
@@ -76,18 +78,18 @@
         <Border x:Name="TaskDetailPanel" Background="#FF1D1D1D" CornerRadius="10">      
             <StackPanel Margin="10">  
                 <Grid ColumnDefinitions="150,*" Margin="15">
-                    <TextBlock Text="Name" Grid.Column="0"/>
-                    <TextBlock Text="{Binding Task.Name}" Grid.Column="1"/>
+                    <TextBlock Text="Name" Grid.Column="0" />
+                    <TextBlock Text="{Binding Task.Name}" Grid.Column="1" />
                 </Grid>
 
                 <Grid ColumnDefinitions="150,*" Margin="15">
-                    <TextBlock Text="Description" Grid.Column="0"/>
-                    <TextBlock Text="{Binding Task.Description}" Grid.Column="1"/>
+                    <TextBlock Text="Description" Grid.Column="0" />
+                    <TextBlock Text="{Binding Task.Description}" Grid.Column="1" />
                 </Grid>
 
                 <Grid ColumnDefinitions="150,*" Margin="15">
-                    <TextBlock Text="Category" Grid.Column="0"/>
-                    <TextBlock Text="{Binding Task.Category}" Grid.Column="1"/>
+                    <TextBlock Text="Category" Grid.Column="0" />
+                    <TextBlock Text="{Binding Task.Category}" Grid.Column="1" />
                 </Grid>
             </StackPanel>
         </Border>    

@@ -4,7 +4,20 @@ using System.ComponentModel;
 
 public class GroupList : INotifyPropertyChanged
 {
-    public required string List { get; set; }
+    public required string ListName { get; set; }
+    private bool _isArchived = false;
+    public bool IsArchived
+    {
+        get => _isArchived;
+        set
+        {
+            if (_isArchived != value)
+            {
+                _isArchived = value;
+                OnPropertyChanged(nameof(IsArchived));
+            }
+        }
+    }
     private ObservableCollection<TaskGroup> _groups = new();
     public required ObservableCollection<TaskGroup> Groups
     {
@@ -15,7 +28,7 @@ public class GroupList : INotifyPropertyChanged
             _groups = value;
             _groups.CollectionChanged += OnGroupsChanged;
 
-            UpdateGroups();
+            HookChanges();
             OnPropertyChanged(nameof(Groups));
         }
     }
@@ -27,9 +40,9 @@ public class GroupList : INotifyPropertyChanged
     }
 
     private void OnGroupsChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
-        UpdateGroups();
+        HookChanges();
 
-    private void UpdateGroups()
+    private void HookChanges()
     {
         foreach (var group in Groups)
             group.PropertyChanged += (_, e) =>

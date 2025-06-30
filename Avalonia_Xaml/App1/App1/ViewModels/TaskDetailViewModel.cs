@@ -12,6 +12,7 @@ public partial class TaskDetailViewModel : ViewModelBase
     private readonly IViewHost _host;
     private readonly IDialogService _dialogService;
     public BaseTask? Task { get; }
+    public bool? IsNotInArchive { get; } = true;
     public ICommand ShowDialogCommand { get; }
     public ICommand BackCommand { get; }
 
@@ -21,7 +22,10 @@ public partial class TaskDetailViewModel : ViewModelBase
         _host = host;
         _dialogService = dialogService;
         if (store.SelectedTask != null)
+        {
             Task = store.SelectedTask;
+            IsNotInArchive = !store.SelectedList?.IsArchived;
+        }
 
         ShowDialogCommand = new AsyncRelayCommand<object>(OnShowDialogAsync);
         BackCommand = new RelayCommand(async () => await _host.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>()));

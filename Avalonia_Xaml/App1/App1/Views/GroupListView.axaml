@@ -10,16 +10,23 @@
 
     <Grid RowDefinitions="Auto,Auto">
         <StackPanel Grid.Row="0" Margin="5">
+            <StackPanel Margin="5,5,30,5" Spacing="10" IsVisible="{Binding !ToggleArchive}">
                 <Button Content="Quick Task"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
-                        Command="{Binding OpenQuickTaskCommand}"
-                        Padding="10,5,5,5"
-                        Margin="5,5,25,5"/>
-
-                <Grid ColumnDefinitions="9*,1*" Margin="10">
-                    <TextBlock Text="Group List" FontSize="22" Grid.Column="0"/>
-                    <Button Grid.Column="1"
+                        Command="{Binding OpenTaskCommand}"
+                        CommandParameter="Quick"
+                        Padding="10,5,5,5" />
+                <Button Content="Important"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Command="{Binding OpenTaskCommand}"
+                        CommandParameter="Important"
+                        Padding="10,5,5,5" />
+            </StackPanel>
+            <Grid ColumnDefinitions="9*,1*" Margin="10">
+                <TextBlock Text="Group List" FontSize="22" Grid.Column="0" />
+                <ToggleButton Grid.Column="1"
                             Width="30" 
                             Height="30" 
                             Padding="0"
@@ -28,39 +35,40 @@
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center"
                             BorderBrush="Transparent"
-                            Background="#FAAA">
+                            Background="#FAAA"
+                            IsChecked="{Binding ToggleArchive, Mode=TwoWay}">
                         <Image Source="avares://App1/Assets/icons8-done-100.png"
                             Stretch="Uniform"
                             Width="30"
-                            Height="30"/>
-                    </Button>
-                </Grid>
+                            Height="30" />
+                </ToggleButton>
+            </Grid>
 
-                <ListBox ItemsSource="{Binding FilteredGroupedList}"
-                         BorderThickness="0"
-                         Margin="5,0,25,0"
-                         Background="Transparent"
-                         SelectionMode="Single"
-                         CornerRadius="6"
-                         SelectedItem="{Binding $parent[UserControl].((vm:GroupListViewModel)DataContext).SelectedGroup, Mode=TwoWay}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                             <StackPanel Orientation="Horizontal" Margin="5">
-                                <TextBlock Text="{Binding List}" 
-                                        VerticalAlignment="Center"
-                                        FontSize="15"
-                                        Background="Transparent"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>     
+            <ListBox ItemsSource="{Binding FilteredLists}"
+                    BorderThickness="0"
+                    Margin="5,0,25,0"
+                    Background="Transparent"
+                    SelectionMode="Single"
+                    CornerRadius="6"
+                    SelectedItem="{Binding $parent[UserControl].((vm:GroupListViewModel)DataContext).SelectedList, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="{Binding ListName}" 
+                                    VerticalAlignment="Center"
+                                    FontSize="15"
+                                    Background="Transparent" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>     
         </StackPanel>   
                          
-        <StackPanel Grid.Row="1" Margin="10,5,10,5">
+        <StackPanel Grid.Row="1" Margin="10,5,10,5" IsVisible="{Binding !ToggleArchive}">
             <TextBox 
                 x:Name="NewListBox" 
                 Watermark="New List" 
-                Margin="0,5,25,5"/>
+                Margin="0,5,25,5" />
             <Button 
                 Content="Add List"
                 HorizontalAlignment="Stretch"
