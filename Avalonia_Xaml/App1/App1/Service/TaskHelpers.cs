@@ -86,10 +86,49 @@ public static class TaskHelpers
         var list = store.Lists.FirstOrDefault(l => l.ListName == archivingList);
         if (list == null) return;
 
+        store.Lists.Remove(list);
+        await SaveAsync(store);
         list.IsArchived = true;
         store.Archive.ArchivedLists.Add(list);
         await SaveAsync(store, true);
+    }
+
+    public static async Task MoveToList(string restoreList, Store store)
+    {
+        var list = store.Archive.ArchivedLists.FirstOrDefault(l => l.ListName == restoreList);
+        if (list == null) return;
+
+        store.Archive.ArchivedLists.Remove(list);
+        await SaveAsync(store, true);
+        list.IsArchived = false;
+        store.Lists.Add(list);
+        await SaveAsync(store);
+    }
+
+    public static async Task EditList(string oldListname, string newListName, ObservableCollection<TaskGroup>? editedList, Store store)
+    {      
+        var list = store.Lists.FirstOrDefault(l => l.ListName == oldListname);
+        if (list == null || editedList == null) return;
+
+        foreach (var group in editedList)
+            foreach (var task in group.Tasks)
+            {
+                if (group.Category == task.Category) continue;
+                else
+                {
+                    task.ListName = newListName;
+                    task.Category = group.Category;
+                }
+            }
+
+        store.SelectedList = new GroupList
+        {
+            ListName = newListName,
+            IsArchived = false,
+            Groups = new(editedList)
+        };
         store.Lists.Remove(list);
+        store.Lists.Add(store.SelectedList);
         await SaveAsync(store);
     }
 

@@ -13,7 +13,7 @@ public class ArchiveEditTextConverter : IMultiValueConverter
         {
             return parameter switch
             {
-                "Edit" => value ? "Edit" : "UnArchive",
+                "Edit" => value ? "Edit" : "Restore",
                 "Archive" => value ? "Archive" : "Delete",
                 "Title" => value ? "Archived" : "Lists",
                 _ => "Unknown"

@@ -58,7 +58,6 @@ public partial class GroupListViewModel : ViewModelBase
         {
             if (e.PropertyName == nameof(Store.FilteredLists) && !ToggleArchive)
             {
-                FilteredLists.Clear();
                 FilteredLists = _store.FilteredLists;
                 OnPropertyChanged(nameof(FilteredLists));
             }
@@ -87,12 +86,9 @@ public partial class GroupListViewModel : ViewModelBase
 
     private async Task OpenListAsync(GroupList groupedList)
     {
-        if (_store.SelectedListName != groupedList.ListName)
-        {
-            _store.SelectedList = groupedList;
-            _store.SelectedListName = groupedList.ListName;
-            await _host.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>());
-            _paneService.OpenPane(false);
-        }
+        _store.SelectedList = groupedList;
+        _store.SelectedListName = groupedList.ListName;
+        await _host.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>());
+        _paneService.OpenPane(false);
     }
 }

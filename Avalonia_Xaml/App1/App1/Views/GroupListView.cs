@@ -5,14 +5,14 @@ namespace App1.Views;
 
 public partial class GroupListView : UserControl
 {
-    private bool _isTextBoxshow = false;
+    private bool IsTextBoxshow { set; get; } = false;
 
     public GroupListView()
     {
         InitializeComponent();
         this.DataContextChanged += OnDataContextChanged;
-
-        NewListBox.IsVisible = _isTextBoxshow;
+        SaveButton.Content = "Add List";
+        NewListBox.IsVisible = IsTextBoxshow;
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
@@ -21,9 +21,10 @@ public partial class GroupListView : UserControl
         {
             vm.OnSaveAddList = () =>
             {
+                SaveButton.Content = IsTextBoxshow ? "Add List" : "Save";
                 NewListBox.Text = null;
-                _isTextBoxshow = !_isTextBoxshow;
-                NewListBox.IsVisible = _isTextBoxshow;
+                IsTextBoxshow = !IsTextBoxshow;
+                NewListBox.IsVisible = IsTextBoxshow;
             };
         }
     }

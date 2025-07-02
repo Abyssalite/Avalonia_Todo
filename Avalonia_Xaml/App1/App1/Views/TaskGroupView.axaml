@@ -30,7 +30,22 @@
         <Grid RowDefinitions="*,Auto">
             <StackPanel Grid.Row="0" Margin="10">
                 <Grid ColumnDefinitions="1*,8*,1*">
-                    <TextBlock Grid.Column="1"  Text="{Binding ListName}" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    <TextBlock Grid.Column="1"  
+                            Text="{Binding ListName}" 
+                            FontSize="30"
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Center" 
+                            TextWrapping="Wrap"
+                            MaxHeight="100"
+                            IsVisible="{Binding !IsInEditMode}" />
+                    <TextBox Grid.Column="1" 
+                            Text="{Binding ListName, Mode=TwoWay}" 
+                            FontSize="30"
+                            Padding="8"
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Center" 
+                            IsVisible="{Binding IsInEditMode}" />
+
                     <Button Grid.Column="2"
                             Width="40" 
                             Height="40" 
@@ -51,7 +66,9 @@
                             <Flyout FlyoutPresenterClasses="DropDown" Placement="BottomEdgeAlignedRight">
                                 <Flyout.Content>
                                     <StackPanel>
-                                        <MenuItem Foreground="Black">
+                                        <MenuItem Foreground="Black"
+                                                Command="{Binding RestoreOrEditCommand}"
+                                                CommandParameter="{Binding ElementName=ButtonFlyout}">
                                             <MenuItem.Header>
                                                 <MultiBinding Converter="{StaticResource ArchiveEditTextConverter}" ConverterParameter="Edit">
                                                     <Binding Path="IsNotInArchive" />
@@ -81,9 +98,15 @@
                             <StackPanel>
                                 <TextBlock Text="{Binding Category}" 
                                         FontSize="22" 
-                                        Background="Transparent"
                                         FontWeight="Bold"
-                                        Margin="10,10,10,5" />
+                                        Margin="10,10,100,5"
+                                        Padding="10,5,10,5" 
+                                        IsVisible="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext).IsInEditMode}" />
+                                <TextBox Text="{Binding Category, Mode=TwoWay}" 
+                                        FontSize="22"
+                                        Margin="10,10,100,5"
+                                        Padding="10,8,10,8" 
+                                        IsVisible="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext).IsInEditMode}" />
 
                                 <ListBox ItemsSource="{Binding Tasks}"
                                         BorderThickness="0"
@@ -91,7 +114,8 @@
                                         Background="Transparent"
                                         SelectionMode="Single"
                                         CornerRadius="8"
-                                        SelectedItem="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext).SelectedTask, Mode=TwoWay}">
+                                        SelectedItem="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext).SelectedTask, Mode=TwoWay}"
+                                        IsEnabled="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext).IsInEditMode}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" Margin="5,8,5,8">
@@ -112,24 +136,35 @@
                 </ItemsControl>
 
             </StackPanel> 
-
-            <Button Grid.Row="1"
-                    Width="50" 
-                    Height="50" 
-                    Margin="10"
-                    Padding="0"
-                    CornerRadius="30"
-                    HorizontalAlignment="Right"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    BorderBrush="Transparent"
-                    Background="#FAAA"
-                    IsEnabled="{Binding IsNotInArchive}"
-                    Command="{Binding AddTaskViewCommand}">
-                <Image Source="avares://App1/Assets/icons8-plus-100.png"
-                    Stretch="Uniform"
-                    Width="50"
-                    Height="50" />
-            </Button>               
+            <StackPanel Margin="20,10,20,10" 
+                        Spacing="10"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom">
+                <TextBox 
+                        Watermark="New Task" 
+                        Padding="8"
+                        VerticalAlignment="Center"
+                        Width="230"
+                        FontSize="16"
+                        IsEnabled="{Binding IsNotInArchive}" />
+                <Button Grid.Row="1"
+                        Width="50" 
+                        Height="50" 
+                        Padding="0"
+                        CornerRadius="30"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Transparent"
+                        Background="#FAAA"
+                        Command="{Binding AddTaskViewCommand}"
+                        IsEnabled="{Binding IsNotInArchive}" >
+                    <Image Source="avares://App1/Assets/icons8-plus-100.png"
+                        Stretch="Uniform"
+                        Width="50"
+                        Height="50" />
+                </Button>    
+            </StackPanel>            
         </Grid>
 </UserControl>
