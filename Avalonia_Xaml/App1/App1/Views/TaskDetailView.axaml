@@ -22,7 +22,7 @@
     </UserControl.Styles>
     
     <StackPanel HorizontalAlignment="Stretch">
-        <Grid ColumnDefinitions="1*,8*,1*" Margin="10">
+        <Grid ColumnDefinitions="Auto,*,Auto" Margin="10">
             <Button Grid.Column="0"
                     Width="40" 
                     Height="40" 
@@ -40,7 +40,14 @@
                     Width="40"
                     Height="40" />
             </Button>
-            <TextBlock Grid.Column="1" Text="Task Detail" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="1" 
+                    Text="Task Detail" 
+                    FontSize="30" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center" 
+                    ClipToBounds="True"
+                    TextWrapping="Wrap"        
+                    MaxHeight="100"  />
             <Button Grid.Column="2"
                     Width="40" 
                     Height="40" 
@@ -60,7 +67,7 @@
                 <Button.Flyout>
                     <Flyout FlyoutPresenterClasses="DropDown" Placement="BottomEdgeAlignedRight">
                         <Flyout.Content>
-                            <StackPanel>
+                            <StackPanel VerticalAlignment="Center">
                                 <MenuItem Header="Edit" 
                                         IsEnabled="{Binding IsNotInArchive}"
                                         Foreground="Black" />
@@ -75,7 +82,7 @@
             </Button>
         </Grid>
 
-        <Border x:Name="TaskDetailPanel" Background="#FF1D1D1D" CornerRadius="10">      
+        <Border x:Name="TaskDetailPanel" Background="#FF1D1D1D" CornerRadius="10" ClipToBounds="True">      
             <StackPanel Margin="10">  
                 <Grid ColumnDefinitions="150,*" Margin="15">
                     <TextBlock Text="Name" Grid.Column="0" />

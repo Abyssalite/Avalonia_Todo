@@ -109,27 +109,34 @@ public static class TaskHelpers
     {      
         var list = store.Lists.FirstOrDefault(l => l.ListName == oldListname);
         if (list == null || editedList == null) return;
+        var ischanged = (oldListname == newListName) ? false : true;
 
         foreach (var group in editedList)
+        {
+            group.Category = InputOrDefault(group.Category, "Miscelanious");
             foreach (var task in group.Tasks)
             {
                 if (group.Category == task.Category) continue;
                 else
                 {
+                    ischanged = true;
                     task.ListName = newListName;
                     task.Category = group.Category;
                 }
             }
-
-        store.SelectedList = new GroupList
-        {
-            ListName = newListName,
-            IsArchived = false,
-            Groups = new(editedList)
-        };
-        store.Lists.Remove(list);
-        store.Lists.Add(store.SelectedList);
-        await SaveAsync(store);
+        }
+        if (ischanged)
+            {
+                store.SelectedList = new GroupList
+                {
+                    ListName = newListName,
+                    IsArchived = false,
+                    Groups = new(editedList)
+                };
+                store.Lists.Remove(list);
+                store.Lists.Add(store.SelectedList);
+                await SaveAsync(store);
+            }
     }
 
     public static void print(object? data)

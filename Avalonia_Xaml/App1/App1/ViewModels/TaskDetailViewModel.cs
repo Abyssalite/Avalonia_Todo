@@ -30,15 +30,6 @@ public partial class TaskDetailViewModel : ViewModelBase
         ShowDialogCommand = new AsyncRelayCommand<object>(OnShowDialogAsync);
         BackCommand = new RelayCommand(async () => await _host.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>()));
     }
-
-    public async Task DeleteTaskAsync()
-    {
-        if (Task != null)
-        {
-            await TaskHelpers.DeleteTask(Task, _store, !IsNotInArchive);
-            await _host.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>());
-        }
-    }
     
     private async Task OnShowDialogAsync(object? parameter)
     {
@@ -46,6 +37,10 @@ public partial class TaskDetailViewModel : ViewModelBase
             button.Flyout?.Hide();
 
         bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
-        if (confirmed == true) await DeleteTaskAsync();
+        if (confirmed == true && Task != null)
+        {
+            await TaskHelpers.DeleteTask(Task, _store, !IsNotInArchive);
+            await _host.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>()); 
+        }
     }
 }

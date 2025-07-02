@@ -28,8 +28,8 @@
         </UserControl.Styles>
 
         <Grid RowDefinitions="*,Auto">
-            <StackPanel Grid.Row="0" Margin="10">
-                <Grid ColumnDefinitions="1*,8*,1*">
+            <StackPanel Grid.Row="0" Margin="10" x:Name="ListsStack">
+                <Grid ColumnDefinitions="Auto,*,Auto">
                     <TextBlock Grid.Column="1"  
                             Text="{Binding ListName}" 
                             FontSize="30"
@@ -65,7 +65,7 @@
                         <Button.Flyout>
                             <Flyout FlyoutPresenterClasses="DropDown" Placement="BottomEdgeAlignedRight">
                                 <Flyout.Content>
-                                    <StackPanel>
+                                    <StackPanel VerticalAlignment="Center">
                                         <MenuItem Foreground="Black"
                                                 Command="{Binding RestoreOrEditCommand}"
                                                 CommandParameter="{Binding ElementName=ButtonFlyout}">
@@ -85,6 +85,11 @@
                                                 </MultiBinding>
                                             </MenuItem.Header>
                                         </MenuItem>
+                                        <MenuItem Header="Delete" 
+                                                IsVisible="{Binding IsNotInArchive}"
+                                                Foreground="Black" 
+                                                Command="{Binding ShowDialogCommand}"
+                                                CommandParameter="{Binding ElementName=ButtonFlyout}" />
                                     </StackPanel>
                                 </Flyout.Content>
                             </Flyout>
@@ -134,37 +139,65 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-
             </StackPanel> 
-            <StackPanel Margin="20,10,20,10" 
-                        Spacing="10"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom">
-                <TextBox 
-                        Watermark="New Task" 
-                        Padding="8"
-                        VerticalAlignment="Center"
-                        Width="230"
-                        FontSize="16"
-                        IsEnabled="{Binding IsNotInArchive}" />
-                <Button Grid.Row="1"
-                        Width="50" 
-                        Height="50" 
-                        Padding="0"
-                        CornerRadius="30"
-                        VerticalAlignment="Center"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        BorderBrush="Transparent"
-                        Background="#FAAA"
-                        Command="{Binding AddTaskViewCommand}"
-                        IsEnabled="{Binding IsNotInArchive}" >
-                    <Image Source="avares://App1/Assets/icons8-plus-100.png"
-                        Stretch="Uniform"
-                        Width="50"
-                        Height="50" />
-                </Button>    
-            </StackPanel>            
+
+            <Border Grid.Row="1" 
+                    x:Name="QuickAddTaskBorder" 
+                    VerticalAlignment="Top" 
+                    CornerRadius="10"
+                    IsEnabled="{Binding IsNotInArchive}" >
+                <Grid 
+                    ColumnDefinitions="*,Auto"
+                    Margin="20,20,20,0"
+                    VerticalAlignment="Top">
+                    <TextBox Grid.Column="0"
+                            x:Name="QuickAddTaskTextBox"
+                            Watermark="New Task" 
+                            Padding="8"                
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            IsVisible="{Binding !IsInEditMode}"
+                            Text="{Binding QuickAddTaskName, Mode=TwoWay}" />
+                   <Button Grid.Column="0"
+                            Width="50" 
+                            Height="50" 
+                            Padding="0"
+                            Margin="0,0,10,0"
+                            CornerRadius="30"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            BorderBrush="Transparent"
+                            Background="#FAAA"
+                            IsVisible="{Binding IsInEditMode}"
+                            Command="{Binding CancelCommand}">
+                        <Image Source="avares://App1/Assets/icons8-plus-100.png"
+                            Stretch="Uniform"
+                            Width="50"
+                            Height="50" />
+                    </Button>  
+
+                    <Button Grid.Column="1"
+                            Width="50" 
+                            Height="50" 
+                            Padding="0"
+                            Margin="10,0,0,0"
+                            CornerRadius="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            BorderBrush="Transparent"
+                            Background="#FAAA"
+                            Command="{Binding AddTaskViewCommand}">
+                        <Image Source="avares://App1/Assets/icons8-plus-100.png"
+                            Stretch="Uniform"
+                            Width="50"
+                            Height="50" />
+                    </Button>    
+                </Grid>
+            </Border>
         </Grid>
 </UserControl>

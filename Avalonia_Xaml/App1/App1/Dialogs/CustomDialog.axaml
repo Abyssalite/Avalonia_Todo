@@ -20,7 +20,7 @@
     <Grid
         MinWidth="400"
         Margin="24"
-        RowDefinitions="Auto, *, Auto">
+        RowDefinitions="Auto,*,Auto">
         <TextBlock
             Grid.Row="0"
             Margin="8"
