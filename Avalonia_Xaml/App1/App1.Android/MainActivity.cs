@@ -2,6 +2,7 @@
 using Android.Content.PM;
 using Avalonia;
 using Avalonia.Android;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace App1.Android;
 
@@ -17,5 +18,18 @@ public class MainActivity : AvaloniaMainActivity<App>
     {
         return base.CustomizeAppBuilder(builder)
             .WithInterFont();
+    }
+
+    public override void OnBackPressed()
+    {
+        var navigatorService = App.Services?.GetRequiredService<INavigatorService>();
+        
+        if (navigatorService == null) return;
+        
+        if (navigatorService.IsExit())
+            OnBackPressedDispatcher.OnBackPressed();
+        
+        else
+            navigatorService.OpenPrevious();
     }
 }

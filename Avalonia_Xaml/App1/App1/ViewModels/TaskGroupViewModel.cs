@@ -10,7 +10,7 @@ namespace App1.ViewModels;
 public partial class TaskGroupViewModel : ViewModelBase
 {
     private readonly Store _store;
-    private readonly IViewHost _host;
+    public readonly INavigatorService _navigator;
     private readonly IDialogService _dialogService;
     public ObservableCollection<TaskGroup>? GroupedTasks { get; set; } = new();
     public string? ListName { get; set; }
@@ -48,10 +48,10 @@ public partial class TaskGroupViewModel : ViewModelBase
         }
     }
 
-    public TaskGroupViewModel(IViewHost host, Store store, IDialogService dialogService)
+    public TaskGroupViewModel(INavigatorService navigator, Store store, IDialogService dialogService)
     {
         _store = store;
-        _host = host;
+        _navigator = navigator;
         _dialogService = dialogService;
         if (store.SelectedList != null)
         {
@@ -145,8 +145,8 @@ public partial class TaskGroupViewModel : ViewModelBase
             }
             else
             {
-                await _host.NavigateRight(App.Services?.GetRequiredService<AddTaskViewModel>());
-                await _host.NavigateLeft(App.Services?.GetRequiredService<NewTaskOptionViewModel>());
+                await _navigator.NavigateRight(App.Services?.GetRequiredService<AddTaskViewModel>());
+                await _navigator.NavigateLeft(App.Services?.GetRequiredService<NewTaskOptionViewModel>());
             }
         }
         IsInEditMode = false;
@@ -158,7 +158,7 @@ public partial class TaskGroupViewModel : ViewModelBase
         OnPropertyChanged(nameof(SelectedTask));
 
         _store.SelectedTask = task;
-        await _host.NavigateRight(App.Services?.GetRequiredService<TaskDetailViewModel>());
+        await _navigator.NavigateRight(App.Services?.GetRequiredService<TaskDetailViewModel>());
     }
 
     private async Task ArchiveDeleteDialog(string listName)
@@ -167,7 +167,7 @@ public partial class TaskGroupViewModel : ViewModelBase
         if (confirmed == true)
         {
             await TaskHelpers.DeleteList(listName, _store, true);
-            await _host.NavigateRight(App.Services?.GetRequiredService<WellcomeViewModel>());
+            await _navigator.OpenPrevious();
         }
     }
     
@@ -180,7 +180,7 @@ public partial class TaskGroupViewModel : ViewModelBase
         if (confirmed == true && ListName != null && IsNotInArchive)
         {
             await TaskHelpers.DeleteList(ListName, _store);
-            await _host.NavigateRight(App.Services?.GetRequiredService<WellcomeViewModel>()); 
+            await _navigator.OpenPrevious();
         }
     }
 }

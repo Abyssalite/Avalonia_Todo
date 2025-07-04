@@ -8,7 +8,7 @@ namespace App1.ViewModels;
 public partial class AddTaskViewModel : ViewModelBase
 {
     private readonly Store _store;
-    private readonly IViewHost _host;
+    public readonly INavigatorService _navigator;
     public INotificationService Notificate  { get; set; }
     public ICommand SaveTaskCommand { get; }
     public ICommand CancelCommand { get; }
@@ -16,10 +16,10 @@ public partial class AddTaskViewModel : ViewModelBase
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
 
-    public AddTaskViewModel(IViewHost host, Store store, INotificationService notificate)
+    public AddTaskViewModel(INavigatorService navigator, Store store, INotificationService notificate)
     {
         _store = store;
-        _host = host;
+        _navigator = navigator;
         Notificate = notificate;
         SaveTaskCommand = new AsyncRelayCommand(AddTask);
         CancelCommand = new AsyncRelayCommand(ClearAsync);
@@ -33,8 +33,7 @@ public partial class AddTaskViewModel : ViewModelBase
         OnPropertyChanged(nameof(TaskCatalog));
         TaskDesc = string.Empty;
         OnPropertyChanged(nameof(TaskDesc));
-        await _host.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>());
-        await _host.NavigateLeft(App.Services?.GetRequiredService<GroupListViewModel>());
+        await _navigator.OpenPrevious();
     }
 
     private async Task AddTask()

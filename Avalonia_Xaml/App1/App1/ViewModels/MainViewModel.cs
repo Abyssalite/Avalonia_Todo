@@ -8,13 +8,15 @@ public partial class MainViewModel : ViewModelBase
     private readonly Store _store;
     private readonly IViewHost _host;
     public IViewHost ViewHost => _host;
-    public INotificationService Notificate  { get; set; }
+    public readonly INavigatorService _navigator;
+    public INotificationService Notificate { get; set; }
 
-    public MainViewModel(Store store, IViewHost host, INotificationService notificate)
+    public MainViewModel(Store store, IViewHost host, INavigatorService navigator, INotificationService notificate)
     {
         _store = store;
         _host = host;
         Notificate = notificate;
+        _navigator = navigator;
         _ = InitializeAsync();
     }
 
@@ -28,7 +30,8 @@ public partial class MainViewModel : ViewModelBase
             if (e.PropertyName == nameof(BaseTask.IsDone)) await TaskHelpers.SaveAsync(_store);
         };
 
-        await _host.NavigateLeft(App.Services?.GetRequiredService<GroupListViewModel>());
-        await _host.NavigateRight(App.Services?.GetRequiredService<WellcomeViewModel>());
+        _navigator.FirstView = App.Services?.GetRequiredService<WellcomeViewModel>();
+        await _navigator.NavigateLeft(App.Services?.GetRequiredService<GroupListViewModel>());
+        await _navigator.NavigateRight(_navigator.FirstView);
     }
 }

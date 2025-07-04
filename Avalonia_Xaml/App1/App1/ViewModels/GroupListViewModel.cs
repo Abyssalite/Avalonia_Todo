@@ -11,11 +11,11 @@ namespace App1.ViewModels;
 public partial class GroupListViewModel : ViewModelBase
 {
     private readonly Store _store;
-    private readonly IViewHost _host;
+    private readonly INavigatorService _navigator;
     public INotificationService Notificate  { get; set; }
     private readonly IPaneService _paneService;
     public ObservableCollection<GroupList>? FilteredLists { get; set; } = new();
-    public ICommand OpenTaskCommand { get; }
+    public ICommand OpenListCommand { get; }
     public ICommand AddListCommand { get; }
     public Action? OnSaveAddList { get; set; }
     private bool _toggleArchive = false;
@@ -47,10 +47,10 @@ public partial class GroupListViewModel : ViewModelBase
         }
     }
 
-    public GroupListViewModel(IViewHost host, Store store, INotificationService notificate, IPaneService paneService)
+    public GroupListViewModel(INavigatorService navigator, Store store, INotificationService notificate, IPaneService paneService)
     {
         _store = store;
-        _host = host;
+        _navigator = navigator;
         Notificate = notificate;
         _paneService = paneService;
         FilteredLists = _store.FilteredLists;
@@ -63,13 +63,11 @@ public partial class GroupListViewModel : ViewModelBase
             }
         };
 
-        OpenTaskCommand = new RelayCommand<string>(async (listName) =>
+        OpenListCommand = new RelayCommand<string>(async (listName) =>
         {
             var list = _store.Lists.FirstOrDefault(l => l.ListName == listName);
             if (list != null)
                 await OpenListAsync(list);
-            _selectedList = null;
-            OnPropertyChanged(nameof(SelectedList));
         });
         AddListCommand = new AsyncRelayCommand<string>(AddList);
     }
@@ -88,7 +86,9 @@ public partial class GroupListViewModel : ViewModelBase
     {
         _store.SelectedList = groupedList;
         _store.SelectedListName = groupedList.ListName;
-        await _host.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>());
+        _navigator.ClearStack();
+        await _navigator.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>());
         _paneService.OpenPane(false);
+        _selectedList = null;
     }
 }

@@ -22,7 +22,7 @@
                     <TextBox Watermark="Task name" Text="{Binding NewTaskName}" Margin="8" />
                     <TextBox Watermark="Description" Text="{Binding TaskDesc}" Margin="8" />
                     <TextBox Watermark="Category" Text="{Binding TaskCatalog}" Margin="8" />
-                    <Grid ColumnDefinitions="Auto,*"  Margin="5,5,0,0">
+                    <Grid ColumnDefinitions="Auto,*"  Margin="5,4,0,0">
                         <Button Grid.Column="0"
                             Content="Add task"
                             HorizontalAlignment="Left"
