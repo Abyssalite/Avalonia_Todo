@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using App1.Dialogs;
+using App1.Components;
 using Ursa.Common;
 using Ursa.Controls;
 using Ursa.Controls.Options;

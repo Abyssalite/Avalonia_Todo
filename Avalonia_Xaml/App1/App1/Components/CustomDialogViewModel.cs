@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Irihi.Avalonia.Shared.Contracts;
 
-namespace App1.Dialogs;
+namespace App1.Components;
 
 public partial class CustomDialogViewModel : ObservableObject, IDialogContext
 {

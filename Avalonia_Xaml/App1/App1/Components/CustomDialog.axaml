@@ -1,9 +1,9 @@
 <UserControl
-    x:Class="App1.Dialogs.CustomDialog"
+    x:Class="App1.Components.CustomDialog"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:dialogs="clr-namespace:App1.Dialogs"
+    xmlns:dialogs="clr-namespace:App1.Components"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:u="https://irihi.tech/ursa"
     d:DesignHeight="450"

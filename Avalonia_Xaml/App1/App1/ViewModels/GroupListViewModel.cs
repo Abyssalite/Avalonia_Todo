@@ -68,6 +68,8 @@ public partial class GroupListViewModel : ViewModelBase
             var list = _store.Lists.FirstOrDefault(l => l.ListName == listName);
             if (list != null)
                 await OpenListAsync(list);
+            _selectedList = null;
+            OnPropertyChanged(nameof(SelectedList));
         });
         AddListCommand = new AsyncRelayCommand<string>(AddList);
     }
@@ -89,6 +91,5 @@ public partial class GroupListViewModel : ViewModelBase
         _navigator.ClearStack();
         await _navigator.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>());
         _paneService.OpenPane(false);
-        _selectedList = null;
     }
 }
