@@ -151,7 +151,7 @@
                     ColumnDefinitions="*,Auto"
                     Margin="20,20,20,0"
                     VerticalAlignment="Top">
-                    <custom:CustomTextBox Grid.Column="0"
+                    <TextBox Grid.Column="0"
                             x:Name="QuickAddTaskTextBox"
                             Watermark="New Task" 
                             Padding="8"

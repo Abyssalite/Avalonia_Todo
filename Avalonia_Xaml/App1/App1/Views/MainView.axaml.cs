@@ -38,8 +38,8 @@ public partial class MainView : UserControl
 
         if (OperatingSystem.IsAndroid())
         {
-            var paneService = App.Services?.GetRequiredService<IPaneService>();
-            if (paneService is PaneService service) service.PaneChanged += OpenPane;
+            var stateService = App.Services?.GetRequiredService<IChangeStateService>();
+            if (stateService is ChangeStateService service) service.PaneChanged += OpenPane;
 
             TopBorder.Height = 0;
             ContentGrid.RowDefinitions.Clear();

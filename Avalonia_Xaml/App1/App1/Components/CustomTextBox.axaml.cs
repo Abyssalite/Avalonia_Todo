@@ -9,7 +9,7 @@ namespace App1.Components;
 public class CustomTextBox : TextBox
 {
     protected override Type StyleKeyOverride => typeof(TextBox);
-    private Flyout? _flyout;
+    private MenuFlyout? _flyout;
 
     public CustomTextBox()
     {
@@ -17,13 +17,13 @@ public class CustomTextBox : TextBox
         ContextFlyout = _flyout;
     }
 
-    private Flyout CreateHorizontalFlyout()
+    private MenuFlyout CreateHorizontalFlyout()
     {
-        var flyout = new Flyout { };
+        var flyout = new MenuFlyout { };
 
-        var cutButton = new MenuItem { Header = "Cut", Padding = new Thickness(8, 0, 8, 0) };
-        var copyButton = new MenuItem { Header = "Copy", Padding = new Thickness(8, 0, 8, 0) };
-        var pasteButton = new MenuItem { Header = "Paste", Padding = new Thickness(8, 0, 8, 0) };
+        var cutButton = new MenuItem { Header = "Cut", Padding = new Thickness(10) };
+        var copyButton = new MenuItem { Header = "Copy", Padding = new Thickness(10) };
+        var pasteButton = new MenuItem { Header = "Paste", Padding = new Thickness(10) };
 
         this.GetObservable(IsFocusedProperty)
             .Subscribe(isFocused =>
@@ -39,28 +39,21 @@ public class CustomTextBox : TextBox
         cutButton.Click += (_, _) =>
         {
             Cut();
-            flyout.Hide();
         };
 
         copyButton.Click += (_, _) =>
         {
             Copy();
-            flyout.Hide();
         };
 
         pasteButton.Click += (_, _) =>
         {
             Paste();
-            flyout.Hide();
         };
 
-        cutButton.IsEnabled = CanCut;
-
-        flyout.Content = new StackPanel
+          flyout.ItemsSource = new[]
         {
-            Orientation = Orientation.Horizontal,
-            Spacing = 0,
-            Children = { cutButton, copyButton, pasteButton, }
+            cutButton, copyButton, pasteButton, 
         };
 
         return flyout;

@@ -28,6 +28,7 @@ public partial class TaskGroupView : UserControl
                     }
                     else
                     {
+                        if (QuickAddTaskTextBox.ContextFlyout?.IsOpen == true) return;
                         QuickAddTaskBorder.Height = 90;
                         await Task.Delay(100);
                         ListsStack.Effect = new BlurEffect { Radius = 0 };

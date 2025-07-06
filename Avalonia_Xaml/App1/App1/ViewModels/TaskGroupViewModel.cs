@@ -12,6 +12,7 @@ public partial class TaskGroupViewModel : ViewModelBase
     private readonly Store _store;
     public readonly INavigatorService _navigator;
     private readonly IDialogService _dialogService;
+    private readonly IChangeStateService _stateService;
     public ObservableCollection<TaskGroup>? GroupedTasks { get; set; } = new();
     public string? ListName { get; set; }
     public string? QuickAddTaskName { get; set; }
@@ -25,6 +26,7 @@ public partial class TaskGroupViewModel : ViewModelBase
         set
         {
             _isInEditMode = value;
+            _stateService.IsInEditMode = value;
             OnPropertyChanged(nameof(IsInEditMode));
         }
     }
@@ -42,25 +44,33 @@ public partial class TaskGroupViewModel : ViewModelBase
             if (value != null && value != _selectedTask)
             {
                 _selectedTask = value;
-                _ = OpenTaskAsync(value);
+                _ = OpenTaskAsync(_selectedTask);
+                _selectedTask = null;
                 OnPropertyChanged(nameof(SelectedTask));
             }
         }
     }
 
-    public TaskGroupViewModel(INavigatorService navigator, Store store, IDialogService dialogService)
+    public TaskGroupViewModel(INavigatorService navigator, Store store, IDialogService dialogService, INotificationService notificate, IChangeStateService stateService)
     {
         _store = store;
         _navigator = navigator;
         _dialogService = dialogService;
+        _stateService = stateService;
         if (store.SelectedList != null)
         {
             ListName = store.SelectedListName;
             GroupedTasks = store.SelectedList.Groups;
             IsNotMainList = !CheckMainList();
             IsNotInArchive = !store.SelectedList.IsArchived;
+            OnPropertyChanged(nameof(IsNotInArchive));
             OnPropertyChanged(nameof(IsNotMainList));
         }
+
+        _stateService.EditModeChanged += (_, value) =>
+        {
+            IsInEditMode = value;
+        }; 
         _store.PropertyChanged += (_, e) =>
         {
             if (store.SelectedList == null) return;
@@ -95,7 +105,16 @@ public partial class TaskGroupViewModel : ViewModelBase
 
         if (IsNotInArchive)
             await TaskHelpers.MoveToArchive(ListName, _store);
-        else await ArchiveDeleteDialog(ListName);
+        else
+        {
+            bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
+            if (confirmed == true)
+            {
+                await TaskHelpers.DeleteList(ListName, _store, true);
+                await _navigator.OpenPrevious();
+            }
+        }
+        ;
         IsInEditMode = false;
     }
 
@@ -105,7 +124,7 @@ public partial class TaskGroupViewModel : ViewModelBase
             button.Flyout?.Hide();
         if (ListName == null) return;
 
-        if (IsNotInArchive && !IsInEditMode)
+        if (IsNotInArchive && !_isInEditMode)
         {
             _oldListName = ListName;
             IsInEditMode = true;
@@ -115,7 +134,7 @@ public partial class TaskGroupViewModel : ViewModelBase
 
     private void CancelEdit()
     {
-        if (IsInEditMode)
+        if (_isInEditMode)
         {
             ListName = _oldListName;
             OnPropertyChanged(nameof(ListName));
@@ -126,7 +145,7 @@ public partial class TaskGroupViewModel : ViewModelBase
     private async Task OpenAddOrSaveTaskAsync()
     {
         if (ListName == null || ListName == "") return;
-        if (IsInEditMode && _oldListName != "") await TaskHelpers.EditList(_oldListName, ListName, GroupedTasks, _store);
+        if (_isInEditMode && _oldListName != "") await TaskHelpers.EditList(_oldListName, ListName, GroupedTasks, _store);
 
         else
         {
@@ -154,23 +173,10 @@ public partial class TaskGroupViewModel : ViewModelBase
 
     private async Task OpenTaskAsync(BaseTask task)
     {
-        _selectedTask = null;
-        OnPropertyChanged(nameof(SelectedTask));
-
         _store.SelectedTask = task;
         await _navigator.NavigateRight(App.Services?.GetRequiredService<TaskDetailViewModel>());
     }
 
-    private async Task ArchiveDeleteDialog(string listName)
-    {
-        bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
-        if (confirmed == true)
-        {
-            await TaskHelpers.DeleteList(listName, _store, true);
-            await _navigator.OpenPrevious();
-        }
-    }
-    
     private async Task OnShowDialogAsync(object? parameter)
     {
         if (parameter is Button button)

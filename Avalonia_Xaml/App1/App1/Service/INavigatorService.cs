@@ -9,13 +9,15 @@ public class NavigatorService : INavigatorService
     private bool isExit = false;
     private readonly Stack<ViewModelBase> _leftHistory = new();
     private readonly Stack<ViewModelBase> _rightHistory = new();
+    private readonly IChangeStateService _stateService;
     public ViewModelBase? FirstView { set; get; }
     private ViewModelBase? _currentLeft;
     private ViewModelBase? _currentRight;
 
-    public NavigatorService(IViewHost host)
+    public NavigatorService(IViewHost host, IChangeStateService stateService)
     {
         _host = host;
+        _stateService = stateService;
     }
 
     public async Task NavigateLeft(ViewModelBase? viewModel)
@@ -66,12 +68,18 @@ public class NavigatorService : INavigatorService
 
     public async Task OpenPrevious()
     {
+        if (_stateService.IsInEditMode)
+        {
+            _stateService.IsInEditMode = false;
+            return;
+        }
         if (_rightHistory.Count > 0)
         {
             _currentRight = _rightHistory.Pop();
             TaskHelpers.print("_rightHistory");
             TaskHelpers.print(_rightHistory);
             await _host.NavigateRight(_currentRight);
+            if (_rightHistory.Count == 0) _stateService.ClearSelectedList();
         }
         if (_leftHistory.Count > 0)
         {
