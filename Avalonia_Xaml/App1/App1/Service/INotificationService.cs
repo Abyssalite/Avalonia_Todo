@@ -1,5 +1,3 @@
-
-
 using System;
 using Ursa.Controls;
 

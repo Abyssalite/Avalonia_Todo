@@ -19,6 +19,7 @@ public partial class TaskGroupViewModel : ViewModelBase
     private string _oldListName = "";
     public bool IsNotMainList { get; } = true;
     public bool IsNotInArchive { get; set; } = true;
+    public bool CanEditListName { get; set; } = false;
     private bool _isInEditMode = false;
     public bool IsInEditMode
     {
@@ -27,7 +28,9 @@ public partial class TaskGroupViewModel : ViewModelBase
         {
             _isInEditMode = value;
             _stateService.IsInEditMode = value;
+            CanEditListName = !CheckMainList() && _isInEditMode;
             OnPropertyChanged(nameof(IsInEditMode));
+            OnPropertyChanged(nameof(CanEditListName));
         }
     }
     public ICommand ShowDialogCommand { get; }

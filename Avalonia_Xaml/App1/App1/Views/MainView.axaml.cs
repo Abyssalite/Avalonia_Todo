@@ -28,12 +28,11 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-        if (!OperatingSystem.IsAndroid())
-            MainSplitView.GetObservable(SplitView.IsPaneOpenProperty)
+        MainSplitView.GetObservable(SplitView.IsPaneOpenProperty)
             .Subscribe(isOpen =>
             {
                 _isPaneOpen = isOpen;
-                LeftBar.IsVisible = !_isPaneOpen;
+                LeftBar.IsVisible = !_isPaneOpen || OperatingSystem.IsAndroid();
             });
 
         if (OperatingSystem.IsAndroid())
@@ -97,12 +96,12 @@ public partial class MainView : UserControl
 
         if (!_isOverride)
         {
-            if (_isPaneOpen && width < 700)
+            if (_isPaneOpen && width < 650)
             {
                 _isSetted = true;
                 OpenPane(false);
             }
-            else if (_isSetted && width > 720)
+            else if (_isSetted && width > 650)
             {
                 _isSetted = false;
                 OpenPane(true);
