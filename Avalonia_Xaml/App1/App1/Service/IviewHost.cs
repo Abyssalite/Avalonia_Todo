@@ -1,11 +1,13 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
+using App1.Components;
 using App1.ViewModels;
 
 public class ViewHost : IViewHost, INotifyPropertyChanged
 {
     private ViewModelBase _leftView = null!;
     private ViewModelBase _rightView = null!;
+    private TopBarViewModel? _topBar = null!;
 
     public ViewModelBase LeftView
     {
@@ -33,6 +35,19 @@ public class ViewHost : IViewHost, INotifyPropertyChanged
         }
     }
 
+    public TopBarViewModel? TopBar
+    {
+        get => _topBar;
+        set
+        {
+            if (_topBar != value)
+            {
+                _topBar = value;
+                OnPropertyChanged(nameof(TopBar));
+            }
+        }
+    }
+
     public Task NavigateLeft(ViewModelBase? viewModel)
     {
         if (viewModel != null)
@@ -47,6 +62,12 @@ public class ViewHost : IViewHost, INotifyPropertyChanged
         return Task.CompletedTask;
     }
 
+    public Task ChangeTopBar(TopBarViewModel? viewModel)
+    {
+        TopBar = viewModel;
+        return Task.CompletedTask;
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected void OnPropertyChanged(string name) =>
@@ -57,7 +78,9 @@ public interface IViewHost
 {
     ViewModelBase LeftView { get; set; }
     ViewModelBase RightView { get; set; }
+    TopBarViewModel? TopBar { get; set; }
 
+    Task ChangeTopBar(TopBarViewModel? viewModel);
     Task NavigateLeft(ViewModelBase? viewModel);
     Task NavigateRight(ViewModelBase? viewModel);
 }

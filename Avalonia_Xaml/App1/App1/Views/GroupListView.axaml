@@ -16,7 +16,7 @@
     </UserControl.Resources>
     <Grid RowDefinitions="Auto,Auto">
         <StackPanel Grid.Row="0" Margin="5">
-            <StackPanel Margin="5,5,30,10" Spacing="10" IsVisible="{Binding !ToggleArchive}">
+            <StackPanel Margin="5,10,30,10" Spacing="10" IsVisible="{Binding !ToggleArchive}">
                 <Button Content="Quick Task"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -62,7 +62,7 @@
                     Background="Transparent"
                     SelectionMode="Single"
                     CornerRadius="6"
-                    SelectedItem="{Binding $parent[UserControl].((vm:GroupListViewModel)DataContext).SelectedList, Mode=TwoWay}">
+                    SelectedItem="{Binding $parent[UserControl].((vm:GroupListViewModel)DataContext)?.SelectedList, Mode=TwoWay}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Margin="5">
@@ -80,7 +80,7 @@
             <TextBox 
                 x:Name="NewListBox" 
                 Watermark="New List" 
-                Margin="0,5,25,5" />
+                Margin="0,0,25,5" />
             <Button x:Class="App1.Views.GroupListView"
                 x:Name="SaveButton"
                 HorizontalAlignment="Stretch"

@@ -47,7 +47,7 @@ public partial class GroupListViewModel : ViewModelBase
         }
     }
 
-    public GroupListViewModel(INavigatorService navigator, Store store, INotificationService notificate, IChangeStateService stateService)
+    public GroupListViewModel(Store store, INavigatorService navigator, INotificationService notificate, IChangeStateService stateService)
     {
         _store = store;
         _navigator = navigator;
@@ -90,7 +90,8 @@ public partial class GroupListViewModel : ViewModelBase
         _store.SelectedList = groupedList;
         _store.SelectedListName = groupedList?.ListName;
         _navigator.ClearStack();
-        await _navigator.NavigateRight(App.Services?.GetRequiredService<TaskGroupViewModel>());
+        var vm = App.Services?.GetRequiredService<TaskGroupViewModel>();
+        await _navigator.NavigateRight(vm, new Components.TopBarViewModel(_store, vm));
         _stateService.OpenPane(false);
     }
 

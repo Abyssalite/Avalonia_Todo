@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace App1.ViewModels;
@@ -33,11 +32,12 @@ public partial class TaskGroupViewModel : ViewModelBase
             OnPropertyChanged(nameof(CanEditListName));
         }
     }
-    public ICommand ShowDialogCommand { get; }
-    public ICommand CancelCommand { get; }
     public ICommand AddTaskViewCommand { get; }
-    public ICommand ArchiveOrDeleteCommand { get; }
-    public ICommand RestoreOrEditCommand { get; }
+    public ICommand CancelCommand { get; }
+    public AsyncRelayCommand DeleteCommand { get; }
+    public AsyncRelayCommand ArchiveCommand { get; }
+    public AsyncRelayCommand RestoreOrEditCommand { get; }
+
     private BaseTask? _selectedTask;
     public BaseTask? SelectedTask
     {
@@ -54,7 +54,7 @@ public partial class TaskGroupViewModel : ViewModelBase
         }
     }
 
-    public TaskGroupViewModel(INavigatorService navigator, Store store, IDialogService dialogService, INotificationService notificate, IChangeStateService stateService)
+    public TaskGroupViewModel(Store store, INavigatorService navigator, IDialogService dialogService, IChangeStateService stateService)
     {
         _store = store;
         _navigator = navigator;
@@ -70,10 +70,14 @@ public partial class TaskGroupViewModel : ViewModelBase
             OnPropertyChanged(nameof(IsNotMainList));
         }
 
+        DeleteCommand = new AsyncRelayCommand(DeleteListAsync);
+        ArchiveCommand = new AsyncRelayCommand(ArchiveListAsync);
+        RestoreOrEditCommand = new AsyncRelayCommand(RestoreOrEditListAsync);
+
         _stateService.EditModeChanged += (_, value) =>
         {
             IsInEditMode = value;
-        }; 
+        };
         _store.PropertyChanged += (_, e) =>
         {
             if (store.SelectedList == null) return;
@@ -92,39 +96,34 @@ public partial class TaskGroupViewModel : ViewModelBase
         };
 
         AddTaskViewCommand = new AsyncRelayCommand(OpenAddOrSaveTaskAsync);
-        ArchiveOrDeleteCommand = new AsyncRelayCommand<object>(ArchiveOrDeleteListAsync);
-        RestoreOrEditCommand = new AsyncRelayCommand<object>(RestoreOrEditListAsync);
-        ShowDialogCommand = new AsyncRelayCommand<object>(OnShowDialogAsync);
         CancelCommand = new RelayCommand(CancelEdit);
     }
 
     private bool CheckMainList() => ListName == "Quick" || ListName == "Important";
 
-    private async Task ArchiveOrDeleteListAsync(object? parameter)
+    private async Task ArchiveListAsync()
     {
-        if (parameter is Button button)
-            button.Flyout?.Hide();
         if (!IsNotMainList || ListName == null) return;
 
-        if (IsNotInArchive)
-            await TaskHelpers.MoveToArchive(ListName, _store);
-        else
-        {
-            bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
-            if (confirmed == true)
-            {
-                await TaskHelpers.DeleteList(ListName, _store, true);
-                await _navigator.OpenPrevious();
-            }
-        }
-        ;
+        await TaskHelpers.MoveToArchive(ListName, _store);
         IsInEditMode = false;
     }
 
-    private async Task RestoreOrEditListAsync(object? parameter)
+    private async Task DeleteListAsync()
     {
-        if (parameter is Button button)
-            button.Flyout?.Hide();
+        if (!IsNotMainList || ListName == null) return;
+
+        bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
+        if (confirmed == true)
+        {
+            await TaskHelpers.DeleteList(ListName, _store, !IsNotInArchive);
+            await _navigator.OpenPrevious();
+        }        
+        IsInEditMode = false;
+    }
+
+    private async Task RestoreOrEditListAsync()
+    {
         if (ListName == null) return;
 
         if (IsNotInArchive && !_isInEditMode)
@@ -148,7 +147,8 @@ public partial class TaskGroupViewModel : ViewModelBase
     private async Task OpenAddOrSaveTaskAsync()
     {
         if (ListName == null || ListName == "") return;
-        if (_isInEditMode && _oldListName != "") await TaskHelpers.EditList(_oldListName, ListName, GroupedTasks, _store);
+        if (_isInEditMode && _oldListName != "")
+            await TaskHelpers.EditList(_oldListName, ListName, GroupedTasks, _store);
 
         else
         {
@@ -167,7 +167,8 @@ public partial class TaskGroupViewModel : ViewModelBase
             }
             else
             {
-                await _navigator.NavigateRight(App.Services?.GetRequiredService<AddTaskViewModel>());
+                var vm = App.Services?.GetRequiredService<AddTaskViewModel>();
+                await _navigator.NavigateRight(vm, new Components.TopBarViewModel(_store, vm, "New Task"));
                 await _navigator.NavigateLeft(App.Services?.GetRequiredService<NewTaskOptionViewModel>());
             }
         }
@@ -177,19 +178,7 @@ public partial class TaskGroupViewModel : ViewModelBase
     private async Task OpenTaskAsync(BaseTask task)
     {
         _store.SelectedTask = task;
-        await _navigator.NavigateRight(App.Services?.GetRequiredService<TaskDetailViewModel>());
-    }
-
-    private async Task OnShowDialogAsync(object? parameter)
-    {
-        if (parameter is Button button)
-            button.Flyout?.Hide();
-
-        bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
-        if (confirmed == true && ListName != null && IsNotInArchive)
-        {
-            await TaskHelpers.DeleteList(ListName, _store);
-            await _navigator.OpenPrevious();
-        }
+        var vm = App.Services?.GetRequiredService<TaskDetailViewModel>();
+        await _navigator.NavigateRight(vm, new Components.TopBarViewModel(_store, vm));
     }
 }

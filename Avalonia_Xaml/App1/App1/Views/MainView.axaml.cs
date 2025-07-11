@@ -41,22 +41,12 @@ public partial class MainView : UserControl
             if (stateService is ChangeStateService service) service.PaneChanged += OpenPane;
 
             TopBorder.Height = 0;
-            ContentGrid.RowDefinitions.Clear();
-            ContentGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
-            ContentGrid.RowDefinitions.Add(new RowDefinition(new GridLength(1, GridUnitType.Star)));
-            Grid.SetRow(MainContent, 1);
-            LeftBar.Orientation = Avalonia.Layout.Orientation.Horizontal;
             OpenPane(false);
             MainSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
         }
         else
         {
             TopBorder.Height = OperatingSystem.IsBrowser() ? 0 : 33;
-            ContentGrid.ColumnDefinitions.Clear();
-            ContentGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
-            ContentGrid.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
-            Grid.SetColumn(MainContent, 1);
-            LeftBar.Orientation = Avalonia.Layout.Orientation.Vertical;
             OpenPane(true);
             MainSplitView.DisplayMode = SplitViewDisplayMode.Inline;
         }

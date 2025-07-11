@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
+using App1.Components;
 using CommunityToolkit.Mvvm.Input;
 
 namespace App1.ViewModels;
@@ -15,11 +16,12 @@ public partial class AddTaskViewModel : ViewModelBase
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
 
-    public AddTaskViewModel(INavigatorService navigator, Store store, INotificationService notificate)
+    public AddTaskViewModel(Store store, INavigatorService navigator, INotificationService notificate)
     {
         _store = store;
         _navigator = navigator;
         Notificate = notificate;
+
         SaveTaskCommand = new AsyncRelayCommand(AddTask);
         CancelCommand = new AsyncRelayCommand(ClearAsync);
     }

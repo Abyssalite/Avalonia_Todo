@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using App1.Components;
 using App1.ViewModels;
 
 public class NavigatorService : INavigatorService
@@ -7,11 +8,12 @@ public class NavigatorService : INavigatorService
     private readonly IViewHost _host;
     private bool isExit = false;
     private readonly Stack<ViewModelBase> _leftHistory = new();
-    private readonly Stack<ViewModelBase> _rightHistory = new();
+    private readonly Stack<(ViewModelBase ViewModel, TopBarViewModel? TopBar)> _rightHistory = new();
     private readonly IChangeStateService _stateService;
     public ViewModelBase? FirstView { set; get; }
     private ViewModelBase? _currentLeft;
     private ViewModelBase? _currentRight;
+    private TopBarViewModel? _currentTopBar;
 
     public NavigatorService(IViewHost host, IChangeStateService stateService)
     {
@@ -27,21 +29,21 @@ public class NavigatorService : INavigatorService
         if (viewModel != null)
             _currentLeft = viewModel;
         
-        TaskHelpers.print("_leftHistory");
-        TaskHelpers.print(_leftHistory);
         await _host.NavigateLeft(_currentLeft);
     }
 
-    public async Task NavigateRight(ViewModelBase? viewModel)
+    public async Task NavigateRight(ViewModelBase? viewModel, TopBarViewModel? topbar = null)
     {
         isExit = false;
         if (_currentRight != null)
-            _rightHistory.Push(_currentRight);
+            _rightHistory.Push((_currentRight, _currentTopBar));
         if (viewModel != null)
+        {
             _currentRight = viewModel;
-    
-        TaskHelpers.print("_rightHistory");
-        TaskHelpers.print(_rightHistory);
+            _currentTopBar = topbar;
+        }
+
+        await _host.ChangeTopBar(_currentTopBar);
         await _host.NavigateRight(_currentRight);
     }
 
@@ -61,6 +63,7 @@ public class NavigatorService : INavigatorService
         if (_rightHistory.Count > 0 && FirstView != null)
         {
             _currentRight = FirstView;
+            _currentTopBar = null;
             _rightHistory.Clear();
         }
     }
@@ -74,17 +77,18 @@ public class NavigatorService : INavigatorService
         }
         if (_rightHistory.Count > 0)
         {
-            _currentRight = _rightHistory.Pop();
-            TaskHelpers.print("_rightHistory");
-            TaskHelpers.print(_rightHistory);
+            (_currentRight, _currentTopBar) = _rightHistory.Pop();
+
             await _host.NavigateRight(_currentRight);
+            await _host.ChangeTopBar(_currentTopBar);
+
             if (_rightHistory.Count == 0) _stateService.ClearSelectedList();
+    
         }
         if (_leftHistory.Count > 0)
         {
             _currentLeft = _leftHistory.Pop();
-            TaskHelpers.print("_leftHistory");
-            TaskHelpers.print(_leftHistory);
+
             await _host.NavigateLeft(_currentLeft);
         }
     }
@@ -93,9 +97,9 @@ public class NavigatorService : INavigatorService
 public interface INavigatorService
 {
     Task NavigateLeft(ViewModelBase? viewModel);
-    Task NavigateRight(ViewModelBase? viewModel);
-    public void ClearStack();
-    bool IsExit(); 
+    Task NavigateRight(ViewModelBase? viewModel, TopBarViewModel? topbar = null);
+    void ClearStack();
+    bool IsExit();
     ViewModelBase? FirstView { set; get; }
-    Task OpenPrevious();   
+    Task OpenPrevious();
 }

@@ -30,8 +30,8 @@
                     Classes.Blur="{Binding $parent[u:UrsaWindow].(u:OverlayDialogHost.IsInModalStatus)}">
                 <SplitView.Pane>
                     <Border Background="#FF2D2D2D">
-                        <StackPanel Margin="10">
-                            <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,10" >
+                        <StackPanel Margin="10,15,10,10">
+                            <Grid ColumnDefinitions="*,Auto" >
                                 <TextBlock Grid.Column="0" Margin="10,0,10,0" Text="Text" FontSize="20" VerticalAlignment="Center" />
                                 <Button Content="☰" 
                                     Grid.Column="1" 
@@ -44,16 +44,19 @@
                     </Border>
                 </SplitView.Pane>
 
-                <Grid x:Name="ContentGrid">  
-                    <Border Background="#FF2D2D2D">
-                        <StackPanel  x:Name="LeftBar" Margin="10,15,10,10" Spacing="10">
+                <Grid ColumnDefinitions="Auto,*">  
+                    <Border Grid.Column="0" Background="#FF2D2D2D" x:Name="LeftBar">
+                        <StackPanel Spacing="10" Margin="10,15,10,10">
                             <Button Content="☰" 
                                 Click="TogglePane_Click"
                                 x:Name="toggleOpen" />
                             <Button Content="0" />
                         </StackPanel>
                     </Border>
-                    <ContentControl x:Name="MainContent" Grid.Column="1" Content="{Binding ViewHost.RightView}" Margin="5,10,5,5" />
+                    <Grid Grid.Column="1" RowDefinitions="Auto,*" Margin="5,10,5,5">
+                        <ContentControl Grid.Row="0" Content="{Binding ViewHost.TopBar}" Margin="10,5,10,5" />
+                        <ContentControl Grid.Row="1" Content="{Binding ViewHost.RightView}" />
+                    </Grid>
                 </Grid>
             </SplitView>
         </Panel>

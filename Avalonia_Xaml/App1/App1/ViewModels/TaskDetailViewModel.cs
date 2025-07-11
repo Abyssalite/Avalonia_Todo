@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
+using App1.Components;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
 
@@ -15,7 +16,7 @@ public partial class TaskDetailViewModel : ViewModelBase
     public ICommand ShowDialogCommand { get; }
     public ICommand BackCommand { get; }
 
-    public TaskDetailViewModel(INavigatorService navigator, Store store, IDialogService dialogService)
+    public TaskDetailViewModel(Store store, INavigatorService navigator, IDialogService dialogService)
     {
         _store = store;
         _navigator = navigator;

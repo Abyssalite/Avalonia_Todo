@@ -10,110 +10,22 @@
              x:DataType="vm:TaskGroupViewModel"
              xmlns:custom="clr-namespace:App1.Components"> 
 
-        <UserControl.Resources>
-            <ResourceDictionary>
-                <converters:ArchiveEditTextConverter x:Key="ArchiveEditTextConverter" />
-            </ResourceDictionary>
-        </UserControl.Resources>
-        <UserControl.Styles>
-            <Style Selector="FlyoutPresenter.DropDown">
-                <Setter Property="Background" Value="#FAAA" />
-                <Setter Property="MinWidth" Value="150" />
-                <Setter Property="MaxHeight" Value="400" />
-                <Setter Property="Margin" Value="10" />
-                <Setter Property="Padding" Value="10" />
-                <Setter Property="BorderBrush" Value="White" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
-            </Style>
-        </UserControl.Styles>
-
         <Grid RowDefinitions="*,Auto">
-            <StackPanel Grid.Row="0" Margin="10" x:Name="ListsStack">
-                <Grid ColumnDefinitions="Auto,*,Auto">
-                    <TextBlock Grid.Column="1"  
-                            Text="{Binding ListName}" 
-                            FontSize="30"
-                            VerticalAlignment="Center" 
-                            HorizontalAlignment="Center" 
-                            TextWrapping="Wrap"
-                            MaxHeight="100"
-                            IsVisible="{Binding !CanEditListName}" />
-                    <TextBox Grid.Column="1" 
-                            Text="{Binding ListName, Mode=TwoWay}" 
-                            FontSize="30"
-                            Padding="8"
-                            VerticalAlignment="Center" 
-                            HorizontalAlignment="Center" 
-                            IsVisible="{Binding CanEditListName}" />
-
-                    <Button Grid.Column="2"
-                            Width="40" 
-                            Height="40" 
-                            Padding="0"
-                            CornerRadius="30"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Right"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"
-                            BorderBrush="Transparent"
-                            Background="#FAAA" 
-                            x:Name="ButtonFlyout">
-                        <Image Source="avares://App1/Assets/icons8-menu-100.png"
-                            Stretch="Uniform"
-                            Width="40"
-                            Height="40" />
-                        <Button.Flyout>
-                            <Flyout FlyoutPresenterClasses="DropDown" Placement="BottomEdgeAlignedRight">
-                                <Flyout.Content>
-                                    <StackPanel VerticalAlignment="Center">
-                                        <MenuItem Foreground="Black"
-                                                Command="{Binding RestoreOrEditCommand}"
-                                                CommandParameter="{Binding ElementName=ButtonFlyout}">
-                                            <MenuItem.Header>
-                                                <MultiBinding Converter="{StaticResource ArchiveEditTextConverter}" ConverterParameter="Edit">
-                                                    <Binding Path="IsNotInArchive" />
-                                                </MultiBinding>
-                                            </MenuItem.Header>
-                                        </MenuItem>
-                                        <MenuItem Foreground="Black" 
-                                                IsEnabled="{Binding IsNotMainList}"
-                                                Command="{Binding ArchiveOrDeleteCommand}" 
-                                                CommandParameter="{Binding ElementName=ButtonFlyout}">
-                                            <MenuItem.Header>
-                                                <MultiBinding Converter="{StaticResource ArchiveEditTextConverter}" ConverterParameter="Archive">
-                                                    <Binding Path="IsNotInArchive" />
-                                                </MultiBinding>
-                                            </MenuItem.Header>
-                                        </MenuItem>
-                                        <MenuItem Header="Delete" 
-                                                IsEnabled="{Binding IsNotMainList}"
-                                                IsVisible="{Binding IsNotInArchive}"
-                                                Foreground="Black" 
-                                                Command="{Binding ShowDialogCommand}"
-                                                CommandParameter="{Binding ElementName=ButtonFlyout}" />
-                                    </StackPanel>
-                                </Flyout.Content>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-                </Grid>
-
-                <ItemsControl ItemsSource="{Binding GroupedTasks}">
+                <ItemsControl ItemsSource="{Binding GroupedTasks}" Grid.Row="0" Margin="5" x:Name="ListsStack">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel>
+                            <StackPanel Background="#FF2D2D2D">
                                 <TextBlock Text="{Binding Category}" 
                                         FontSize="22" 
                                         FontWeight="Bold"
                                         Margin="10,10,100,2"
                                         Padding="10,5,10,5" 
-                                        IsVisible="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext).IsInEditMode}" />
+                                        IsVisible="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}" />
                                 <TextBox Text="{Binding Category, Mode=TwoWay}" 
                                         FontSize="22"
                                         Margin="10,10,100,2"
                                         Padding="10,8,10,8" 
-                                        IsVisible="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext).IsInEditMode}" />
+                                        IsVisible="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}" />
 
                                 <ListBox ItemsSource="{Binding Tasks}"
                                         BorderThickness="0"
@@ -121,8 +33,8 @@
                                         Background="Transparent"
                                         SelectionMode="Single"
                                         CornerRadius="8"
-                                        SelectedItem="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext).SelectedTask, Mode=TwoWay}"
-                                        IsEnabled="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext).IsInEditMode}">
+                                        SelectedItem="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.SelectedTask, Mode=TwoWay}"
+                                        IsEnabled="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" Margin="5,10,5,10">
@@ -141,7 +53,6 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </StackPanel> 
 
             <Border Grid.Row="1" 
                     x:Name="QuickAddTaskBorder" 

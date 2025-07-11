@@ -10,13 +10,6 @@
              x:DataType="vm:AddTaskViewModel">   
         
         <StackPanel HorizontalAlignment="Stretch" >
-            <TextBlock Text="New Task" 
-                    FontSize="30" 
-                    Margin="10" 
-                    VerticalAlignment="Center" 
-                    HorizontalAlignment="Center"
-                    TextWrapping="Wrap"
-                    MaxHeight="100" />
             <Border x:Name="AddTaskPanel" Background="#FF1D1D1D" CornerRadius="10" ClipToBounds="True">      
                 <StackPanel Margin="10"> 
                     <TextBox Watermark="Task name" Text="{Binding NewTaskName}" Margin="8" />
