@@ -5,7 +5,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace App1.Components;
-
+/// <summary>
+/// Todo: Maybe implement a more permanent Topbar
+/// </summary>
 public partial class TopBarViewModel : ObservableObject
 {
     private readonly Store _store;
@@ -25,13 +27,12 @@ public partial class TopBarViewModel : ObservableObject
             OnPropertyChanged(nameof(CanEditBarName));
         }
     }
-    public ICommand? ArchiveCommand { get; }
-    public ICommand? RestoreOrEditCommand { get; }
+    public ICommand? ToggleArchiveCommand { get; }
+    public ICommand? EditCommand { get; }
     public ICommand? BackOrDrawerCommand { get; }
     public ICommand? DeleteCommand { get; }
     public RelayCommand RunAfterLoadedCommand { get; }
-    public Action<ViewModelBase?>? OnSetParent { get; set; }
-
+    public Action<ViewModelBase>? OnSetParent { get; set; }
 
     public TopBarViewModel(Store store, ViewModelBase? parent, String? barname = null)
     {
@@ -58,11 +59,11 @@ public partial class TopBarViewModel : ObservableObject
             }
         };
 
-        if (parent is TaskGroupViewModel tg) {
-            ArchiveCommand = new AsyncRelayCommand(() => tg.ArchiveCommand.ExecuteAsync(null));
-            RestoreOrEditCommand = new AsyncRelayCommand(() => tg.RestoreOrEditCommand.ExecuteAsync(null));
-            DeleteCommand = new AsyncRelayCommand(() => tg.DeleteCommand.ExecuteAsync(null));
-        }
+        if (parent == null) throw new NullReferenceException("No Parent View Setted");
+        ToggleArchiveCommand = new AsyncRelayCommand(() => parent.ToggleArchiveCommand.ExecuteAsync(null));
+        DeleteCommand = new AsyncRelayCommand(() => parent.DeleteCommand.ExecuteAsync(null));
+        EditCommand = new RelayCommand(() => parent.EditCommand.Execute(null));
+        BackOrDrawerCommand = new AsyncRelayCommand(() => parent.BackOrDrawerCommand.ExecuteAsync(null));
 
         RunAfterLoadedCommand = new RelayCommand(() => OnSetParent?.Invoke(parent));
     }

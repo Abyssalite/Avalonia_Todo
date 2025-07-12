@@ -10,10 +10,6 @@ namespace App1.ViewModels;
 
 public partial class GroupListViewModel : ViewModelBase
 {
-    private readonly Store _store;
-    private readonly INavigatorService _navigator;
-    public INotificationService Notificate { get; set; }
-    private readonly IChangeStateService _stateService;
     public ObservableCollection<GroupList>? FilteredLists { get; set; } = new();
     public ICommand OpenListCommand { get; }
     public ICommand AddListCommand { get; }
@@ -47,12 +43,14 @@ public partial class GroupListViewModel : ViewModelBase
         }
     }
 
-    public GroupListViewModel(Store store, INavigatorService navigator, INotificationService notificate, IChangeStateService stateService)
+    public GroupListViewModel(        
+        Store store,
+        INavigatorService navigator,
+        IDialogService dialogService,
+        IChangeStateService stateService,
+        INotificationService notificate):
+        base(store, navigator, dialogService, stateService, notificate)
     {
-        _store = store;
-        _navigator = navigator;
-        Notificate = notificate;
-        _stateService = stateService;
         FilteredLists = _store.FilteredLists;
         _store.PropertyChanged += (_, e) =>
         {
@@ -90,8 +88,9 @@ public partial class GroupListViewModel : ViewModelBase
         _store.SelectedList = groupedList;
         _store.SelectedListName = groupedList?.ListName;
         _navigator.ClearStack();
+        
         var vm = App.Services?.GetRequiredService<TaskGroupViewModel>();
-        await _navigator.NavigateRight(vm, new Components.TopBarViewModel(_store, vm));
+        await _navigator.NavigateRight((vm, new Components.TopBarViewModel(_store, vm)));
         _stateService.OpenPane(false);
     }
 

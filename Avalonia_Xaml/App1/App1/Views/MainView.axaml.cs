@@ -21,32 +21,44 @@ public partial class MainView : UserControl
 {
     private MainViewModel? _viewModel;
     private bool _isPaneOpen;
+    public bool IsPaneOpen
+    {
+        get => _isPaneOpen;
+        set
+        {
+            _isPaneOpen = value;
+            if (_stateService != null) _stateService.IsPaneOpen = value;
+        }
+    }
     private bool _isSetted = false;
     private bool _isOverride = false;
     private CancellationTokenSource? _resizeToken;
+    private IChangeStateService? _stateService;
 
     public MainView()
     {
         InitializeComponent();
+        _stateService = App.Services?.GetRequiredService<IChangeStateService>();
+
         MainSplitView.GetObservable(SplitView.IsPaneOpenProperty)
             .Subscribe(isOpen =>
             {
-                _isPaneOpen = isOpen;
-                LeftBar.IsVisible = !_isPaneOpen || OperatingSystem.IsAndroid();
+                IsPaneOpen = isOpen;
+                LeftBar.IsVisible = !IsPaneOpen && !OperatingSystem.IsAndroid();
             });
 
         if (OperatingSystem.IsAndroid())
         {
-            var stateService = App.Services?.GetRequiredService<IChangeStateService>();
-            if (stateService is ChangeStateService service) service.PaneChanged += OpenPane;
-
+            if (_stateService != null) _stateService.PaneChanged += OpenPane;
             TopBorder.Height = 0;
+            LeftBar.IsVisible = false;
             OpenPane(false);
             MainSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
         }
         else
         {
             TopBorder.Height = OperatingSystem.IsBrowser() ? 0 : 33;
+            LeftBar.IsVisible = true;
             OpenPane(true);
             MainSplitView.DisplayMode = SplitViewDisplayMode.Inline;
         }
@@ -71,7 +83,7 @@ public partial class MainView : UserControl
             if (insetsManager is not null)
             {
                 insetsManager.SystemBarColor = Colors.Black;
-                insetsManager.DisplayEdgeToEdge = true;
+                insetsManager.DisplayEdgeToEdge = false;
             }
         };
     }
@@ -86,7 +98,7 @@ public partial class MainView : UserControl
 
         if (!_isOverride)
         {
-            if (_isPaneOpen && width < 650)
+            if (IsPaneOpen && width < 650)
             {
                 _isSetted = true;
                 OpenPane(false);
@@ -102,15 +114,15 @@ public partial class MainView : UserControl
     [RelayCommand]
     private void FollowSystemTheme() =>
         Application.Current?.RegisterFollowSystemTheme();
-    
-    private void OpenPane(bool value) =>
-        MainSplitView.IsPaneOpen = value;
 
-    private void TogglePane_Click(object sender, RoutedEventArgs e)
+    private void OpenPane(bool value)
     {
         _isOverride = true;
-        OpenPane(!_isPaneOpen);
+        MainSplitView.IsPaneOpen = value;
     }
+
+    private void TogglePane_Click(object sender, RoutedEventArgs e) =>
+        OpenPane(!IsPaneOpen);
     
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
@@ -125,6 +137,5 @@ public partial class MainView : UserControl
         _viewModel.Notificate.ToastManager = WindowToastManager.TryGetToastManager(visualLayerManager, out var toastManager)
             ? toastManager
             : new WindowToastManager(visualLayerManager) { MaxItems = 3 };
-        Debug.Assert(WindowNotificationManager.TryGetNotificationManager(visualLayerManager, out _));
     }
 }

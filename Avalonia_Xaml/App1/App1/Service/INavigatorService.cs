@@ -8,9 +8,9 @@ public class NavigatorService : INavigatorService
     private readonly IViewHost _host;
     private bool isExit = false;
     private readonly Stack<ViewModelBase> _leftHistory = new();
-    private readonly Stack<(ViewModelBase ViewModel, TopBarViewModel? TopBar)> _rightHistory = new();
+    private readonly Stack<(ViewModelBase, TopBarViewModel)> _rightHistory = new();
     private readonly IChangeStateService _stateService;
-    public ViewModelBase? FirstView { set; get; }
+    public (ViewModelBase? , TopBarViewModel?) FirstView { set; get; }
     private ViewModelBase? _currentLeft;
     private ViewModelBase? _currentRight;
     private TopBarViewModel? _currentTopBar;
@@ -32,17 +32,15 @@ public class NavigatorService : INavigatorService
         await _host.NavigateLeft(_currentLeft);
     }
 
-    public async Task NavigateRight(ViewModelBase? viewModel, TopBarViewModel? topbar = null)
+    public async Task NavigateRight((ViewModelBase?, TopBarViewModel?) viewModel)
     {
         isExit = false;
-        if (_currentRight != null)
+        if (_currentRight != null && _currentTopBar != null)
             _rightHistory.Push((_currentRight, _currentTopBar));
-        if (viewModel != null)
+        if (viewModel != (null, null))
         {
-            _currentRight = viewModel;
-            _currentTopBar = topbar;
+            (_currentRight, _currentTopBar) = viewModel;
         }
-
         await _host.ChangeTopBar(_currentTopBar);
         await _host.NavigateRight(_currentRight);
     }
@@ -60,10 +58,9 @@ public class NavigatorService : INavigatorService
 
     public void ClearStack()
     {
-        if (_rightHistory.Count > 0 && FirstView != null)
+        if (_rightHistory.Count > 0 && FirstView != (null, null))
         {
-            _currentRight = FirstView;
-            _currentTopBar = null;
+            (_currentRight, _currentTopBar) = FirstView;
             _rightHistory.Clear();
         }
     }
@@ -97,9 +94,9 @@ public class NavigatorService : INavigatorService
 public interface INavigatorService
 {
     Task NavigateLeft(ViewModelBase? viewModel);
-    Task NavigateRight(ViewModelBase? viewModel, TopBarViewModel? topbar = null);
+    Task NavigateRight((ViewModelBase?, TopBarViewModel?) viewModel);
     void ClearStack();
     bool IsExit();
-    ViewModelBase? FirstView { set; get; }
+    (ViewModelBase?, TopBarViewModel?) FirstView { set; get; }
     Task OpenPrevious();
 }

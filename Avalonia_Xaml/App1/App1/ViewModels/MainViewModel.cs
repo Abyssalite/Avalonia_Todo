@@ -5,18 +5,20 @@ namespace App1.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    private readonly Store _store;
     private readonly IViewHost _host;
     public IViewHost ViewHost => _host;
-    public readonly INavigatorService _navigator;
-    public INotificationService Notificate { get; set; }
 
-    public MainViewModel(Store store, IViewHost host, INavigatorService navigator, INotificationService notificate)
+    public MainViewModel(
+        IViewHost host,
+        Store store,
+        INavigatorService navigator,
+        IDialogService dialogService,
+        IChangeStateService stateService,
+        INotificationService notificate):
+        base(store, navigator, dialogService, stateService, notificate)
+
     {
-        _store = store;
         _host = host;
-        Notificate = notificate;
-        _navigator = navigator;
         _ = InitializeAsync();
     }
 
@@ -30,7 +32,8 @@ public partial class MainViewModel : ViewModelBase
             if (e.PropertyName == nameof(BaseTask.IsDone)) await TaskHelpers.SaveAsync(_store);
         };
 
-        _navigator.FirstView = App.Services?.GetRequiredService<WellcomeViewModel>();
+        var vm = App.Services?.GetRequiredService<WellcomeViewModel>();
+        _navigator.FirstView = (vm, new Components.TopBarViewModel(_store, vm, ""));
         await _navigator.NavigateLeft(App.Services?.GetRequiredService<GroupListViewModel>());
         await _navigator.NavigateRight(_navigator.FirstView);
     }

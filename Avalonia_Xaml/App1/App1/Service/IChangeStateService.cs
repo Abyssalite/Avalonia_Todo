@@ -2,6 +2,7 @@ using System;
 
 public class ChangeStateService : IChangeStateService
 {
+    public bool IsPaneOpen { set; get; }
     public event Action<bool>? PaneChanged;
     public void OpenPane(bool isOpen)
     {
@@ -17,11 +18,11 @@ public class ChangeStateService : IChangeStateService
             if (_isInEditMode != value)
             {
                 _isInEditMode = value;
-                EditModeChanged?.Invoke(this, value);
+                EditModeChanged?.Invoke(value);
             }
         }
     }
-    public event EventHandler<bool>? EditModeChanged;
+    public event Action<bool>? EditModeChanged;
 
     public event Action? SelectedListCleared;
     public void ClearSelectedList()
@@ -33,9 +34,11 @@ public class ChangeStateService : IChangeStateService
 public interface IChangeStateService
 {
     void OpenPane(bool isOpen);
+    bool IsPaneOpen { set; get; }
+    event Action<bool>? PaneChanged;
 
     bool IsInEditMode { get; set; }
-    event EventHandler<bool>? EditModeChanged;
+    event Action<bool>? EditModeChanged;
 
     void ClearSelectedList();
 }

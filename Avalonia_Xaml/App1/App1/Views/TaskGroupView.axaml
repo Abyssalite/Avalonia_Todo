@@ -106,7 +106,7 @@
                             VerticalContentAlignment="Center"
                             BorderBrush="Transparent"
                             Background="#FAAA"
-                            Command="{Binding AddTaskViewCommand}">
+                            Command="{Binding AddOrSaveTaskCommand}">
                         <Image Source="avares://App1/Assets/icons8-plus-100.png"
                             Stretch="Uniform"
                             Width="50"

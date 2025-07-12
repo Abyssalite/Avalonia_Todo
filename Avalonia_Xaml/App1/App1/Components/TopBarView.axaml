@@ -11,7 +11,7 @@
 
         <UserControl.Resources>
             <ResourceDictionary>
-                <converters:ArchiveEditTextConverter x:Key="ArchiveEditTextConverter" />
+                <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
             </ResourceDictionary>
         </UserControl.Resources>
         <UserControl.Styles>
@@ -98,21 +98,21 @@
                             <Flyout FlyoutPresenterClasses="DropDown" Placement="BottomEdgeAlignedRight">
                                 <Flyout.Content>
                                     <StackPanel VerticalAlignment="Center">
+                                        <MenuItem Header="Edit" 
+                                                Foreground="Black" 
+                                                IsVisible="{Binding IsNotInArchive}"
+                                                Command="{Binding EditCommand}" 
+                                                CommandParameter="{Binding ElementName=ButtonFlyout}">
+                                        </MenuItem>
                                         <MenuItem Foreground="Black"
-                                                Command="{Binding RestoreOrEditCommand}"
+                                                IsEnabled="{Binding IsNotMainList}"
+                                                Command="{Binding ToggleArchiveCommand}"
                                                 CommandParameter="{Binding ElementName=ButtonFlyout}">
                                             <MenuItem.Header>
-                                                <MultiBinding Converter="{StaticResource ArchiveEditTextConverter}" ConverterParameter="Edit">
-                                                    <Binding Path="IsNotInArchive" />
+                                                <MultiBinding Converter="{StaticResource BoolToTextConverter}" ConverterParameter="Archive">
+                                                <Binding Path="IsNotInArchive" />
                                                 </MultiBinding>
                                             </MenuItem.Header>
-                                        </MenuItem>
-                                        <MenuItem Header="Archive" 
-                                                Foreground="Black" 
-                                                IsEnabled="{Binding IsNotMainList}"
-                                                IsVisible="{Binding IsNotInArchive}"
-                                                Command="{Binding ArchiveCommand}" 
-                                                CommandParameter="{Binding ElementName=ButtonFlyout}">
                                         </MenuItem>
                                         <MenuItem Header="Delete" 
                                                 Foreground="Black" 

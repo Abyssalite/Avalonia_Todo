@@ -1,5 +1,4 @@
 using System;
-using App1.ViewModels;
 using Avalonia.Controls;
 
 namespace App1.Components;
@@ -18,7 +17,7 @@ public partial class TopBarView : UserControl
         {
             vm.OnSetParent = (parent) =>
             {
-                switch (parent?.GetType().Name)
+                switch (parent.GetType().Name)
                 {
                     case "AddTaskViewModel":
                         AddTaskTopBar(); break;
@@ -28,6 +27,9 @@ public partial class TopBarView : UserControl
 
                     case "TaskGroupViewModel":
                         TaskGroupTopBar(); break;
+
+                    case "WellcomeViewModel":
+                        WellcomeTopBar(); break;
 
                     default:
                         break;
@@ -39,21 +41,32 @@ public partial class TopBarView : UserControl
 
     private void AddTaskTopBar()
     {
-        ButtonFlyout.IsVisible = false;
         BackOrDrawerButton.IsVisible = false;
         StarButton.IsVisible = false;
+        ButtonFlyout.IsVisible = false;
     }
 
     private void TaskDetailTopBar()
     {
         if (OperatingSystem.IsAndroid())
             ButtonFlyout.IsVisible = false;
-        else  StarButton.IsVisible = false;
+        else StarButton.IsVisible = false;
     }
 
     private void TaskGroupTopBar()
     {
-        BackOrDrawerButton.IsVisible = false;
+        if (OperatingSystem.IsAndroid())
+            BackOrDrawerButton.IsVisible = true;
+        else BackOrDrawerButton.IsVisible = false;
         StarButton.IsVisible = false;
+    }
+    
+    private void WellcomeTopBar()
+    {
+        if (OperatingSystem.IsAndroid())
+            BackOrDrawerButton.IsVisible = true;
+        else BackOrDrawerButton.IsVisible = false;
+        StarButton.IsVisible = false;
+        ButtonFlyout.IsVisible = false;
     }
 }

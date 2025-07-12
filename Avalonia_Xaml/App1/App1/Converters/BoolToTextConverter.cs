@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace App1.Converters;
 
-public class ArchiveEditTextConverter : IMultiValueConverter
+public class BoolToTextConverter : IMultiValueConverter
 {
     public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
     {
@@ -13,12 +13,11 @@ public class ArchiveEditTextConverter : IMultiValueConverter
         {
             return parameter switch
             {
-                "Edit" => value ? "Edit" : "Restore",
                 "Title" => value ? "Archived" : "Lists",
+                "Archive" => value ? "Archive" : "Restore",
                 _ => "Unknown"
             };
         }
-
         return "N/A";
     }
 }
