@@ -40,5 +40,6 @@ public interface IChangeStateService
     bool IsInEditMode { get; set; }
     event Action<bool>? EditModeChanged;
 
+    event Action? SelectedListCleared;
     void ClearSelectedList();
 }

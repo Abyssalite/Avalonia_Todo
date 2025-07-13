@@ -12,6 +12,8 @@ public static class TaskHelpers
         return string.IsNullOrWhiteSpace(input) ? defaultValue : input;
     }
 
+    public static bool CheckMainList(string listName) => listName == "Quick" || listName == "Important";
+
     public static async Task AddTaskToCategory(BaseTask task, Store store)
     {
         var list = store.Lists.FirstOrDefault(l => l.ListName == task.ListName);

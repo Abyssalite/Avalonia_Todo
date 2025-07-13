@@ -69,7 +69,7 @@ public partial class GroupListViewModel : ViewModelBase
             ClearSelectedList();
         });
         AddListCommand = new AsyncRelayCommand<string>(AddList);
-        if (_stateService is ChangeStateService service) service.SelectedListCleared += ClearSelectedList;
+        _stateService.SelectedListCleared += ClearSelectedList;
 
     }
 
@@ -86,11 +86,11 @@ public partial class GroupListViewModel : ViewModelBase
     private async Task OpenListAsync(GroupList groupedList)
     {
         _store.SelectedList = groupedList;
-        _store.SelectedListName = groupedList?.ListName;
+        _store.SelectedListName = groupedList.ListName;
         _navigator.ClearStack();
         
         var vm = App.Services?.GetRequiredService<TaskGroupViewModel>();
-        await _navigator.NavigateRight((vm, new Components.TopBarViewModel(_store, vm)));
+        await _navigator.NavigateRight((vm, new Components.TopBarViewModel(_store, vm, groupedList.ListName)));
         _stateService.OpenPane(false);
     }
 

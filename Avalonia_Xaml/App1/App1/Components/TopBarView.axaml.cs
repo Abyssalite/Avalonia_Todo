@@ -50,7 +50,7 @@ public partial class TopBarView : UserControl
     {
         if (OperatingSystem.IsAndroid())
             ButtonFlyout.IsVisible = false;
-        else StarButton.IsVisible = false;
+        ToggleArchiveButton.IsVisible = false;
     }
 
     private void TaskGroupTopBar()

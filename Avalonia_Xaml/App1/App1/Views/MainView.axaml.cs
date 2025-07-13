@@ -4,7 +4,6 @@ using Avalonia.Interactivity;
 using Avalonia;
 using Semi.Avalonia;
 using CommunityToolkit.Mvvm.Input;
-using System.Diagnostics;
 using Avalonia.Controls.Primitives;
 using Avalonia.VisualTree;
 using Ursa.Controls;
@@ -83,7 +82,7 @@ public partial class MainView : UserControl
             if (insetsManager is not null)
             {
                 insetsManager.SystemBarColor = Colors.Black;
-                insetsManager.DisplayEdgeToEdge = false;
+                insetsManager.DisplayEdgeToEdge = true;
             }
         };
     }

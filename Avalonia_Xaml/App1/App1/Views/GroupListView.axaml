@@ -31,7 +31,7 @@
                         Padding="10,5,5,5" />
             </StackPanel>
             <Grid ColumnDefinitions="*,Auto" Margin="10,10,10,5">
-                <TextBlock FontSize="22" Grid.Column="0">
+                <TextBlock FontSize="20" Grid.Column="0">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource BoolToTextConverter}" ConverterParameter="Title">
                         <Binding Path="ToggleArchive" />
@@ -68,7 +68,7 @@
                         <StackPanel Orientation="Horizontal" Margin="5">
                             <TextBlock Text="{Binding ListName}" 
                                     VerticalAlignment="Center"
-                                    FontSize="15"
+                                    FontSize="14"
                                     Background="Transparent" />
                         </StackPanel>
                     </DataTemplate>

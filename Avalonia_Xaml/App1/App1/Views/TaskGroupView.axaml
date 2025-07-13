@@ -14,22 +14,22 @@
                 <ItemsControl ItemsSource="{Binding GroupedTasks}" Grid.Row="0" Margin="5" x:Name="ListsStack">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Background="#FF2D2D2D">
+                            <StackPanel>
                                 <TextBlock Text="{Binding Category}" 
-                                        FontSize="22" 
+                                        FontSize="20" 
                                         FontWeight="Bold"
                                         Margin="10,10,100,2"
-                                        Padding="10,5,10,5" 
+                                        Padding="10,2,10,2" 
                                         IsVisible="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}" />
                                 <TextBox Text="{Binding Category, Mode=TwoWay}" 
-                                        FontSize="22"
+                                        FontSize="20"
                                         Margin="10,10,100,2"
                                         Padding="10,8,10,8" 
                                         IsVisible="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}" />
 
                                 <ListBox ItemsSource="{Binding Tasks}"
                                         BorderThickness="0"
-                                        Margin="10,2,10,10"
+                                        Margin="10,2,10,2"
                                         Background="Transparent"
                                         SelectionMode="Single"
                                         CornerRadius="8"
@@ -37,7 +37,7 @@
                                         IsEnabled="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" Margin="5,10,5,10">
+                                            <StackPanel Orientation="Horizontal" Margin="5,8,5,8">
                                                 <CheckBox IsChecked="{Binding IsDone}" 
                                                         VerticalAlignment="Center"
                                                         Margin="0,0,15,0" />
@@ -61,7 +61,7 @@
                     IsEnabled="{Binding IsNotInArchive}" >
                 <Grid 
                     ColumnDefinitions="*,Auto"
-                    Margin="20,20,20,0"
+                    Margin="20,15,20,0"
                     VerticalAlignment="Top">
                     <TextBox Grid.Column="0"
                             x:Name="QuickAddTaskTextBox"

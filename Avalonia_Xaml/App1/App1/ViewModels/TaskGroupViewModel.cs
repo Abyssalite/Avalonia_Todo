@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -9,12 +10,10 @@ namespace App1.ViewModels;
 public partial class TaskGroupViewModel : ViewModelBase
 {
     public ObservableCollection<TaskGroup>? GroupedTasks { get; set; } = new();
-    public string? ListName { get; set; }
+    public string ListName { get; set; } = "";
     public string? QuickAddTaskName { get; set; }
-    private string _oldListName = "";
     public bool IsNotMainList { get; } = true;
     public bool IsNotInArchive { get; set; } = true;
-    public bool CanEditListName { get; set; } = false;
     private bool _isInEditMode = false;
     public bool IsInEditMode
     {
@@ -23,9 +22,8 @@ public partial class TaskGroupViewModel : ViewModelBase
         {
             _isInEditMode = value;
             _stateService.IsInEditMode = value;
-            CanEditListName = !CheckMainList() && _isInEditMode;
+            OnChangeListName?.Invoke(_isInEditMode && IsNotMainList);
             OnPropertyChanged(nameof(IsInEditMode));
-            OnPropertyChanged(nameof(CanEditListName));
         }
     }
     public ICommand AddOrSaveTaskCommand { get; }
@@ -55,13 +53,14 @@ public partial class TaskGroupViewModel : ViewModelBase
         INotificationService notificate):
         base(store, navigator, dialogService, stateService, notificate)
     {
+        ListName = store.SelectedListName;
+        IsNotMainList = !TaskHelpers.CheckMainList(ListName);
+        OnPropertyChanged(nameof(IsNotMainList));
+
         if (store.SelectedList != null)
         {
-            ListName = store.SelectedListName;
             GroupedTasks = store.SelectedList.Groups;
-            IsNotMainList = !CheckMainList();
             IsNotInArchive = !store.SelectedList.IsArchived;
-            OnPropertyChanged(nameof(IsNotMainList));
             OnPropertyChanged(nameof(IsNotInArchive));
         }
 
@@ -90,11 +89,10 @@ public partial class TaskGroupViewModel : ViewModelBase
         CancelCommand = new RelayCommand(CancelEdit);
     }
 
-    private bool CheckMainList() => ListName == "Quick" || ListName == "Important";
 
     protected override async Task ToggleArchiveListAsync()
     {
-        if (!IsNotMainList || ListName == null) return;
+        if (!IsNotMainList || ListName == "") return;
 
         if (IsNotInArchive) await TaskHelpers.MoveToArchive(ListName, _store);
         else await TaskHelpers.MoveToList(ListName, _store);
@@ -104,7 +102,7 @@ public partial class TaskGroupViewModel : ViewModelBase
 
     protected override async Task DeleteListAsync()
     {
-        if (!IsNotMainList || ListName == null) return;
+        if (!IsNotMainList || ListName == "") return;
 
         bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
         if (confirmed == true)
@@ -123,30 +121,31 @@ public partial class TaskGroupViewModel : ViewModelBase
     
     protected override void EditList()
     {
-        if (ListName == null) return;
+        if (ListName == "") return;
 
         if (IsNotInArchive && !_isInEditMode)
-        {
-            _oldListName = ListName;
             IsInEditMode = true;
-        }
+        
     }
 
     private void CancelEdit()
     {
         if (_isInEditMode)
         {
-            ListName = _oldListName;
-            OnPropertyChanged(nameof(ListName));
+            _store.TopbarText = ListName;
             IsInEditMode = false;
         }
     }
 
     private async Task OpenAddOrSaveTaskAsync()
     {
-        if (ListName == null || ListName == "") return;
-        if (_isInEditMode && _oldListName != "")
-            await TaskHelpers.EditList(_oldListName, ListName, GroupedTasks, _store);
+        if (ListName == "" || (_store.TopbarText == "" && _isInEditMode)) return;
+        if (_isInEditMode)
+        {
+            await TaskHelpers.EditList(ListName, _store.TopbarText, GroupedTasks, _store);
+            ListName = _store.TopbarText;
+            _store.SelectedListName = ListName;
+        }
 
         else
         {
@@ -177,6 +176,6 @@ public partial class TaskGroupViewModel : ViewModelBase
     {
         _store.SelectedTask = task;
         var vm = App.Services?.GetRequiredService<TaskDetailViewModel>();
-        await _navigator.NavigateRight((vm, new Components.TopBarViewModel(_store, vm)));
+        await _navigator.NavigateRight((vm, new Components.TopBarViewModel(_store, vm, ListName)));
     }
 }

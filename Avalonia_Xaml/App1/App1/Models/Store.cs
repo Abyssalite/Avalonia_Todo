@@ -6,7 +6,20 @@ using System.Linq;
 public class Store : INotifyPropertyChanged
 {
     private ObservableCollection<GroupList> _lists = new();
-    public string? SelectedListName { set; get; }
+    public string SelectedListName { set; get; } = "";
+    private string _topBarText = "";
+    public string TopbarText
+    {
+        get => _topBarText;
+        set
+        {
+            if (value != null)
+            {
+                _topBarText = value;
+                OnPropertyChanged(nameof(TopbarText));
+            }
+        }
+    }
     public string WellcomeText { set; get; } = "Wellcome";
     public bool Initialized { set; get; } = false;
     public GroupList? SelectedList { get; set; }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -14,6 +15,8 @@ public partial class ViewModelBase : ObservableObject
     public AsyncRelayCommand DeleteCommand { get; }
     public AsyncRelayCommand ToggleArchiveCommand { get; }
     public AsyncRelayCommand BackOrDrawerCommand { get; }
+    public Action<bool>? OnChangeListName { get; set; }
+
 
     public RelayCommand EditCommand { get; }
 
