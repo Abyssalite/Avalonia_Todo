@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace App1.Views;
 
-public partial class WellcomeView : UserControl
+public partial class WelcomeView : UserControl
 {
-    public WellcomeView()
+    public WelcomeView()
     {
         InitializeComponent();
     }

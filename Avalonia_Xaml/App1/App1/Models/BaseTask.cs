@@ -19,6 +19,29 @@ public class BaseTask : INotifyPropertyChanged
             }
         }
     }
+    private bool _isImportant;
+    public bool IsImportant
+    {
+        get => _isImportant;
+        set
+        {
+            if (_isImportant != value)
+            {
+                _isImportant = value;
+                OnPropertyChanged(nameof(IsImportant));
+            }
+        }
+    }
+    
+    public BaseTask() { }
+    public BaseTask(BaseTask other)
+    {
+        Name = other.Name;
+        Category = other.Category;
+        ListName = other.ListName;
+        Description = other.Description;
+        IsDone = other.IsDone;
+    }
     
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged(string propertyName) =>

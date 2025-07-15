@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
         collection.AddTransient<AddTaskViewModel>();
         collection.AddTransient<GroupListViewModel>();
         collection.AddTransient<NewTaskOptionViewModel>();
-        collection.AddTransient<WellcomeViewModel>();
+        collection.AddTransient<WelcomeViewModel>();
         collection.AddTransient<TaskGroupViewModel>();
     }
 }

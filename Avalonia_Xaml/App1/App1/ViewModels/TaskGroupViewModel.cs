@@ -1,4 +1,3 @@
-using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -10,6 +9,7 @@ namespace App1.ViewModels;
 public partial class TaskGroupViewModel : ViewModelBase
 {
     public ObservableCollection<TaskGroup>? GroupedTasks { get; set; } = new();
+    private ObservableCollection<TaskGroup>? _clone;
     public string ListName { get; set; } = "";
     public string? QuickAddTaskName { get; set; }
     public bool IsNotMainList { get; } = true;
@@ -35,7 +35,7 @@ public partial class TaskGroupViewModel : ViewModelBase
         get => _selectedTask;
         set
         {
-            if (value != null && value != _selectedTask)
+            if (value != null && _selectedTask != value)
             {
                 _selectedTask = value;
                 _ = OpenTaskAsync(_selectedTask);
@@ -64,23 +64,21 @@ public partial class TaskGroupViewModel : ViewModelBase
             OnPropertyChanged(nameof(IsNotInArchive));
         }
 
-        _stateService.EditModeChanged += (value) =>
-        {
-            IsInEditMode = value;
-        };
+        _stateService.EditModeChanged += CancelEdit;
         _store.PropertyChanged += (_, e) =>
         {
             if (store.SelectedList == null) return;
 
+            // Update GUI after toggle IsArchived
             if (e.PropertyName == nameof(GroupList.IsArchived))
             {
                 IsNotInArchive = !store.SelectedList.IsArchived;
                 OnPropertyChanged(nameof(IsNotInArchive));
             }
+            // Update GUI after edit List Category
             if (e.PropertyName == nameof(Store.FilteredLists))
             {
                 GroupedTasks = store.SelectedList.Groups;
-                OnPropertyChanged(nameof(ListName));
                 OnPropertyChanged(nameof(GroupedTasks));
             }
         };
@@ -89,20 +87,20 @@ public partial class TaskGroupViewModel : ViewModelBase
         CancelCommand = new RelayCommand(CancelEdit);
     }
 
-
     protected override async Task ToggleArchiveListAsync()
     {
         if (!IsNotMainList || ListName == "") return;
+        IsInEditMode = false;
 
         if (IsNotInArchive) await TaskHelpers.MoveToArchive(ListName, _store);
         else await TaskHelpers.MoveToList(ListName, _store);
 
-        IsInEditMode = false;
     }
 
     protected override async Task DeleteListAsync()
     {
         if (!IsNotMainList || ListName == "") return;
+        IsInEditMode = false;
 
         bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
         if (confirmed == true)
@@ -110,7 +108,6 @@ public partial class TaskGroupViewModel : ViewModelBase
             await TaskHelpers.DeleteList(ListName, _store, !IsNotInArchive);
             await _navigator.OpenPrevious();
         }        
-        IsInEditMode = false;
     }
 
     protected override async Task BackOrToggleDrawerAsync()
@@ -121,32 +118,41 @@ public partial class TaskGroupViewModel : ViewModelBase
     
     protected override void EditList()
     {
-        if (ListName == "") return;
+        if (ListName == "" || GroupedTasks == null) return;
 
         if (IsNotInArchive && !_isInEditMode)
+        {
+            _clone = TaskHelpers.Clone(GroupedTasks);
             IsInEditMode = true;
-        
+        }
     }
 
     private void CancelEdit()
     {
-        if (_isInEditMode)
+        if (_isInEditMode && _clone != null && GroupedTasks != null)
         {
-            _store.TopbarText = ListName;
             IsInEditMode = false;
+            GroupedTasks.Clear();
+            foreach (var item in _clone)
+            {
+                GroupedTasks.Add(item);
+            }
+            OnPropertyChanged(nameof(GroupedTasks));
+            _clone = null;
+            _store.TopbarText = ListName;
         }
     }
 
     private async Task OpenAddOrSaveTaskAsync()
     {
         if (ListName == "" || (_store.TopbarText == "" && _isInEditMode)) return;
+
         if (_isInEditMode)
         {
             await TaskHelpers.EditList(ListName, _store.TopbarText, GroupedTasks, _store);
             ListName = _store.TopbarText;
             _store.SelectedListName = ListName;
         }
-
         else
         {
             if (QuickAddTaskName != null && QuickAddTaskName != "")

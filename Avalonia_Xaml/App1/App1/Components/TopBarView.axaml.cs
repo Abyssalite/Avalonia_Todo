@@ -28,8 +28,8 @@ public partial class TopBarView : UserControl
                     case "TaskGroupViewModel":
                         TaskGroupTopBar(); break;
 
-                    case "WellcomeViewModel":
-                        WellcomeTopBar(); break;
+                    case "WelcomeViewModel":
+                        WelcomeTopBar(); break;
 
                     default:
                         break;
@@ -61,7 +61,7 @@ public partial class TopBarView : UserControl
         StarButton.IsVisible = false;
     }
     
-    private void WellcomeTopBar()
+    private void WelcomeTopBar()
     {
         if (OperatingSystem.IsAndroid())
             BackOrDrawerButton.IsVisible = true;

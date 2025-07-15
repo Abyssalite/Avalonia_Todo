@@ -20,7 +20,7 @@ public class Store : INotifyPropertyChanged
             }
         }
     }
-    public string WellcomeText { set; get; } = "Wellcome";
+    public string WelcomeText { set; get; } = "Welcome";
     public bool Initialized { set; get; } = false;
     public GroupList? SelectedList { get; set; }
     public BaseTask? SelectedTask { get; set; }
@@ -62,7 +62,7 @@ public class Store : INotifyPropertyChanged
                 if (e.PropertyName == nameof(GroupList.IsArchived))
                     OnPropertyChanged(nameof(GroupList.IsArchived));
             };
-        Archive.PropertyChanged +=  (_, e) =>
+            Archive.PropertyChanged +=  (_, e) =>
             {
                 if (e.PropertyName == nameof(ArchivedList.ArchivedLists))
                     OnPropertyChanged(nameof(ArchivedList.ArchivedLists));

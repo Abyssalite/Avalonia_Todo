@@ -32,7 +32,7 @@ public partial class MainViewModel : ViewModelBase
             if (e.PropertyName == nameof(BaseTask.IsDone)) await TaskHelpers.SaveAsync(_store);
         };
 
-        var vm = App.Services?.GetRequiredService<WellcomeViewModel>();
+        var vm = App.Services?.GetRequiredService<WelcomeViewModel>();
         _navigator.FirstView = (vm, new Components.TopBarViewModel(_store, vm, ""));
         await _navigator.NavigateLeft(App.Services?.GetRequiredService<GroupListViewModel>());
         await _navigator.NavigateRight(_navigator.FirstView);

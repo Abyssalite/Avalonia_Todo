@@ -18,11 +18,15 @@ public class ChangeStateService : IChangeStateService
             if (_isInEditMode != value)
             {
                 _isInEditMode = value;
-                EditModeChanged?.Invoke(value);
+                //EditModeChanged?.Invoke(value);
             }
         }
     }
-    public event Action<bool>? EditModeChanged;
+    public void CancelEdit()
+    {
+        EditModeChanged?.Invoke();
+    }
+    public event Action? EditModeChanged;
 
     public event Action? SelectedListCleared;
     public void ClearSelectedList()
@@ -38,7 +42,8 @@ public interface IChangeStateService
     event Action<bool>? PaneChanged;
 
     bool IsInEditMode { get; set; }
-    event Action<bool>? EditModeChanged;
+    void CancelEdit();
+    event Action? EditModeChanged;
 
     event Action? SelectedListCleared;
     void ClearSelectedList();

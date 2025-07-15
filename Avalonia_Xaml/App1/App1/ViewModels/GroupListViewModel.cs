@@ -54,6 +54,7 @@ public partial class GroupListViewModel : ViewModelBase
         FilteredLists = _store.FilteredLists;
         _store.PropertyChanged += (_, e) =>
         {
+            // Update GUI after add new List
             if (e.PropertyName == nameof(Store.FilteredLists) && !_toggleArchive)
             {
                 FilteredLists = _store.FilteredLists;
@@ -89,9 +90,10 @@ public partial class GroupListViewModel : ViewModelBase
         _store.SelectedListName = groupedList.ListName;
         _navigator.ClearStack();
         
+        _stateService.CancelEdit();
+        _stateService.OpenPane(false);
         var vm = App.Services?.GetRequiredService<TaskGroupViewModel>();
         await _navigator.NavigateRight((vm, new Components.TopBarViewModel(_store, vm, groupedList.ListName)));
-        _stateService.OpenPane(false);
     }
 
     private void ClearSelectedList()

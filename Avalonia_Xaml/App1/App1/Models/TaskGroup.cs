@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 
 public class TaskGroup : INotifyPropertyChanged
 {
@@ -20,8 +21,20 @@ public class TaskGroup : INotifyPropertyChanged
         }
     }
 
-    public TaskGroup()
+    public TaskGroup() {}
+    public TaskGroup(TaskGroup other)
     {
+        Category = other.Category;
+        Tasks = new ObservableCollection<BaseTask>(
+            other.Tasks.Select(task => new BaseTask(task)
+            {
+                Name = task.Name,
+                Category = task.Category,
+                ListName = task.ListName,
+                Description = task.Description,
+                IsDone = task.IsDone
+            })
+        );
         if (Tasks != null)
             Tasks.CollectionChanged += OnTasksChanged;
     }

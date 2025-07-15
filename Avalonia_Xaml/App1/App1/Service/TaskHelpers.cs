@@ -13,6 +13,16 @@ public static class TaskHelpers
     }
 
     public static bool CheckMainList(string listName) => listName == "Quick" || listName == "Important";
+    public static ObservableCollection<TaskGroup> Clone(ObservableCollection<TaskGroup> groupedTasks)
+    {
+        return new ObservableCollection<TaskGroup>(
+            groupedTasks.Select(group => new TaskGroup(group)
+            {
+                Tasks = group.Tasks,
+                Category = group.Category
+            })
+        );
+    }
 
     public static async Task AddTaskToCategory(BaseTask task, Store store)
     {

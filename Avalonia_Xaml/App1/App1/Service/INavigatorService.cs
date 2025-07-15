@@ -69,7 +69,7 @@ public class NavigatorService : INavigatorService
     {
         if (_stateService.IsInEditMode)
         {
-            _stateService.IsInEditMode = false;
+            _stateService.CancelEdit();
             return;
         }
         if (_rightHistory.Count > 0)

@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Input;
 using App1.ViewModels;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -49,11 +50,13 @@ public partial class TopBarViewModel : ObservableObject
         {
             if (store.SelectedList == null) return;
 
+            // Update GUI after toggle IsArchived
             if (e.PropertyName == nameof(GroupList.IsArchived))
             {
                 IsNotInArchive = !store.SelectedList.IsArchived;
                 OnPropertyChanged(nameof(IsNotInArchive));
             }
+            // Update GUI after change TopbarText
             if (e.PropertyName == nameof(Store.TopbarText))
             {
                 _topbarText = _store.TopbarText;
@@ -62,10 +65,30 @@ public partial class TopBarViewModel : ObservableObject
         };
 
         if (parent == null) throw new NullReferenceException("No Parent View Setted");
-        ToggleArchiveCommand = new AsyncRelayCommand(() => parent.ToggleArchiveCommand.ExecuteAsync(null));
-        DeleteCommand = new AsyncRelayCommand(() => parent.DeleteCommand.ExecuteAsync(null));
-        EditCommand = new RelayCommand(() => parent.EditCommand.Execute(null));
-        BackOrDrawerCommand = new AsyncRelayCommand(() => parent.BackOrDrawerCommand.ExecuteAsync(null));
+        ToggleArchiveCommand = new AsyncRelayCommand<object>(async (param) =>
+        {
+            if (param is Button button)
+                button.Flyout?.Hide();
+            await parent.ToggleArchiveCommand.ExecuteAsync(null);
+        });
+        DeleteCommand = new AsyncRelayCommand<object>(async (param) => {
+            if (param is Button button)
+                button.Flyout?.Hide();
+            await parent.DeleteCommand.ExecuteAsync(null);
+        });
+        EditCommand = new RelayCommand<object>((param) =>
+        {
+            if (param is Button button)
+                button.Flyout?.Hide();
+            parent.EditCommand.Execute(null);
+
+        });
+        BackOrDrawerCommand = new AsyncRelayCommand<object>(async (param) => {
+            if (param is Button button)
+                button.Flyout?.Hide();
+            await parent.BackOrDrawerCommand.ExecuteAsync(null);
+        });
+
         parent.OnChangeListName = (value) =>
         {
             CanEditBarName = value;
@@ -73,5 +96,4 @@ public partial class TopBarViewModel : ObservableObject
         };
         RunAfterLoadedCommand = new RelayCommand(() => OnSetParent?.Invoke(parent));
     }
-
 }

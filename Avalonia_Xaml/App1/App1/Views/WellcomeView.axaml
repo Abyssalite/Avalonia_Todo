@@ -1,4 +1,4 @@
-<UserControl x:Class="App1.Views.WellcomeView"
+<UserControl x:Class="App1.Views.WelcomeView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
              xmlns:vm="clr-namespace:App1.ViewModels"
              xmlns:iri="https://irihi.tech/shared"
              xmlns:u="https://irihi.tech/ursa"
-             x:DataType="vm:WellcomeViewModel"> 
+             x:DataType="vm:WelcomeViewModel"> 
 
         <Grid>
             <TextBlock Text="{Binding Text}" 
