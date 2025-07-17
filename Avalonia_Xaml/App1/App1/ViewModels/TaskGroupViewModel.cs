@@ -54,7 +54,7 @@ public partial class TaskGroupViewModel : ViewModelBase
         base(store, navigator, dialogService, stateService, notificate)
     {
         ListName = store.SelectedListName;
-        IsNotMainList = !TaskHelpers.CheckMainList(ListName);
+        IsNotMainList = !TaskHelpers.IsMainList(ListName);
         OnPropertyChanged(nameof(IsNotMainList));
 
         if (store.SelectedList != null)
@@ -94,7 +94,6 @@ public partial class TaskGroupViewModel : ViewModelBase
 
         if (IsNotInArchive) await TaskHelpers.MoveToArchive(ListName, _store);
         else await TaskHelpers.MoveToList(ListName, _store);
-
     }
 
     protected override async Task DeleteListAsync()
@@ -160,9 +159,11 @@ public partial class TaskGroupViewModel : ViewModelBase
                 var task = new BaseTask
                 {
                     Name = QuickAddTaskName,
+                    IsDone = false,
                     Category = "Miscelanious",
-                    ListName = ListName,
-                    Description = ""
+                    ListName = (ListName == GlobalVariables.Important) ? GlobalVariables.Quick : ListName,
+                    Description = "",
+                    IsImportant = (ListName == GlobalVariables.Important) ? true : false
                 };
                 QuickAddTaskName = null;
                 OnPropertyChanged(nameof(QuickAddTaskName));

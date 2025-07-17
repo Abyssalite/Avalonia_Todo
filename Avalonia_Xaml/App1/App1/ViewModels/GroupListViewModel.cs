@@ -34,7 +34,7 @@ public partial class GroupListViewModel : ViewModelBase
         get => _selectedList;
         set
         {
-            if (value != null && value != _selectedList)
+            if (value != null && _selectedList != value)
             {
                 _selectedList = value;
                 _ = OpenListAsync(_selectedList);
@@ -43,12 +43,12 @@ public partial class GroupListViewModel : ViewModelBase
         }
     }
 
-    public GroupListViewModel(        
+    public GroupListViewModel(
         Store store,
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate):
+        INotificationService notificate) :
         base(store, navigator, dialogService, stateService, notificate)
     {
         FilteredLists = _store.FilteredLists;
@@ -64,9 +64,17 @@ public partial class GroupListViewModel : ViewModelBase
 
         OpenListCommand = new RelayCommand<string>(async (listName) =>
         {
-            var list = _store.Lists.FirstOrDefault(l => l.ListName == listName);
-            if (list != null)
+            if (TaskHelpers.IsMainList(listName))
+            {
+                var list = _store.Lists.FirstOrDefault(l => l.ListName == listName);
+                if (list != null)
+                    await OpenListAsync(list);
+            }
+            else if (listName == GlobalVariables.Important)
+            {
+                var list = TaskHelpers.FilterImportant(_store.Lists, listName);
                 await OpenListAsync(list);
+            }
             ClearSelectedList();
         });
         AddListCommand = new AsyncRelayCommand<string>(AddList);
@@ -89,7 +97,7 @@ public partial class GroupListViewModel : ViewModelBase
         _store.SelectedList = groupedList;
         _store.SelectedListName = groupedList.ListName;
         _navigator.ClearStack();
-        
+
         _stateService.CancelEdit();
         _stateService.OpenPane(false);
         var vm = App.Services?.GetRequiredService<TaskGroupViewModel>();

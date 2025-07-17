@@ -12,7 +12,8 @@ public static class TaskHelpers
         return string.IsNullOrWhiteSpace(input) ? defaultValue : input;
     }
 
-    public static bool CheckMainList(string listName) => listName == "Quick" || listName == "Important";
+    public static bool IsMainList(string? listName) => listName == GlobalVariables.Quick;
+
     public static ObservableCollection<TaskGroup> Clone(ObservableCollection<TaskGroup> groupedTasks)
     {
         return new ObservableCollection<TaskGroup>(
@@ -44,6 +45,34 @@ public static class TaskHelpers
             });
         }
         await SaveAsync(store);
+    }
+
+    public static GroupList FilterImportant(ObservableCollection<GroupList> lists, string listName)
+    {
+        ObservableCollection<TaskGroup> groups = new();
+        foreach (var list in lists)
+        {
+            ObservableCollection<BaseTask> tasks = new();
+            foreach (var group in list.Groups)
+                foreach (var task in group.Tasks)
+                {
+                    if (task.IsImportant) tasks.Add(task);
+                }
+
+            if (tasks.Count() != 0)
+            {
+                groups.Add(new TaskGroup()
+                {
+                    Category = list.ListName,
+                    Tasks = tasks
+                });
+            }
+        }
+        return new GroupList()
+        {
+            ListName = listName,
+            Groups = (groups.Count() != 0) ? groups : []
+        };        
     }
 
     public static async Task<bool> AddList(string listName, Store store)
@@ -212,15 +241,9 @@ public static class TaskHelpers
         {
             new GroupList
             {
-                ListName = "Quick",
+                ListName = GlobalVariables.Quick,
                 IsArchived = false,
                 Groups = new ObservableCollection<TaskGroup>()
-            },
-            new GroupList
-            {
-                ListName = "Important",
-                IsArchived = false,
-                Groups = new ObservableCollection<TaskGroup>()
-            },
+            }
         };
 }

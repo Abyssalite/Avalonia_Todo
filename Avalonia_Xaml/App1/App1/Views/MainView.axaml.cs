@@ -43,10 +43,10 @@ public partial class MainView : UserControl
             .Subscribe(isOpen =>
             {
                 IsPaneOpen = isOpen;
-                LeftBar.IsVisible = !IsPaneOpen && !OperatingSystem.IsAndroid();
+                LeftBar.IsVisible = !IsPaneOpen && !GlobalVariables.IsAndroid;
             });
 
-        if (OperatingSystem.IsAndroid())
+        if (GlobalVariables.IsAndroid)
         {
             if (_stateService != null) _stateService.PaneChanged += OpenPane;
             TopBorder.Height = 0;
@@ -56,7 +56,7 @@ public partial class MainView : UserControl
         }
         else
         {
-            TopBorder.Height = OperatingSystem.IsBrowser() ? 0 : 33;
+            TopBorder.Height = GlobalVariables.IsBrowser ? 0 : 33;
             LeftBar.IsVisible = true;
             OpenPane(true);
             MainSplitView.DisplayMode = SplitViewDisplayMode.Inline;

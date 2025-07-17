@@ -22,6 +22,21 @@ public partial class TaskDetailViewModel : ViewModelBase
         }
     }
 
+    public override bool? GetSetImportant(bool? value)
+    {
+        if (Task == null) return null;
+        if (value == null) return Task.IsImportant;
+        else if (value == true)
+        {
+            Task.IsImportant = true;
+        }
+        else if (value == false)
+        {
+            Task.IsImportant = false;
+        } 
+        return null;
+    }
+
     protected override async Task BackOrToggleDrawerAsync() =>
         await _navigator.OpenPrevious();
     

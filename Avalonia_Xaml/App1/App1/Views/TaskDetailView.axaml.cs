@@ -9,6 +9,6 @@ public partial class TaskDetailView : UserControl
     public TaskDetailView()
     {
         InitializeComponent();
-        TaskDetailPanel.Margin = OperatingSystem.IsAndroid() ? new Thickness(10) : new Thickness(100, 20, 100, 20);
+        TaskDetailPanel.Margin = GlobalVariables.IsAndroid ? new Thickness(10) : new Thickness(100, 20, 100, 20);
     }
 }

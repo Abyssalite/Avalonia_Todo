@@ -59,6 +59,8 @@ public class Store : INotifyPropertyChanged
             {
                 if (e.PropertyName == nameof(BaseTask.IsDone))
                     OnPropertyChanged(nameof(BaseTask.IsDone));
+                if (e.PropertyName == nameof(BaseTask.IsImportant))
+                    OnPropertyChanged(nameof(BaseTask.IsImportant));
                 if (e.PropertyName == nameof(GroupList.IsArchived))
                     OnPropertyChanged(nameof(GroupList.IsArchived));
             };
@@ -73,7 +75,7 @@ public class Store : INotifyPropertyChanged
     private void UpdateFilteredList()
     {
         FilteredLists = new ObservableCollection<GroupList>(
-            Lists.Where(g => g.ListName != "Quick" && g.ListName != "Important")
+            Lists.Where(g => g.ListName != GlobalVariables.Quick)
         );
         OnPropertyChanged(nameof(FilteredLists));
     }

@@ -1,7 +1,9 @@
+using System;
 using System.ComponentModel;
 
 public class BaseTask : INotifyPropertyChanged
 {
+    public Guid ID = new Guid();
     public required string Name { set; get; }
     public string? Description { set; get; }
     public required string Category { get; set; }
@@ -41,6 +43,7 @@ public class BaseTask : INotifyPropertyChanged
         ListName = other.ListName;
         Description = other.Description;
         IsDone = other.IsDone;
+        IsImportant = other.IsImportant;
     }
     
     public event PropertyChangedEventHandler? PropertyChanged;

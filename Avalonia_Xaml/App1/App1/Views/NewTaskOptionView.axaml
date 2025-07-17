@@ -13,11 +13,13 @@
             <StackPanel>
                 <Button Content="Base Task"
                         HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
                         HorizontalContentAlignment="Left"
                         Padding="10,5,5,5"
                         Margin="20,5,25,5" />
                 <Button Content="Noted Task"
                         HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
                         HorizontalContentAlignment="Left"
                         Padding="10,5,5,5"
                         Margin="20,5,25,5" />                       

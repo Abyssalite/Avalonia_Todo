@@ -49,6 +49,8 @@ public class GroupList : INotifyPropertyChanged
             {
                 if (e.PropertyName == nameof(BaseTask.IsDone))
                     OnPropertyChanged(nameof(BaseTask.IsDone));
+                if (e.PropertyName == nameof(BaseTask.IsImportant))
+                    OnPropertyChanged(nameof(BaseTask.IsImportant));
             };
     }
     

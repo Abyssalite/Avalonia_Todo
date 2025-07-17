@@ -15,10 +15,8 @@ public partial class ViewModelBase : ObservableObject
     public AsyncRelayCommand DeleteCommand { get; }
     public AsyncRelayCommand ToggleArchiveCommand { get; }
     public AsyncRelayCommand BackOrDrawerCommand { get; }
-    public Action<bool>? OnChangeListName { get; set; }
-
-
     public RelayCommand EditCommand { get; }
+    public Action<bool>? OnChangeListName { get; set; }
 
     protected ViewModelBase(
         Store store,
@@ -42,4 +40,5 @@ public partial class ViewModelBase : ObservableObject
     protected virtual Task ToggleArchiveListAsync() => Task.CompletedTask;
     protected virtual Task BackOrToggleDrawerAsync() => Task.CompletedTask;
     protected virtual void EditList() { }
+    public virtual bool? GetSetImportant(bool? value) { return null; }
 }

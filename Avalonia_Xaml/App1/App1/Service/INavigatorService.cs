@@ -10,7 +10,7 @@ public class NavigatorService : INavigatorService
     private readonly Stack<ViewModelBase> _leftHistory = new();
     private readonly Stack<(ViewModelBase, TopBarViewModel)> _rightHistory = new();
     private readonly IChangeStateService _stateService;
-    public (ViewModelBase? , TopBarViewModel?) FirstView { set; get; }
+    public (ViewModelBase?, TopBarViewModel?) FirstView { set; get; }
     private ViewModelBase? _currentLeft;
     private ViewModelBase? _currentRight;
     private TopBarViewModel? _currentTopBar;

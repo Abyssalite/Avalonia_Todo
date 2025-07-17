@@ -1,4 +1,5 @@
 using System;
+using App1.ViewModels;
 using Avalonia.Controls;
 
 namespace App1.Components;
@@ -26,7 +27,10 @@ public partial class TopBarView : UserControl
                         TaskDetailTopBar(); break;
 
                     case "TaskGroupViewModel":
-                        TaskGroupTopBar(); break;
+                    {
+                        if (parent is TaskGroupViewModel vm)
+                            TaskGroupTopBar(vm.ListName); break;
+                    }
 
                     case "WelcomeViewModel":
                         WelcomeTopBar(); break;
@@ -42,28 +46,29 @@ public partial class TopBarView : UserControl
     private void AddTaskTopBar()
     {
         BackOrDrawerButton.IsVisible = false;
-        StarButton.IsVisible = false;
         ButtonFlyout.IsVisible = false;
     }
 
     private void TaskDetailTopBar()
     {
-        if (OperatingSystem.IsAndroid())
+        if (GlobalVariables.IsAndroid)
             ButtonFlyout.IsVisible = false;
         ToggleArchiveButton.IsVisible = false;
     }
 
-    private void TaskGroupTopBar()
+    private void TaskGroupTopBar(string listName)
     {
-        if (OperatingSystem.IsAndroid())
+        if (GlobalVariables.IsAndroid)
             BackOrDrawerButton.IsVisible = true;
         else BackOrDrawerButton.IsVisible = false;
+        if (listName == GlobalVariables.Important) 
+            ButtonFlyout.IsVisible = false;
         StarButton.IsVisible = false;
     }
     
     private void WelcomeTopBar()
     {
-        if (OperatingSystem.IsAndroid())
+        if (GlobalVariables.IsAndroid)
             BackOrDrawerButton.IsVisible = true;
         else BackOrDrawerButton.IsVisible = false;
         StarButton.IsVisible = false;

@@ -35,7 +35,7 @@ public class DialogService : IDialogService
             await Task.CompletedTask;
         };
 
-        if (OperatingSystem.IsAndroid())
+        if (GlobalVariables.IsAndroid)
             await Drawer.ShowCustomModal<CustomDialog, CustomDialogViewModel, object?>(vm, null, drawerOptions);
         else
             await OverlayDialog.ShowCustomModal<CustomDialog, CustomDialogViewModel, bool>(vm, null, dialogOptions);

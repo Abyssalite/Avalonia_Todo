@@ -13,7 +13,7 @@ public partial class TaskGroupView : UserControl
         InitializeComponent();
         ListsStack.IsEnabled = true;
 
-        if (OperatingSystem.IsAndroid())
+        if (GlobalVariables.IsAndroid)
             QuickAddTaskTextBox.GetObservable(IsFocusedProperty)
                 .Subscribe(async isFocused =>
                 {

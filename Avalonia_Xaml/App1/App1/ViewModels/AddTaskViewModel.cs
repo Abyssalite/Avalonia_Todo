@@ -11,17 +11,32 @@ public partial class AddTaskViewModel : ViewModelBase
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
+    public bool _isImportant = false;
 
-    public AddTaskViewModel(        
+    public AddTaskViewModel(
         Store store,
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate):
+        INotificationService notificate) :
         base(store, navigator, dialogService, stateService, notificate)
     {
         SaveTaskCommand = new AsyncRelayCommand(AddTask);
         CancelCommand = new AsyncRelayCommand(ClearAsync);
+    }
+
+    public override bool? GetSetImportant(bool? value)
+    {
+        if (value == null) return _isImportant;
+        else if (value == true)
+        {
+            _isImportant = true;
+        }
+        else if (value == false)
+        {
+            _isImportant = false;
+        } 
+        return null;
     }
 
     private async Task ClearAsync()
@@ -47,9 +62,10 @@ public partial class AddTaskViewModel : ViewModelBase
         {
             Name = name,
             IsDone = false,
-            ListName = TaskHelpers.InputOrDefault(_store.SelectedListName, "Quick"),
+            ListName = TaskHelpers.InputOrDefault(_store.SelectedListName, GlobalVariables.Quick),
             Category = TaskHelpers.InputOrDefault(TaskCatalog, "Miscelanious"),
-            Description = TaskHelpers.InputOrDefault(TaskDesc, "")
+            Description = TaskHelpers.InputOrDefault(TaskDesc, ""),
+            IsImportant = _isImportant
         };
         await TaskHelpers.AddTaskToCategory(task, _store);
         await ClearAsync();

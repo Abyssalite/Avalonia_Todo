@@ -32,7 +32,8 @@ public class TaskGroup : INotifyPropertyChanged
                 Category = task.Category,
                 ListName = task.ListName,
                 Description = task.Description,
-                IsDone = task.IsDone
+                IsDone = task.IsDone,
+                IsImportant = task.IsImportant
             })
         );
         if (Tasks != null)
@@ -49,6 +50,8 @@ public class TaskGroup : INotifyPropertyChanged
             {
                 if (e.PropertyName == nameof(BaseTask.IsDone))
                     OnPropertyChanged(nameof(BaseTask.IsDone));
+                if (e.PropertyName == nameof(BaseTask.IsImportant))
+                    OnPropertyChanged(nameof(BaseTask.IsImportant));
             };
     }
 

@@ -12,6 +12,7 @@ namespace App1.Components;
 public partial class TopBarViewModel : ObservableObject
 {
     private readonly Store _store;
+    private readonly ViewModelBase _parent;
     private string _topbarText;
     public string TopbarText
     {
@@ -20,6 +21,20 @@ public partial class TopBarViewModel : ObservableObject
         {
             if (value != null)
                 _store.TopbarText = value;
+        }
+    }
+    private bool? _toggleImportant;
+    public bool? ToggleImportant
+    {
+        get => _toggleImportant;
+        set
+        {
+            if (value != null)
+            {
+                _toggleImportant = value;
+                _parent.GetSetImportant(value);
+                OnPropertyChanged(nameof(ToggleImportant));                
+            }
         }
     }
     public bool IsNotMainList { get; } = true;
@@ -35,9 +50,11 @@ public partial class TopBarViewModel : ObservableObject
 
     public TopBarViewModel(Store store, ViewModelBase? parent, string text)
     {
+        if (parent == null) throw new NullReferenceException("No Parent View Setted");
         _store = store;
+        _parent = parent;
         _topbarText = text;
-        IsNotMainList =  !TaskHelpers.CheckMainList(TopbarText);
+        IsNotMainList =  !TaskHelpers.IsMainList(TopbarText);
         OnPropertyChanged(nameof(IsNotMainList));
 
         if (store.SelectedList != null)
@@ -64,36 +81,37 @@ public partial class TopBarViewModel : ObservableObject
             }
         };
 
-        if (parent == null) throw new NullReferenceException("No Parent View Setted");
         ToggleArchiveCommand = new AsyncRelayCommand<object>(async (param) =>
         {
             if (param is Button button)
                 button.Flyout?.Hide();
-            await parent.ToggleArchiveCommand.ExecuteAsync(null);
+            await _parent.ToggleArchiveCommand.ExecuteAsync(null);
         });
         DeleteCommand = new AsyncRelayCommand<object>(async (param) => {
             if (param is Button button)
                 button.Flyout?.Hide();
-            await parent.DeleteCommand.ExecuteAsync(null);
+            await _parent.DeleteCommand.ExecuteAsync(null);
         });
         EditCommand = new RelayCommand<object>((param) =>
         {
             if (param is Button button)
                 button.Flyout?.Hide();
-            parent.EditCommand.Execute(null);
+            _parent.EditCommand.Execute(null);
 
         });
         BackOrDrawerCommand = new AsyncRelayCommand<object>(async (param) => {
             if (param is Button button)
                 button.Flyout?.Hide();
-            await parent.BackOrDrawerCommand.ExecuteAsync(null);
+            await _parent.BackOrDrawerCommand.ExecuteAsync(null);
         });
 
-        parent.OnChangeListName = (value) =>
+        _parent.OnChangeListName = (value) =>
         {
             CanEditBarName = value;
             OnPropertyChanged(nameof(CanEditBarName));
         };
-        RunAfterLoadedCommand = new RelayCommand(() => OnSetParent?.Invoke(parent));
+        _toggleImportant = _parent.GetSetImportant(null);
+        OnPropertyChanged(nameof(ToggleImportant));
+        RunAfterLoadedCommand = new RelayCommand(() => OnSetParent?.Invoke(_parent));
     }
 }
