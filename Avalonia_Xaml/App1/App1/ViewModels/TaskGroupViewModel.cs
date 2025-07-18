@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -8,7 +9,19 @@ namespace App1.ViewModels;
 
 public partial class TaskGroupViewModel : ViewModelBase
 {
-    public ObservableCollection<TaskGroup>? GroupedTasks { get; set; } = new();
+    private ObservableCollection<TaskGroup>? _groupedTasks = new();
+    public ObservableCollection<TaskGroup>? GroupedTasks
+    {
+        get => _groupedTasks;
+        set
+        {
+            if (value != null)
+            {
+                _groupedTasks = value;
+                OnPropertyChanged(nameof(GroupedTasks));
+            }
+        }
+    }
     private ObservableCollection<TaskGroup>? _clone;
     public string ListName { get; set; } = "";
     public string? QuickAddTaskName { get; set; }
@@ -26,9 +39,6 @@ public partial class TaskGroupViewModel : ViewModelBase
             OnPropertyChanged(nameof(IsInEditMode));
         }
     }
-    public ICommand AddOrSaveTaskCommand { get; }
-    public ICommand CancelCommand { get; }
-
     private BaseTask? _selectedTask;
     public BaseTask? SelectedTask
     {
@@ -44,13 +54,15 @@ public partial class TaskGroupViewModel : ViewModelBase
             }
         }
     }
-
-    public TaskGroupViewModel(        
+    public ICommand AddOrSaveTaskCommand { get; }
+    public ICommand CancelCommand { get; }
+    
+    public TaskGroupViewModel(
         Store store,
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate):
+        INotificationService notificate) :
         base(store, navigator, dialogService, stateService, notificate)
     {
         ListName = store.SelectedListName;
@@ -79,7 +91,6 @@ public partial class TaskGroupViewModel : ViewModelBase
             if (e.PropertyName == nameof(Store.FilteredLists))
             {
                 GroupedTasks = store.SelectedList.Groups;
-                OnPropertyChanged(nameof(GroupedTasks));
             }
         };
 
@@ -96,7 +107,7 @@ public partial class TaskGroupViewModel : ViewModelBase
         else await TaskHelpers.MoveToList(ListName, _store);
     }
 
-    protected override async Task DeleteListAsync()
+    protected override async Task DeleteAsync()
     {
         if (!IsNotMainList || ListName == "") return;
         IsInEditMode = false;
@@ -115,7 +126,7 @@ public partial class TaskGroupViewModel : ViewModelBase
         await Task.CompletedTask;
     }
     
-    protected override void EditList()
+    protected override void Edit()
     {
         if (ListName == "" || GroupedTasks == null) return;
 
@@ -136,7 +147,6 @@ public partial class TaskGroupViewModel : ViewModelBase
             {
                 GroupedTasks.Add(item);
             }
-            OnPropertyChanged(nameof(GroupedTasks));
             _clone = null;
             _store.TopbarText = ListName;
         }
@@ -163,7 +173,7 @@ public partial class TaskGroupViewModel : ViewModelBase
                     Category = "Miscelanious",
                     ListName = (ListName == GlobalVariables.Important) ? GlobalVariables.Quick : ListName,
                     Description = "",
-                    IsImportant = (ListName == GlobalVariables.Important) ? true : false
+                    IsImportant = ListName == GlobalVariables.Important
                 };
                 QuickAddTaskName = null;
                 OnPropertyChanged(nameof(QuickAddTaskName));
@@ -176,6 +186,8 @@ public partial class TaskGroupViewModel : ViewModelBase
                 await _navigator.NavigateLeft(App.Services?.GetRequiredService<NewTaskOptionViewModel>());
             }
         }
+        if (ListName == GlobalVariables.Important)
+            GroupedTasks = TaskHelpers.FilterImportant(_store.Lists);
         IsInEditMode = false;
     }
 

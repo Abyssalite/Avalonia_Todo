@@ -31,14 +31,14 @@ public partial class ViewModelBase : ObservableObject
         _stateService = stateService;
         Notificate = notificate;
 
-        DeleteCommand = new AsyncRelayCommand(DeleteListAsync);
+        DeleteCommand = new AsyncRelayCommand(DeleteAsync);
         ToggleArchiveCommand = new AsyncRelayCommand(ToggleArchiveListAsync);
         BackOrDrawerCommand = new AsyncRelayCommand(BackOrToggleDrawerAsync);
-        EditCommand = new RelayCommand(EditList);
+        EditCommand = new RelayCommand(Edit);
     }
-    protected virtual Task DeleteListAsync() => Task.CompletedTask;
+    protected virtual Task DeleteAsync() => Task.CompletedTask;
     protected virtual Task ToggleArchiveListAsync() => Task.CompletedTask;
     protected virtual Task BackOrToggleDrawerAsync() => Task.CompletedTask;
-    protected virtual void EditList() { }
+    protected virtual void Edit() { }
     public virtual bool? GetSetImportant(bool? value) { return null; }
 }

@@ -13,14 +13,17 @@ public partial class TopBarViewModel : ObservableObject
 {
     private readonly Store _store;
     private readonly ViewModelBase _parent;
-    private string _topbarText;
+    private string _topbarText = "";
     public string TopbarText
     {
         get => _topbarText;
         set
         {
             if (value != null)
-                _store.TopbarText = value;
+            {
+                _topbarText = value;
+                _store.TopbarText = _topbarText;
+            }
         }
     }
     private bool? _toggleImportant;
@@ -37,7 +40,6 @@ public partial class TopBarViewModel : ObservableObject
             }
         }
     }
-    public bool IsNotMainList { get; } = true;
     public bool IsNotInArchive { get; set; } = true;
     public bool CanEditBarName { get; set; } = false;
 
@@ -53,9 +55,9 @@ public partial class TopBarViewModel : ObservableObject
         if (parent == null) throw new NullReferenceException("No Parent View Setted");
         _store = store;
         _parent = parent;
-        _topbarText = text;
-        IsNotMainList =  !TaskHelpers.IsMainList(TopbarText);
-        OnPropertyChanged(nameof(IsNotMainList));
+        if (parent is GroupListViewModel)
+            TopbarText = text;
+        else _topbarText = text;
 
         if (store.SelectedList != null)
         {

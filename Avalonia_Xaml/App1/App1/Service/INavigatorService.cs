@@ -79,8 +79,8 @@ public class NavigatorService : INavigatorService
             await _host.NavigateRight(_currentRight);
             await _host.ChangeTopBar(_currentTopBar);
 
-            if (_rightHistory.Count == 0) _stateService.ClearSelectedList();
-    
+            if (_rightHistory.Count == 0)
+                _stateService.ClearSelectedList();
         }
         if (_leftHistory.Count > 0)
         {

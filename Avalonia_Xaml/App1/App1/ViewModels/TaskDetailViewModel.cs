@@ -6,6 +6,20 @@ public partial class TaskDetailViewModel : ViewModelBase
 {
     public BaseTask? Task { get; }
     public bool IsNotInArchive { get; } = true;
+    private bool _isDone = false;
+    public bool IsDone
+    {
+        get => _isDone;
+        set
+        {
+            if (Task != null)
+            {
+                _isDone = value;
+                Task.IsDone = _isDone;
+                OnPropertyChanged(nameof(IsDone));         
+            }
+        }
+    }
 
     public TaskDetailViewModel(
         Store store,
@@ -19,6 +33,7 @@ public partial class TaskDetailViewModel : ViewModelBase
         {
             Task = store.SelectedTask;
             IsNotInArchive = !store.SelectedList.IsArchived;
+            _isDone = Task.IsDone;
         }
     }
 
@@ -40,7 +55,7 @@ public partial class TaskDetailViewModel : ViewModelBase
     protected override async Task BackOrToggleDrawerAsync() =>
         await _navigator.OpenPrevious();
     
-    protected override async Task DeleteListAsync()
+    protected override async Task DeleteAsync()
     {
         bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
         if (confirmed == true && Task != null)

@@ -17,7 +17,7 @@ public partial class TopBarView : UserControl
         if (DataContext is TopBarViewModel vm)
         {
             vm.OnSetParent = (parent) =>
-            {
+            {            
                 switch (parent.GetType().Name)
                 {
                     case "AddTaskViewModel":
@@ -27,10 +27,10 @@ public partial class TopBarView : UserControl
                         TaskDetailTopBar(); break;
 
                     case "TaskGroupViewModel":
-                    {
-                        if (parent is TaskGroupViewModel vm)
-                            TaskGroupTopBar(vm.ListName); break;
-                    }
+                        {
+                            if (parent is TaskGroupViewModel vm)
+                                TaskGroupTopBar(vm.ListName); break;
+                        }
 
                     case "WelcomeViewModel":
                         WelcomeTopBar(); break;
@@ -63,6 +63,9 @@ public partial class TopBarView : UserControl
         else BackOrDrawerButton.IsVisible = false;
         if (listName == GlobalVariables.Important) 
             ButtonFlyout.IsVisible = false;
+                            
+        ToggleArchiveButton.IsEnabled = !TaskHelpers.IsMainList(listName);
+        DeleteButton.IsEnabled = !TaskHelpers.IsMainList(listName);
         StarButton.IsVisible = false;
     }
     

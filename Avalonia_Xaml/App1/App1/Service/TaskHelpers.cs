@@ -47,7 +47,7 @@ public static class TaskHelpers
         await SaveAsync(store);
     }
 
-    public static GroupList FilterImportant(ObservableCollection<GroupList> lists, string listName)
+    public static ObservableCollection<TaskGroup> FilterImportant(ObservableCollection<GroupList> lists)
     {
         ObservableCollection<TaskGroup> groups = new();
         foreach (var list in lists)
@@ -68,11 +68,7 @@ public static class TaskHelpers
                 });
             }
         }
-        return new GroupList()
-        {
-            ListName = listName,
-            Groups = (groups.Count() != 0) ? groups : []
-        };        
+        return (groups.Count() != 0) ? groups : [];       
     }
 
     public static async Task<bool> AddList(string listName, Store store)
@@ -150,7 +146,7 @@ public static class TaskHelpers
     {      
         var list = store.Lists.FirstOrDefault(l => l.ListName == oldListname);
         if (list == null || editedList == null) return;
-        var ischanged = (oldListname == newListName) ? false : true;
+        var ischanged = oldListname != newListName;
 
         foreach (var group in editedList)
         {

@@ -72,14 +72,17 @@ public partial class GroupListViewModel : ViewModelBase
             }
             else if (listName == GlobalVariables.Important)
             {
-                var list = TaskHelpers.FilterImportant(_store.Lists, listName);
+                var list = new GroupList()
+                {
+                    ListName = listName,
+                    Groups = TaskHelpers.FilterImportant(_store.Lists)
+                };
                 await OpenListAsync(list);
             }
             ClearSelectedList();
         });
         AddListCommand = new AsyncRelayCommand<string>(AddList);
         _stateService.SelectedListCleared += ClearSelectedList;
-
     }
 
     private async Task AddList(string? newListName)

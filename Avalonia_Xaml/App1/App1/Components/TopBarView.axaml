@@ -103,7 +103,6 @@
                                             </MenuItem>
                                             <MenuItem x:Name="ToggleArchiveButton"
                                                     Foreground="Black"
-                                                    IsEnabled="{Binding IsNotMainList}"
                                                     Command="{Binding ToggleArchiveCommand}"
                                                     CommandParameter="{Binding ElementName=ButtonFlyout}">
                                                 <MenuItem.Header>
@@ -112,9 +111,9 @@
                                                     </MultiBinding>
                                                 </MenuItem.Header>
                                             </MenuItem>
-                                            <MenuItem Header="Delete" 
+                                            <MenuItem x:Name="DeleteButton"
+                                                    Header="Delete" 
                                                     Foreground="Black" 
-                                                    IsEnabled="{Binding IsNotMainList}"
                                                     Command="{Binding DeleteCommand}"
                                                     CommandParameter="{Binding ElementName=ButtonFlyout}" />
                                         </StackPanel>

@@ -20,25 +20,72 @@
             <Setter Property="CornerRadius" Value="10" />
         </Style>
     </UserControl.Styles>
-    
-    <StackPanel HorizontalAlignment="Stretch">
-        <Border x:Name="TaskDetailPanel" Background="#FF1D1D1D" CornerRadius="10" ClipToBounds="True">      
-            <StackPanel Margin="10">  
-                <Grid ColumnDefinitions="150,*" Margin="15">
-                    <TextBlock Text="Name" Grid.Column="0" />
-                    <TextBlock Text="{Binding Task.Name}" Grid.Column="1" />
-                </Grid>
+    <Grid RowDefinitions="*,Auto">
+        <StackPanel Grid.Row="0" HorizontalAlignment="Stretch">
+            <Border x:Name="TaskDetailPanel" Background="#FF1D1D1D" CornerRadius="10" ClipToBounds="True">      
+                <StackPanel Margin="10">  
+                    <Grid ColumnDefinitions="150,*" Margin="15">
+                        <TextBlock Text="Name" Grid.Column="0" />
+                        <TextBlock Text="{Binding Task.Name}" Grid.Column="1" />
+                    </Grid>
 
-                <Grid ColumnDefinitions="150,*" Margin="15">
-                    <TextBlock Text="Description" Grid.Column="0" />
-                    <TextBlock Text="{Binding Task.Description}" Grid.Column="1" />
-                </Grid>
+                    <Grid ColumnDefinitions="150,*" Margin="15">
+                        <TextBlock Text="Description" Grid.Column="0" />
+                        <TextBlock Text="{Binding Task.Description}" Grid.Column="1" />
+                    </Grid>
 
-                <Grid ColumnDefinitions="150,*" Margin="15">
-                    <TextBlock Text="Category" Grid.Column="0" />
-                    <TextBlock Text="{Binding Task.Category}" Grid.Column="1" />
-                </Grid>
-            </StackPanel>
-        </Border>    
-    </StackPanel>
+                    <Grid ColumnDefinitions="150,*" Margin="15">
+                        <TextBlock Text="Category" Grid.Column="0" />
+                        <TextBlock Text="{Binding Task.Category}" Grid.Column="1" />
+                    </Grid>
+                </StackPanel>
+            </Border>    
+        </StackPanel>
+        <UniformGrid x:Name="TaskEditBar" Rows="1" Columns="3" Grid.Row="1" HorizontalAlignment="Stretch">
+                <ToggleButton
+                        Width="40" 
+                        Height="40" 
+                        Padding="0"
+                        CornerRadius="30"
+                        VerticalAlignment="Top"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Transparent"
+                        IsChecked="{Binding IsDone}">
+                    <Image Source="avares://App1/Assets/icons8-done-100.png"
+                        Stretch="Uniform"
+                        Width="40"
+                        Height="40" />
+                </ToggleButton>
+                <Button
+                        Width="40" 
+                        Height="40" 
+                        Padding="0"
+                        CornerRadius="30"
+                        VerticalAlignment="Top"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Transparent">
+                    <Image Source="avares://App1/Assets/icons8-done-100.png"
+                        Stretch="Uniform"
+                        Width="40"
+                        Height="40" />
+                </Button>
+                <Button
+                        Width="40" 
+                        Height="40" 
+                        Padding="0"
+                        CornerRadius="30"
+                        VerticalAlignment="Top"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Transparent"
+                        Command="{Binding DeleteCommand}">
+                    <Image Source="avares://App1/Assets/icons8-done-100.png"
+                        Stretch="Uniform"
+                        Width="40"
+                        Height="40" />
+                </Button>
+        </UniformGrid>       
+    </Grid>
 </UserControl>

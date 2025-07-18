@@ -10,5 +10,6 @@ public partial class TaskDetailView : UserControl
     {
         InitializeComponent();
         TaskDetailPanel.Margin = GlobalVariables.IsAndroid ? new Thickness(10) : new Thickness(100, 20, 100, 20);
+        TaskEditBar.IsVisible = GlobalVariables.IsAndroid;
     }
 }
