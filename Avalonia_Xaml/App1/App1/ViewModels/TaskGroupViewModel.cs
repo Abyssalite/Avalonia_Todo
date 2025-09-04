@@ -77,6 +77,7 @@ public partial class TaskGroupViewModel : ViewModelBase
         }
 
         _stateService.EditModeChanged += CancelEdit;
+        _stateService.ImportantChanged += UpdateImportant;
         _store.PropertyChanged += (_, e) =>
         {
             if (store.SelectedList == null) return;
@@ -137,6 +138,12 @@ public partial class TaskGroupViewModel : ViewModelBase
         }
     }
 
+    private void UpdateImportant()
+    {
+        if (ListName == GlobalVariables.Important)
+            GroupedTasks = TaskHelpers.FilterImportant(_store.Lists);
+    }
+
     private void CancelEdit()
     {
         if (_isInEditMode && _clone != null && GroupedTasks != null)
@@ -178,6 +185,7 @@ public partial class TaskGroupViewModel : ViewModelBase
                 QuickAddTaskName = null;
                 OnPropertyChanged(nameof(QuickAddTaskName));
                 await TaskHelpers.AddTaskToCategory(task, _store);
+                _stateService.UpdateImportant();
             }
             else
             {
@@ -186,8 +194,6 @@ public partial class TaskGroupViewModel : ViewModelBase
                 await _navigator.NavigateLeft(App.Services?.GetRequiredService<NewTaskOptionViewModel>());
             }
         }
-        if (ListName == GlobalVariables.Important)
-            GroupedTasks = TaskHelpers.FilterImportant(_store.Lists);
         IsInEditMode = false;
     }
 

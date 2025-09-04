@@ -70,7 +70,8 @@
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
                                 BorderBrush="Transparent"
-                                IsChecked="{Binding ToggleImportant, Mode=TwoWay}">
+                                IsChecked="{Binding ToggleImportant, Mode=TwoWay}"
+                                IsEnabled="{Binding IsNotInArchive}">
                             <Image Source="avares://App1/Assets/icons8-back-100.png"
                                 Stretch="Uniform"
                                 Width="40"

@@ -22,29 +22,38 @@ public class ChangeStateService : IChangeStateService
             }
         }
     }
+    public event Action? EditModeChanged;
     public void CancelEdit()
     {
         EditModeChanged?.Invoke();
     }
-    public event Action? EditModeChanged;
 
     public event Action? SelectedListCleared;
     public void ClearSelectedList()
     {
         SelectedListCleared?.Invoke();
     }
+
+    public event Action? ImportantChanged;
+    public void UpdateImportant()
+    {
+        ImportantChanged?.Invoke();
+    }
 }
 
 public interface IChangeStateService
 {
-    void OpenPane(bool isOpen);
     bool IsPaneOpen { set; get; }
     event Action<bool>? PaneChanged;
+    void OpenPane(bool isOpen);
 
     bool IsInEditMode { get; set; }
-    void CancelEdit();
     event Action? EditModeChanged;
+    void CancelEdit();
 
     event Action? SelectedListCleared;
     void ClearSelectedList();
+
+    event Action? ImportantChanged;
+    void UpdateImportant();
 }

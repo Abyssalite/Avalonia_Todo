@@ -29,9 +29,13 @@ public partial class MainViewModel : ViewModelBase
 
         _store.PropertyChanged += async (_, e) =>
         {
-            if (e.PropertyName == nameof(BaseTask.IsDone) || 
-                e.PropertyName == nameof(BaseTask.IsImportant))
+            if (e.PropertyName == nameof(BaseTask.IsDone))
                 await TaskHelpers.SaveAsync(_store);
+            if (e.PropertyName == nameof(BaseTask.IsImportant))
+            {
+                await TaskHelpers.SaveAsync(_store);
+                _stateService.UpdateImportant();
+            }
         };
 
         var vm = App.Services?.GetRequiredService<WelcomeViewModel>();
