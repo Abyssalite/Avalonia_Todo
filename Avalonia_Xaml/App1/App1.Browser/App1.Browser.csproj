@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TrimmerRootDescriptor Include="App1.Linker.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\App1\App1.csproj" />
   </ItemGroup>
 </Project>

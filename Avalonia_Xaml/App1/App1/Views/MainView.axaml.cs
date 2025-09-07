@@ -46,17 +46,23 @@ public partial class MainView : UserControl
                 LeftBar.IsVisible = !IsPaneOpen && !GlobalVariables.IsAndroid;
             });
 
-        if (GlobalVariables.IsAndroid)
+        if (GlobalVariables.IsAndroid || GlobalVariables.IsBrowser)
         {
-            if (_stateService != null) _stateService.PaneChanged += OpenPane;
-            TopBorder.Height = 0;
-            LeftBar.IsVisible = false;
-            OpenPane(false);
-            MainSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
+            if (_stateService != null && GlobalVariables.IsAndroid) _stateService.PaneChanged += OpenPane;
+            LeftViewContent.Margin = new Thickness(10, 15, 10, 10);
+            RightViewContent.Margin = new Thickness(5, 10, 5, 5);
+            LeftBarContent.Margin = new Thickness(10, 15, 10, 10);
+
+            LeftBar.IsVisible = !GlobalVariables.IsAndroid;
+            OpenPane(!GlobalVariables.IsAndroid);
+            MainSplitView.DisplayMode = GlobalVariables.IsAndroid ? SplitViewDisplayMode.Overlay : SplitViewDisplayMode.Inline;
         }
         else
         {
-            TopBorder.Height = GlobalVariables.IsBrowser ? 0 : 33;
+            LeftViewContent.Margin = new Thickness(10, 40, 10, 10);
+            RightViewContent.Margin = new Thickness(5, 35, 5, 5);
+            LeftBarContent.Margin = new Thickness(10, 40, 10, 10);
+
             LeftBar.IsVisible = true;
             OpenPane(true);
             MainSplitView.DisplayMode = SplitViewDisplayMode.Inline;

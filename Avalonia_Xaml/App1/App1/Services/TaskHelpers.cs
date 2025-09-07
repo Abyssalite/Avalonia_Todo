@@ -178,13 +178,8 @@ public static class TaskHelpers
 
     public static void print(object? data)
     {
-        Console.WriteLine(JsonSerializer.Serialize(data, JsonOptions));
+        Console.WriteLine(JsonSerializer.Serialize(data, AppJsonContext.Default.ObservableCollectionGroupList));
     }
-
-    private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
-    {
-        WriteIndented = true
-    };
 
     private static string GetAppDataPath()
     {
@@ -197,8 +192,8 @@ public static class TaskHelpers
     public static async Task SaveAsync(Store store, bool isArchive = false)
     {
         string json = isArchive ?
-            JsonSerializer.Serialize(store.Archive.ArchivedLists, JsonOptions) :
-            JsonSerializer.Serialize(store.Lists, JsonOptions);
+            JsonSerializer.Serialize(store.Archive.ArchivedLists, AppJsonContext.Default.ObservableCollectionGroupList) :
+            JsonSerializer.Serialize(store.Lists, AppJsonContext.Default.ObservableCollectionGroupList);
 
         string path = Path.Combine(GetAppDataPath(), isArchive ? "Archive.json" : "Tasks.json");
 
@@ -222,7 +217,7 @@ public static class TaskHelpers
             string json = await File.ReadAllTextAsync(path);
             Console.WriteLine("Loaded from: " + path);
 
-            return JsonSerializer.Deserialize<ObservableCollection<GroupList>>(json, JsonOptions)
+            return JsonSerializer.Deserialize<ObservableCollection<GroupList>>(json, AppJsonContext.Default.ObservableCollectionGroupList)
                    ?? GetDefaultList(isArchive);
         }
         catch (Exception ex)

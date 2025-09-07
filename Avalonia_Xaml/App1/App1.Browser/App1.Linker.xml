@@ -1,0 +1,8 @@
+<linker>
+  <assembly fullname="App1">
+    <namespace fullname="App1.Views" preserve="all"/>
+    <namespace fullname="App1.ViewModels" preserve="all"/>
+    <namespace fullname="App1.Components" preserve="all"/>
+    <namespace fullname="App1.Converters" preserve="all"/>
+  </assembly>
+</linker>

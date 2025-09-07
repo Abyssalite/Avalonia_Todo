@@ -7,3 +7,5 @@
 - dotnet publish App1.Android -f net9.0-android
 
 - dotnet run --project App1.Desktop -f net9.0
+
+- dotnet run --project App1.Browser -f net9.0-browser
