@@ -106,17 +106,12 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage
     {
         _store.SelectedList = groupedList;
         _store.SelectedListName = groupedList.ListName;
-        _navigator.ClearStack();
+        await _navigator.ClearStack();
 
         _stateService.CancelEdit();
         _stateService.OpenPane(false);
         var vm = App.Services?.GetRequiredService<TaskGroupViewModel>();
-        await _navigator.NavigateMain(
-             new NavigationEntry(
-                vm, 
-                new Components.TopBarViewModel(_store, vm, groupedList.ListName)
-            )
-        );
+        await _navigator.NavigateMainAndTop(vm, new Components.TopBarViewModel(_store, vm, groupedList.ListName));
     }
 
     private void ClearSelectedList()

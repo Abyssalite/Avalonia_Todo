@@ -199,13 +199,12 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
             else
             {
                 var vm = App.Services?.GetRequiredService<AddTaskViewModel>();
-                await _navigator.NavigateMain(
-                    new NavigationEntry(
-                        vm, 
-                        new Components.TopBarViewModel(_store, vm, "New Task")
-                    )
-                );
-                await _navigator.NavigateSide(App.Services?.GetRequiredService<NewTaskOptionViewModel>());
+                await _navigator.Navigate(new NavigationState(
+                    vm, 
+                    App.Services?.GetRequiredService<NewTaskOptionViewModel>(),
+                    new Components.TopBarViewModel(_store, vm, "New Task")
+                ));
+
             }
         }
         IsInEditMode = false;
@@ -215,11 +214,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
     {
         _store.SelectedTask = task;
         var vm = App.Services?.GetRequiredService<TaskDetailViewModel>();
-        await _navigator.NavigateMain(
-            new NavigationEntry(
-                vm, 
-                new Components.TopBarViewModel(_store, vm, ListName)
-            )
-        );
+        await _navigator.NavigateMainAndTop(vm, new Components.TopBarViewModel(_store, vm, ListName));
+
     }
 }

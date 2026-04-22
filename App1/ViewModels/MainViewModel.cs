@@ -39,12 +39,12 @@ public partial class MainViewModel : ViewModelBase
         };
 
         var vm = App.Services?.GetRequiredService<WelcomeViewModel>();
-        _navigator.FirstView = new NavigationEntry(
+        _navigator.FirstView = new NavigationState(
             vm, 
+            App.Services?.GetRequiredService<GroupListViewModel>(),
             new Components.TopBarViewModel(_store, vm, "")
         );
 
-        await _navigator.NavigateSide(App.Services?.GetRequiredService<GroupListViewModel>());
-        await _navigator.NavigateMain(_navigator.FirstView);
+        await _navigator.Navigate(_navigator.FirstView);
     }
 }
