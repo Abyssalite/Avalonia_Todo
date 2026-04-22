@@ -34,7 +34,6 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         set
         {
             _isInEditMode = value;
-            _stateService.IsInEditMode = value;
             OnChangeListName?.Invoke(_isInEditMode && IsNotMainList);
             OnPropertyChanged(nameof(IsInEditMode));
         }
@@ -76,8 +75,8 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
             OnPropertyChanged(nameof(IsNotInArchive));
         }
 
-        _stateService.EditModeChanged += CancelEdit;
-        _stateService.ImportantChanged += UpdateImportant;
+        _stateService.CancelEditAction += CancelEdit;
+        _stateService.UpdateImportantAction += UpdateImportant;
         _store.PropertyChanged += (_, e) =>
         {
             if (store.SelectedList == null) return;

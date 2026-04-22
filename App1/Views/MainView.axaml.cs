@@ -48,7 +48,7 @@ public partial class MainView : UserControl
 
         if (GlobalVariables.IsAndroid || GlobalVariables.IsBrowser)
         {
-            if (_stateService != null && GlobalVariables.IsAndroid) _stateService.PaneChanged += OpenPane;
+            if (_stateService != null && GlobalVariables.IsAndroid) _stateService.OpenPaneAction += OpenPane;
             SideViewContent.Margin = new Thickness(10, 15, 10, 10);
             MainViewContent.Margin = new Thickness(5, 10, 5, 5);
             LeftBarContent.Margin = new Thickness(10, 15, 10, 10);

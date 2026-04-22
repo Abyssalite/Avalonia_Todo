@@ -83,12 +83,12 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage
             ClearSelectedList();
         });
         AddListCommand = new AsyncRelayCommand<string>(AddList);
-        _stateService.SelectedListCleared += ClearSelectedList;
+        _stateService.ClearSelectedListAction += ClearSelectedList;
     }
 
     async Task IHandleLastPage.HandleLastPageAsync()
     {
-        ClearSelectedList();
+        _stateService.ClearSelectedList();
         await Task.CompletedTask;
     }
 
