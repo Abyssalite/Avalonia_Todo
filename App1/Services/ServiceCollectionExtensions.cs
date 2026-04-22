@@ -5,12 +5,10 @@ public static class ServiceCollectionExtensions
 {
     public static void AddCommonServices(this IServiceCollection collection)
     {
-        collection.AddSingleton<IDialogService, DialogService>();
         collection.AddSingleton<Store>();
-        collection.AddSingleton<IViewHost, ViewHost>();
+        collection.AddSingleton<IDialogService, DialogService>();
         collection.AddSingleton<INotificationService, NotificationService>();
         collection.AddSingleton<IChangeStateService, ChangeStateService>();
-        collection.AddSingleton<INavigatorService, NavigatorService>();
         collection.AddTransient<MainViewModel>();
         collection.AddTransient<TaskDetailViewModel>();
         collection.AddTransient<AddTaskViewModel>();

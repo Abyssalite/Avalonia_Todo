@@ -49,8 +49,8 @@ public partial class MainView : UserControl
         if (GlobalVariables.IsAndroid || GlobalVariables.IsBrowser)
         {
             if (_stateService != null && GlobalVariables.IsAndroid) _stateService.PaneChanged += OpenPane;
-            LeftViewContent.Margin = new Thickness(10, 15, 10, 10);
-            RightViewContent.Margin = new Thickness(5, 10, 5, 5);
+            SideViewContent.Margin = new Thickness(10, 15, 10, 10);
+            MainViewContent.Margin = new Thickness(5, 10, 5, 5);
             LeftBarContent.Margin = new Thickness(10, 15, 10, 10);
 
             LeftBar.IsVisible = !GlobalVariables.IsAndroid;
@@ -59,8 +59,8 @@ public partial class MainView : UserControl
         }
         else
         {
-            LeftViewContent.Margin = new Thickness(10, 40, 10, 10);
-            RightViewContent.Margin = new Thickness(5, 35, 5, 5);
+            SideViewContent.Margin = new Thickness(10, 40, 10, 10);
+            MainViewContent.Margin = new Thickness(5, 35, 5, 5);
             LeftBarContent.Margin = new Thickness(10, 40, 10, 10);
 
             LeftBar.IsVisible = true;

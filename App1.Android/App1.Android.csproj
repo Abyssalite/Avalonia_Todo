@@ -25,5 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\App1\App1.csproj" />
+    <ProjectReference Include="../../Avalonia_Navigation/Avalonia_Navigation/Avalonia_Navigation.csproj" />
   </ItemGroup>
 </Project>

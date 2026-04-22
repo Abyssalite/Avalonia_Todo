@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Avalonia_Navigation;
 
 namespace App1.ViewModels;
 
@@ -26,8 +27,8 @@ public partial class TaskDetailViewModel : ViewModelBase
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate) :
-        base(store, navigator, dialogService, stateService, notificate)
+        INotificationService notificate
+    ): base(store, navigator, dialogService, stateService, notificate)
     {
         if (store.SelectedTask != null && store.SelectedList != null)
         {

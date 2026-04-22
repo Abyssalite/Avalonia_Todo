@@ -26,4 +26,8 @@
     <PackageReference Include="Semi.Avalonia" />
     <PackageReference Include="System.Reactive" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../Avalonia_Navigation/Avalonia_Navigation/Avalonia_Navigation.csproj" />
+  </ItemGroup>
 </Project>

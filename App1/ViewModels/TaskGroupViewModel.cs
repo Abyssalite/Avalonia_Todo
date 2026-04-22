@@ -1,13 +1,13 @@
-using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Avalonia_Navigation;
 
 namespace App1.ViewModels;
 
-public partial class TaskGroupViewModel : ViewModelBase
+public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
 {
     private ObservableCollection<TaskGroup>? _groupedTasks = new();
     public ObservableCollection<TaskGroup>? GroupedTasks
@@ -62,8 +62,8 @@ public partial class TaskGroupViewModel : ViewModelBase
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate) :
-        base(store, navigator, dialogService, stateService, notificate)
+        INotificationService notificate
+    ): base(store, navigator, dialogService, stateService, notificate)
     {
         ListName = store.SelectedListName;
         IsNotMainList = !TaskHelpers.IsMainList(ListName);
@@ -97,6 +97,16 @@ public partial class TaskGroupViewModel : ViewModelBase
 
         AddOrSaveTaskCommand = new AsyncRelayCommand(OpenAddOrSaveTaskAsync);
         CancelCommand = new RelayCommand(CancelEdit);
+    }
+
+    async Task<bool> IHandleBackNavigation.HandleBackAsync()
+    {
+        if (_isInEditMode)
+        {
+            IsInEditMode = false;
+            return await Task.FromResult(true);
+        }
+        else return await Task.FromResult(false);
     }
 
     protected override async Task ToggleArchiveListAsync()
@@ -190,8 +200,13 @@ public partial class TaskGroupViewModel : ViewModelBase
             else
             {
                 var vm = App.Services?.GetRequiredService<AddTaskViewModel>();
-                await _navigator.NavigateRight((vm, new Components.TopBarViewModel(_store, vm, "New Task")));
-                await _navigator.NavigateLeft(App.Services?.GetRequiredService<NewTaskOptionViewModel>());
+                await _navigator.NavigateMain(
+                    new NavigationEntry(
+                        vm, 
+                        new Components.TopBarViewModel(_store, vm, "New Task")
+                    )
+                );
+                await _navigator.NavigateSide(App.Services?.GetRequiredService<NewTaskOptionViewModel>());
             }
         }
         IsInEditMode = false;
@@ -201,6 +216,11 @@ public partial class TaskGroupViewModel : ViewModelBase
     {
         _store.SelectedTask = task;
         var vm = App.Services?.GetRequiredService<TaskDetailViewModel>();
-        await _navigator.NavigateRight((vm, new Components.TopBarViewModel(_store, vm, ListName)));
+        await _navigator.NavigateMain(
+            new NavigationEntry(
+                vm, 
+                new Components.TopBarViewModel(_store, vm, ListName)
+            )
+        );
     }
 }

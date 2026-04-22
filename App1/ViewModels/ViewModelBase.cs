@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Avalonia_Navigation;
 
 namespace App1.ViewModels;
 
@@ -23,8 +24,8 @@ public partial class ViewModelBase : ObservableObject
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate)
-    {
+        INotificationService notificate
+    ){
         _store = store;
         _navigator = navigator;
         _dialogService = dialogService;

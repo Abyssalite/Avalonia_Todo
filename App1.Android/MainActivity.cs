@@ -3,6 +3,7 @@ using Android.Content.PM;
 using Avalonia;
 using Avalonia.Android;
 using Microsoft.Extensions.DependencyInjection;
+using Avalonia_Navigation;
 
 namespace App1.Android;
 

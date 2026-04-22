@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Avalonia_Navigation;
 
 namespace App1.ViewModels;
 
@@ -14,9 +15,8 @@ public partial class MainViewModel : ViewModelBase
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate):
-        base(store, navigator, dialogService, stateService, notificate)
-
+        INotificationService notificate
+    ): base(store, navigator, dialogService, stateService, notificate)
     {
         _host = host;
         _ = InitializeAsync();
@@ -39,8 +39,12 @@ public partial class MainViewModel : ViewModelBase
         };
 
         var vm = App.Services?.GetRequiredService<WelcomeViewModel>();
-        _navigator.FirstView = (vm, new Components.TopBarViewModel(_store, vm, ""));
-        await _navigator.NavigateLeft(App.Services?.GetRequiredService<GroupListViewModel>());
-        await _navigator.NavigateRight(_navigator.FirstView);
+        _navigator.FirstView = new NavigationEntry(
+            vm, 
+            new Components.TopBarViewModel(_store, vm, "")
+        );
+
+        await _navigator.NavigateSide(App.Services?.GetRequiredService<GroupListViewModel>());
+        await _navigator.NavigateMain(_navigator.FirstView);
     }
 }

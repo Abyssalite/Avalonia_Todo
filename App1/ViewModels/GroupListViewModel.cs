@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Avalonia_Navigation;
 
 namespace App1.ViewModels;
 
-public partial class GroupListViewModel : ViewModelBase
+public partial class GroupListViewModel : ViewModelBase, IHandleLastPage
 {
     public ObservableCollection<GroupList>? FilteredLists { get; set; } = new();
     public ICommand OpenListCommand { get; }
@@ -48,8 +49,8 @@ public partial class GroupListViewModel : ViewModelBase
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate) :
-        base(store, navigator, dialogService, stateService, notificate)
+        INotificationService notificate
+    ): base(store, navigator, dialogService, stateService, notificate)
     {
         FilteredLists = _store.FilteredLists;
         _store.PropertyChanged += (_, e) =>
@@ -85,6 +86,12 @@ public partial class GroupListViewModel : ViewModelBase
         _stateService.SelectedListCleared += ClearSelectedList;
     }
 
+    async Task IHandleLastPage.HandleLastPageAsync()
+    {
+        ClearSelectedList();
+        await Task.CompletedTask;
+    }
+
     private async Task AddList(string? newListName)
     {
         OnSaveAddList?.Invoke();
@@ -104,7 +111,12 @@ public partial class GroupListViewModel : ViewModelBase
         _stateService.CancelEdit();
         _stateService.OpenPane(false);
         var vm = App.Services?.GetRequiredService<TaskGroupViewModel>();
-        await _navigator.NavigateRight((vm, new Components.TopBarViewModel(_store, vm, groupedList.ListName)));
+        await _navigator.NavigateMain(
+             new NavigationEntry(
+                vm, 
+                new Components.TopBarViewModel(_store, vm, groupedList.ListName)
+            )
+        );
     }
 
     private void ClearSelectedList()
