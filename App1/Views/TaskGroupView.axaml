@@ -18,18 +18,18 @@
                                 <TextBlock Text="{Binding Category}" 
                                         FontSize="20" 
                                         FontWeight="Bold"
-                                        Margin="10,10,100,2"
+                                        Margin="15,10,100,2"
                                         Padding="10,2,10,2" 
                                         IsVisible="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}" />
                                 <TextBox Text="{Binding Category, Mode=TwoWay}" 
                                         FontSize="20"
-                                        Margin="10,10,100,2"
+                                        Margin="15,10,100,2"
                                         Padding="10,8,10,8" 
                                         IsVisible="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}" />
 
                                 <ListBox ItemsSource="{Binding Tasks}"
                                         BorderThickness="0"
-                                        Margin="10,2,10,2"
+                                        Margin="15,2,15,2"
                                         Background="Transparent"
                                         SelectionMode="Single"
                                         CornerRadius="8"
@@ -61,7 +61,7 @@
                     IsEnabled="{Binding IsNotInArchive}" >
                 <Grid 
                     ColumnDefinitions="*,Auto"
-                    Margin="20,15,20,0"
+                    Margin="25,15,25,0"
                     VerticalAlignment="Top">
                     <TextBox Grid.Column="0"
                             x:Name="QuickAddTaskTextBox"
@@ -87,7 +87,7 @@
                             Background="#FAAA"
                             IsVisible="{Binding IsInEditMode}"
                             Command="{Binding CancelCommand}">
-                        <Image Source="avares://App1/Assets/icons8-plus-100.png"
+                        <Image Source="avares://App1/Assets/icons8-cross-100.png"
                             Stretch="Uniform"
                             Width="50"
                             Height="50" />

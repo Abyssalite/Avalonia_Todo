@@ -50,8 +50,8 @@ public partial class MainView : UserControl
         {
             if (_stateService != null && GlobalVariables.IsAndroid) _stateService.OpenPaneAction += OpenPane;
             SideViewContent.Margin = new Thickness(10, 15, 10, 10);
-            MainViewContent.Margin = new Thickness(5, 10, 5, 5);
             LeftBarContent.Margin = new Thickness(10, 15, 10, 10);
+            MainViewContent.Margin = new Thickness(0, 10, 0, 0);
 
             LeftBar.IsVisible = !GlobalVariables.IsAndroid;
             OpenPane(!GlobalVariables.IsAndroid);
@@ -60,8 +60,8 @@ public partial class MainView : UserControl
         else
         {
             SideViewContent.Margin = new Thickness(10, 40, 10, 10);
-            MainViewContent.Margin = new Thickness(5, 35, 5, 5);
             LeftBarContent.Margin = new Thickness(10, 40, 10, 10);
+            MainViewContent.Margin = new Thickness(0, 35, 0, 0);
 
             LeftBar.IsVisible = true;
             OpenPane(true);

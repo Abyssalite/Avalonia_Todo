@@ -16,10 +16,4 @@ public partial class WelcomeViewModel : ViewModelBase
     {
         Text = store.WelcomeText;
     }
-    
-    protected override async Task BackOrToggleDrawerAsync()
-    {
-        _stateService.OpenPane(!_stateService.IsPaneOpen);
-        await Task.CompletedTask;
-    }
 }

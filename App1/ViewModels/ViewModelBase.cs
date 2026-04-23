@@ -39,7 +39,16 @@ public partial class ViewModelBase : ObservableObject
     }
     protected virtual Task DeleteAsync() => Task.CompletedTask;
     protected virtual Task ToggleArchiveListAsync() => Task.CompletedTask;
-    protected virtual Task BackOrToggleDrawerAsync() => Task.CompletedTask;
+    protected virtual async Task BackOrToggleDrawerAsync()
+    {
+        if (GlobalVariables.IsAndroid)
+            _stateService.OpenPane(!_stateService.IsPaneOpen);
+        else
+            await _navigator.OpenPrevious();
+
+        await Task.CompletedTask;
+    }
+    
     protected virtual void Edit() { }
     public virtual bool? GetSetImportant(bool? value) { return null; }
 }

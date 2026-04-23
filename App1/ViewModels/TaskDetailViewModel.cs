@@ -52,9 +52,6 @@ public partial class TaskDetailViewModel : ViewModelBase
         } 
         return null;
     }
-
-    protected override async Task BackOrToggleDrawerAsync() =>
-        await _navigator.OpenPrevious();
     
     protected override async Task DeleteAsync()
     {

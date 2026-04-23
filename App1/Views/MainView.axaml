@@ -31,7 +31,7 @@
                     <Border Background="#FF2D2D2D">
                         <StackPanel x:Name="SideViewContent">
                             <Grid ColumnDefinitions="*,Auto" >
-                                <TextBlock Grid.Column="0" Margin="10,0,10,0" Text="Text" FontSize="20" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="0" Margin="10,0,10,0" Text="Todo" FontSize="20" VerticalAlignment="Center" />
                                 <Button Content="☰" 
                                     Grid.Column="1" 
                                     Click="TogglePane_Click"
@@ -53,7 +53,7 @@
                         </StackPanel>
                     </Border>
                     <Grid Grid.Column="1" RowDefinitions="Auto,*" x:Name="MainViewContent">
-                        <ContentControl Grid.Row="0" Content="{Binding ViewHost.TopBar}" Margin="10,5,10,5" />
+                        <ContentControl Grid.Row="0" Content="{Binding ViewHost.TopBar}" Margin="15,5,15,5" />
                         <ContentControl Grid.Row="1" Content="{Binding ViewHost.MainView}" />
                     </Grid>
                 </Grid>

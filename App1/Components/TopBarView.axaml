@@ -41,7 +41,7 @@
                             BorderBrush="Transparent"
                             Background="#FAAA"
                             Command="{Binding BackOrDrawerCommand}">
-                        <Image Source="avares://App1/Assets/icons8-back-100.png"
+                        <Image x:Name="BackOrDrawerImage"
                             Stretch="Uniform"
                             Width="40"
                             Height="40" />
@@ -72,7 +72,7 @@
                                 BorderBrush="Transparent"
                                 IsChecked="{Binding ToggleImportant, Mode=TwoWay}"
                                 IsEnabled="{Binding IsNotInArchive}">
-                            <Image Source="avares://App1/Assets/icons8-back-100.png"
+                            <Image Source="avares://App1/Assets/icons8-star-100.png"
                                 Stretch="Uniform"
                                 Width="40"
                                 Height="40" />
@@ -88,7 +88,7 @@
                                 VerticalContentAlignment="Center"
                                 BorderBrush="Transparent"
                                 Background="#FAAA">
-                            <Image Source="avares://App1/Assets/icons8-menu-100.png"
+                            <Image Source="avares://App1/Assets/icons8-menu-2-100.png"
                                 Stretch="Uniform"
                                 Width="40"
                                 Height="40" />

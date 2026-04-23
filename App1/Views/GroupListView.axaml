@@ -82,7 +82,7 @@
                 x:Name="NewListBox" 
                 Watermark="New List" 
                 Margin="0,0,25,5" />
-            <Button x:Class="App1.Views.GroupListView"
+            <Button
                 x:Name="SaveButton"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"

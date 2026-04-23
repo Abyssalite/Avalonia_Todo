@@ -1,6 +1,8 @@
 using System;
 using App1.ViewModels;
 using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 
 namespace App1.Components;
 
@@ -9,7 +11,16 @@ public partial class TopBarView : UserControl
     public TopBarView()
     {
         InitializeComponent();
+        
         this.DataContextChanged += OnDataContextChanged;
+
+        if (GlobalVariables.IsAndroid)
+            BackOrDrawerImage.Source = new Bitmap(
+                AssetLoader.Open(new Uri("avares://App1/Assets/icons8-menu-100.png"))
+            );
+        else BackOrDrawerImage.Source = new Bitmap(
+                AssetLoader.Open(new Uri("avares://App1/Assets/icons8-back-100.png"))
+            );
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
@@ -51,16 +62,13 @@ public partial class TopBarView : UserControl
 
     private void TaskDetailTopBar()
     {
-        if (GlobalVariables.IsAndroid)
-            ButtonFlyout.IsVisible = false;
+        ButtonFlyout.IsVisible = false;
         ToggleArchiveButton.IsVisible = false;
     }
 
     private void TaskGroupTopBar(string listName)
     {
-        if (GlobalVariables.IsAndroid)
-            BackOrDrawerButton.IsVisible = true;
-        else BackOrDrawerButton.IsVisible = false;
+        BackOrDrawerButton.IsVisible = true;
         if (listName == GlobalVariables.Important) 
             ButtonFlyout.IsVisible = false;
                             
