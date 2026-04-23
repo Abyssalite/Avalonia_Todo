@@ -29,5 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../Avalonia_Navigation/Avalonia_Navigation/Avalonia_Navigation.csproj" />
+    <ProjectReference Include="../../Avalonia_EventHub/Avalonia_EventHub/Avalonia_EventHub.csproj" />
+
   </ItemGroup>
 </Project>

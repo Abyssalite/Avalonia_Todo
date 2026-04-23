@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Avalonia_Navigation;
+using Avalonia_EventHub;
 
 namespace App1.ViewModels;
 
@@ -15,8 +16,9 @@ public partial class MainViewModel : ViewModelBase
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate
-    ): base(store, navigator, dialogService, stateService, notificate)
+        INotificationService notificate,
+        IEventHub events
+    ): base(store, navigator, dialogService, stateService, notificate, events)
     {
         _host = host;
         _ = InitializeAsync();
@@ -27,22 +29,11 @@ public partial class MainViewModel : ViewModelBase
         _store.Lists = await TaskHelpers.LoadAsync();
         _store.Archive.ArchivedLists = await TaskHelpers.LoadAsync(true);
 
-        _store.PropertyChanged += async (_, e) =>
-        {
-            if (e.PropertyName == nameof(BaseTask.IsDone))
-                await TaskHelpers.SaveAsync(_store);
-            if (e.PropertyName == nameof(BaseTask.IsImportant))
-            {
-                await TaskHelpers.SaveAsync(_store);
-                _stateService.UpdateImportant();
-            }
-        };
-
         var vm = App.Services?.GetRequiredService<WelcomeViewModel>();
         _navigator.FirstView = new NavigationState(
-            vm, 
+            vm,
             App.Services?.GetRequiredService<GroupListViewModel>(),
-            new Components.TopBarViewModel(_store, vm, "")
+            new Components.TopBarViewModel(_store, vm, "", _events)
         );
 
         await _navigator.Navigate(_navigator.FirstView);

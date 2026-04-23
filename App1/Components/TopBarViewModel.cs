@@ -4,15 +4,21 @@ using App1.ViewModels;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Avalonia_EventHub;
+using System.Collections.Generic;
+using App1.Events;
 
 namespace App1.Components;
 /// <summary>
 /// Todo: Maybe implement a more permanent Topbar
 /// </summary>
-public partial class TopBarViewModel : ObservableObject
+public partial class TopBarViewModel : ObservableObject, IDisposable
 {
     private readonly Store _store;
     private readonly ViewModelBase _parent;
+    private readonly IEventHub _events;
+    private readonly List<IDisposable> _subscriptions = new();
+    
     private string _topbarText = "";
     public string TopbarText
     {
@@ -23,6 +29,7 @@ public partial class TopBarViewModel : ObservableObject
             {
                 _topbarText = value;
                 _store.TopbarText = _topbarText;
+                OnPropertyChanged(nameof(TopbarText));                
             }
         }
     }
@@ -50,14 +57,18 @@ public partial class TopBarViewModel : ObservableObject
     public RelayCommand RunAfterLoadedCommand { get; }
     public Action<ViewModelBase>? OnSetParent { get; set; }
 
-    public TopBarViewModel(Store store, ViewModelBase? parent, string text)
+    public TopBarViewModel(Store store, ViewModelBase? parent, string text, IEventHub events)
     {
         if (parent == null) throw new NullReferenceException("No Parent View Setted");
         _store = store;
         _parent = parent;
+        _events = events;
+
         if (parent is GroupListViewModel)
             TopbarText = text;
-        else _topbarText = text;
+        else
+            _topbarText = text;
+
 
         if (store.SelectedList != null)
         {
@@ -65,23 +76,20 @@ public partial class TopBarViewModel : ObservableObject
             OnPropertyChanged(nameof(IsNotInArchive));
         }
 
-        _store.PropertyChanged += (_, e) =>
+        _subscriptions.Add(_events.Subscribe<ListArchiveStateChangedEvent>(evt =>
         {
-            if (store.SelectedList == null) return;
+            if (_store.SelectedList == null) return;
+            if (evt.List.ListName != _store.SelectedList.ListName) return;
 
-            // Update GUI after toggle IsArchived
-            if (e.PropertyName == nameof(GroupList.IsArchived))
-            {
-                IsNotInArchive = !store.SelectedList.IsArchived;
-                OnPropertyChanged(nameof(IsNotInArchive));
-            }
-            // Update GUI after change TopbarText
-            if (e.PropertyName == nameof(Store.TopbarText))
-            {
-                _topbarText = _store.TopbarText;
-                OnPropertyChanged(nameof(TopbarText));
-            }
-        };
+            IsNotInArchive = !evt.IsArchived;
+            OnPropertyChanged(nameof(IsNotInArchive));
+        }));
+
+        _subscriptions.Add(_events.Subscribe<TopbarTextChangedEvent>(evt =>
+        {
+            _topbarText = evt.Text;
+            OnPropertyChanged(nameof(TopbarText));
+        }));
 
         ToggleArchiveCommand = new AsyncRelayCommand<object>(async (param) =>
         {
@@ -115,5 +123,11 @@ public partial class TopBarViewModel : ObservableObject
         _toggleImportant = _parent.GetSetImportant(null);
         OnPropertyChanged(nameof(ToggleImportant));
         RunAfterLoadedCommand = new RelayCommand(() => OnSetParent?.Invoke(_parent));
+    }
+    
+        public void Dispose()
+    {
+        foreach (var sub in _subscriptions)
+            sub.Dispose();
     }
 }

@@ -6,10 +6,12 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Avalonia_Navigation;
+using Avalonia_EventHub;
+using App1.Events;
 
 namespace App1.ViewModels;
 
-public partial class GroupListViewModel : ViewModelBase, IHandleLastPage
+public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDisposable
 {
     public ObservableCollection<GroupList>? FilteredLists { get; set; } = new();
     public ICommand OpenListCommand { get; }
@@ -49,19 +51,27 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate
-    ): base(store, navigator, dialogService, stateService, notificate)
+        INotificationService notificate,
+        IEventHub events
+    ): base(store, navigator, dialogService, stateService, notificate, events)
     {
         FilteredLists = _store.FilteredLists;
-        _store.PropertyChanged += (_, e) =>
+        _subscriptions.Add(_events.Subscribe<ListsChangedEvent>(_ =>
         {
-            // Update GUI after add new List
-            if (e.PropertyName == nameof(Store.FilteredLists) && !_toggleArchive)
+            if (!_toggleArchive)
             {
                 FilteredLists = _store.FilteredLists;
                 OnPropertyChanged(nameof(FilteredLists));
             }
-        };
+        }));
+        _subscriptions.Add(_events.Subscribe<ArchiveListsChangedEvent>(_ =>
+        {
+            if (_toggleArchive)
+            {
+                FilteredLists = _store.Archive.ArchivedLists;
+                OnPropertyChanged(nameof(FilteredLists));
+            }
+        }));
 
         OpenListCommand = new RelayCommand<string>(async (listName) =>
         {
@@ -73,7 +83,7 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage
             }
             else if (listName == GlobalVariables.Important)
             {
-                var list = new GroupList()
+                var list = new GroupList
                 {
                     ListName = listName,
                     Groups = TaskHelpers.FilterImportant(_store.Lists)
@@ -82,14 +92,9 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage
             }
             ClearSelectedList();
         });
+
         AddListCommand = new AsyncRelayCommand<string>(AddList);
         _stateService.ClearSelectedListAction += ClearSelectedList;
-    }
-
-    async Task IHandleLastPage.HandleLastPageAsync()
-    {
-        _stateService.ClearSelectedList();
-        await Task.CompletedTask;
     }
 
     private async Task AddList(string? newListName)
@@ -104,19 +109,24 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage
 
     private async Task OpenListAsync(GroupList groupedList)
     {
-        _store.SelectedList = groupedList;
-        _store.SelectedListName = groupedList.ListName;
+        _store.SelectList(groupedList);
         await _navigator.ClearStack();
 
         _stateService.CancelEdit();
         _stateService.OpenPane(false);
         var vm = App.Services?.GetRequiredService<TaskGroupViewModel>();
-        await _navigator.NavigateMainAndTop(vm, new Components.TopBarViewModel(_store, vm, groupedList.ListName));
+        await _navigator.NavigateMainAndTop(vm, new Components.TopBarViewModel(_store, vm, groupedList.ListName, _events));
+    }
+
+    async Task IHandleLastPage.HandleLastPageAsync()
+    {
+        _stateService.ClearSelectedList();
+        await Task.CompletedTask;
     }
 
     private void ClearSelectedList()
     {
         _selectedList = null;
-        OnPropertyChanged(nameof(SelectedList));
+        //OnPropertyChanged(nameof(SelectedList));
     }
 }

@@ -3,15 +3,21 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Avalonia_Navigation;
+using Avalonia_EventHub;
+using System.Collections.Generic;
 
 namespace App1.ViewModels;
 
-public partial class ViewModelBase : ObservableObject
+public partial class ViewModelBase : ObservableObject, IDisposable
 {
+    protected readonly List<IDisposable> _subscriptions = new();
+
     protected readonly Store _store;
     protected readonly INavigatorService _navigator;
     protected readonly IDialogService _dialogService;
     protected readonly IChangeStateService _stateService;
+    protected readonly IEventHub _events;
+
     public INotificationService Notificate { get; }
     public AsyncRelayCommand DeleteCommand { get; }
     public AsyncRelayCommand ToggleArchiveCommand { get; }
@@ -24,12 +30,14 @@ public partial class ViewModelBase : ObservableObject
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate
+        INotificationService notificate,
+        IEventHub events
     ){
         _store = store;
         _navigator = navigator;
         _dialogService = dialogService;
         _stateService = stateService;
+        _events = events;
         Notificate = notificate;
 
         DeleteCommand = new AsyncRelayCommand(DeleteAsync);
@@ -51,4 +59,10 @@ public partial class ViewModelBase : ObservableObject
     
     protected virtual void Edit() { }
     public virtual bool? GetSetImportant(bool? value) { return null; }
+
+    public void Dispose()
+    {
+        foreach (var sub in _subscriptions)
+            sub.Dispose();
+    }
 }

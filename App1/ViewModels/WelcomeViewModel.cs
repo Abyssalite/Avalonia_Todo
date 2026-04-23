@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Avalonia_EventHub;
 using Avalonia_Navigation;
 
 namespace App1.ViewModels;
@@ -11,8 +12,9 @@ public partial class WelcomeViewModel : ViewModelBase
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate
-    ): base(store, navigator, dialogService, stateService, notificate)
+        INotificationService notificate,
+        IEventHub events
+    ): base(store, navigator, dialogService, stateService, notificate, events)
     {
         Text = store.WelcomeText;
     }

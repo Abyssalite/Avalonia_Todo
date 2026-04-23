@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Avalonia_Navigation;
+using Avalonia_EventHub;
 
 namespace App1.ViewModels;
 
@@ -21,8 +22,9 @@ public partial class AddTaskViewModel : ViewModelBase
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate
-    ): base(store, navigator, dialogService, stateService, notificate)
+        INotificationService notificate,
+        IEventHub events
+    ): base(store, navigator, dialogService, stateService, notificate, events)
     {
         SaveTaskCommand = new AsyncRelayCommand(AddTask);
         CancelCommand = new AsyncRelayCommand(ClearAsync);

@@ -1,83 +1,82 @@
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using Avalonia_EventHub;
+using App1.Events;
 
 public class Store : INotifyPropertyChanged
 {
+    private readonly IEventHub _events;
+
     private ObservableCollection<GroupList> _lists = new();
-    public string SelectedListName { set; get; } = "";
     private string _topBarText = "";
-    public string TopbarText
+
+    public Store(IEventHub events)
     {
-        get => _topBarText;
-        set
-        {
-            if (value != null)
-            {
-                _topBarText = value;
-                OnPropertyChanged(nameof(TopbarText));
-            }
-        }
+        _events = events;
+        Archive = new();
     }
-    public string WelcomeText { set; get; } = "Welcome";
-    public bool Initialized { set; get; } = false;
-    public GroupList? SelectedList { get; set; }
+
+    public string SelectedListName { get; private set; } = "";
+    public GroupList? SelectedList { get; private set; }
     public BaseTask? SelectedTask { get; set; }
-    public ArchivedList Archive { set; get; }
-    public ObservableCollection<GroupList> FilteredLists { get; set; } = new();
+    public ArchivedList Archive { get; }
+    public string WelcomeText { get; set; } = "Welcome";
+    public bool Initialized { get; set; }
+
+    public ObservableCollection<GroupList> FilteredLists =>
+        new(_lists.Where(g => g.ListName != GlobalVariables.Quick));
+
     public ObservableCollection<GroupList> Lists
     {
         get => _lists;
         set
         {
-            if (value != null)
-            {
-                _lists.CollectionChanged -= OnListsChanged;
-                _lists = value;
-                _lists.CollectionChanged += OnListsChanged;
-
-                HookChanges();
-                OnPropertyChanged(nameof(Lists));
-            }
+            _lists = value ?? new();
+            OnPropertyChanged(nameof(Lists));
+            OnPropertyChanged(nameof(FilteredLists));
+            _events.Publish(new ListsChangedEvent());
         }
     }
 
-    public Store()
+    public string TopbarText
     {
-        Lists.CollectionChanged += OnListsChanged;
-        Archive = new();
+        get => _topBarText;
+        set
+        {
+            if (_topBarText == value) return;
+            _topBarText = value;
+            OnPropertyChanged(nameof(TopbarText));
+            _events.Publish(new TopbarTextChangedEvent(_topBarText));
+        }
     }
 
-    private void OnListsChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
-        HookChanges();
-    
-    private void HookChanges()
+    public void SelectList(GroupList? list)
     {
-        foreach (var list in Lists)
-            list.PropertyChanged += (_, e) =>
-            {
-                if (e.PropertyName == nameof(BaseTask.IsDone))
-                    OnPropertyChanged(nameof(BaseTask.IsDone));
-                if (e.PropertyName == nameof(BaseTask.IsImportant))
-                    OnPropertyChanged(nameof(BaseTask.IsImportant));
-                if (e.PropertyName == nameof(GroupList.IsArchived))
-                    OnPropertyChanged(nameof(GroupList.IsArchived));
-            };
-            Archive.PropertyChanged +=  (_, e) =>
-            {
-                if (e.PropertyName == nameof(ArchivedList.ArchivedLists))
-                    OnPropertyChanged(nameof(ArchivedList.ArchivedLists));
-            };
-        UpdateFilteredList();
+        SelectedList = list;
+        SelectedListName = list?.ListName ?? "";
+        OnPropertyChanged(nameof(SelectedList));
+        OnPropertyChanged(nameof(SelectedListName));
+        _events.Publish(new SelectedListChangedEvent(SelectedList, SelectedListName));
     }
 
-    private void UpdateFilteredList()
+    public void NotifyListsChanged()
     {
-        FilteredLists = new ObservableCollection<GroupList>(
-            Lists.Where(g => g.ListName != GlobalVariables.Quick)
-        );
+        OnPropertyChanged(nameof(Lists));
         OnPropertyChanged(nameof(FilteredLists));
+        _events.Publish(new ListsChangedEvent());
+    }
+
+    public void NotifyArchiveChanged()
+    {
+        OnPropertyChanged(nameof(Archive));
+        _events.Publish(new ArchiveListsChangedEvent());
+    }
+
+    public void NotifyArchiveToggled()
+    {
+        OnPropertyChanged(nameof(GroupList.IsArchived));
+        _events.Publish(new ArchiveListsChangedEvent());
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

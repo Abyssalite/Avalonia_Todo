@@ -1,61 +1,38 @@
+using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 
 public class GroupList : INotifyPropertyChanged
 {
+    public Guid ID = Guid.NewGuid();
     public required string ListName { get; set; }
-    private bool _isArchived = false;
+
+    private bool _isArchived;
     public bool IsArchived
     {
         get => _isArchived;
         set
         {
-            if (_isArchived != value)
-            {
-                _isArchived = value;
-                OnPropertyChanged(nameof(IsArchived));
-            }
+            if (_isArchived == value) return;
+            _isArchived = value;
+            OnPropertyChanged(nameof(IsArchived));
         }
     }
+
     private ObservableCollection<TaskGroup> _groups = new();
     public required ObservableCollection<TaskGroup> Groups
     {
         get => _groups;
         set
         {
-            _groups.CollectionChanged -= OnGroupsChanged;
-            _groups = value;
-            _groups.CollectionChanged += OnGroupsChanged;
-
-            HookChanges();
+            _groups = value ?? new();
             OnPropertyChanged(nameof(Groups));
         }
     }
 
-    public GroupList()
-    {
-        if (Groups != null)
-            Groups.CollectionChanged += OnGroupsChanged;
-    }
+    public GroupList() {}
 
-    private void OnGroupsChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
-        HookChanges();
-
-    private void HookChanges()
-    {
-        foreach (var group in Groups)
-            group.PropertyChanged += (_, e) =>
-            {
-                if (e.PropertyName == nameof(BaseTask.IsDone))
-                    OnPropertyChanged(nameof(BaseTask.IsDone));
-                if (e.PropertyName == nameof(BaseTask.IsImportant))
-                    OnPropertyChanged(nameof(BaseTask.IsImportant));
-            };
-    }
-    
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
-

@@ -1,58 +1,39 @@
+using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
 public class TaskGroup : INotifyPropertyChanged
 {
+    public Guid ID = Guid.NewGuid();
     public required string Category { get; set; }
+
     private ObservableCollection<BaseTask> _tasks = new();
     public required ObservableCollection<BaseTask> Tasks
     {
         get => _tasks;
         set
         {
-            _tasks.CollectionChanged -= OnTasksChanged;
-            _tasks = value;
-            _tasks.CollectionChanged += OnTasksChanged;
-
-            HookChanges();
+            _tasks = value ?? new();
             OnPropertyChanged(nameof(Tasks));
         }
     }
 
     public TaskGroup() {}
+
     public TaskGroup(TaskGroup other)
     {
         Category = other.Category;
-        Tasks = new ObservableCollection<BaseTask>(
-            other.Tasks.Select(task => new BaseTask(task)
-            {
-                Name = task.Name,
-                Category = task.Category,
-                ListName = task.ListName,
-                Description = task.Description,
-                IsDone = task.IsDone,
-                IsImportant = task.IsImportant
-            })
-        );
-        if (Tasks != null)
-            Tasks.CollectionChanged += OnTasksChanged;
-    }
-
-    private void OnTasksChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
-        HookChanges();
-
-    private void HookChanges()
-    {
-        foreach (var task in Tasks)
-            task.PropertyChanged += (_, e) =>
-            {
-                if (e.PropertyName == nameof(BaseTask.IsDone))
-                    OnPropertyChanged(nameof(BaseTask.IsDone));
-                if (e.PropertyName == nameof(BaseTask.IsImportant))
-                    OnPropertyChanged(nameof(BaseTask.IsImportant));
-            };
+        Tasks = new ObservableCollection<BaseTask>(other.Tasks.Select(task => new BaseTask(task)
+        {
+            ID = task.ID,
+            Name = task.Name,
+            Category = task.Category,
+            ListName = task.ListName,
+            Description = task.Description,
+            IsDone = task.IsDone,
+            IsImportant = task.IsImportant
+        }));
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

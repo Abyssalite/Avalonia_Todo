@@ -4,6 +4,8 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Avalonia_Navigation;
+using Avalonia_EventHub;
+using App1.Events;
 
 namespace App1.ViewModels;
 
@@ -61,8 +63,9 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         INavigatorService navigator,
         IDialogService dialogService,
         IChangeStateService stateService,
-        INotificationService notificate
-    ): base(store, navigator, dialogService, stateService, notificate)
+        INotificationService notificate,
+        IEventHub events
+    ): base(store, navigator, dialogService, stateService, notificate, events)
     {
         ListName = store.SelectedListName;
         IsNotMainList = !TaskHelpers.IsMainList(ListName);
@@ -77,35 +80,33 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
 
         _stateService.CancelEditAction += CancelEdit;
         _stateService.UpdateImportantAction += UpdateImportant;
-        _store.PropertyChanged += (_, e) =>
-        {
-            if (store.SelectedList == null) return;
+        _subscriptions.Add(_events.Subscribe<ListArchiveStateChangedEvent>(evt =>
+                {
+                    if (_store.SelectedList == null) return;
+                    if (evt.List.ListName != _store.SelectedList.ListName) return;
 
-            // Update GUI after toggle IsArchived
-            if (e.PropertyName == nameof(GroupList.IsArchived))
-            {
-                IsNotInArchive = !store.SelectedList.IsArchived;
-                OnPropertyChanged(nameof(IsNotInArchive));
-            }
-            // Update GUI after edit List Category
-            if (e.PropertyName == nameof(Store.FilteredLists))
-            {
-                GroupedTasks = store.SelectedList.Groups;
-            }
-        };
+                    IsNotInArchive = !evt.IsArchived;
+                    OnPropertyChanged(nameof(IsNotInArchive));
+                }));
 
-        AddOrSaveTaskCommand = new AsyncRelayCommand(OpenAddOrSaveTaskAsync);
-        CancelCommand = new RelayCommand(CancelEdit);
-    }
+                _subscriptions.Add(_events.Subscribe<ListEditedEvent>(evt =>
+                {
+                    if (_store.SelectedList == null) return;
+                    if (evt.List.ListName != _store.SelectedList.ListName) return;
 
-    async Task<bool> IHandleBackNavigation.HandleBackAsync()
-    {
-        if (_isInEditMode)
-        {
-            IsInEditMode = false;
-            return await Task.FromResult(true);
-        }
-        else return await Task.FromResult(false);
+                    GroupedTasks = evt.List.Groups;
+                }));
+
+                _subscriptions.Add(_events.Subscribe<TaskGroupsChangedEvent>(evt =>
+                {
+                    if (_store.SelectedList == null) return;
+                    if (evt.List.ListName != _store.SelectedList.ListName) return;
+
+                    GroupedTasks = evt.List.Groups;
+                }));
+
+                AddOrSaveTaskCommand = new AsyncRelayCommand(OpenAddOrSaveTaskAsync);
+                CancelCommand = new RelayCommand(CancelEdit);
     }
 
     protected override async Task ToggleArchiveListAsync()
@@ -170,7 +171,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         {
             await TaskHelpers.EditList(ListName, _store.TopbarText, GroupedTasks, _store);
             ListName = _store.TopbarText;
-            _store.SelectedListName = ListName;
+            //_store.SelectedListName = ListName;
         }
         else
         {
@@ -196,7 +197,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
                 await _navigator.Navigate(new NavigationState(
                     vm, 
                     App.Services?.GetRequiredService<NewTaskOptionViewModel>(),
-                    new Components.TopBarViewModel(_store, vm, "New Task")
+                    new Components.TopBarViewModel(_store, vm, "New Task", _events)
                 ));
 
             }
@@ -204,11 +205,21 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         IsInEditMode = false;
     }
 
+    async Task<bool> IHandleBackNavigation.HandleBackAsync()
+    {
+        if (_isInEditMode)
+        {
+            IsInEditMode = false;
+            return await Task.FromResult(true);
+        }
+        else return await Task.FromResult(false);
+    }
+
     private async Task OpenTaskAsync(BaseTask task)
     {
         _store.SelectedTask = task;
         var vm = App.Services?.GetRequiredService<TaskDetailViewModel>();
-        await _navigator.NavigateMainAndTop(vm, new Components.TopBarViewModel(_store, vm, ListName));
+        await _navigator.NavigateMainAndTop(vm, new Components.TopBarViewModel(_store, vm, ListName, _events));
 
     }
 }

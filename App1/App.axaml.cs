@@ -8,6 +8,7 @@ using App1.Views;
 using Semi.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using Avalonia_Navigation;
+using Avalonia_EventHub;
 
 namespace App1;
 
@@ -30,6 +31,7 @@ public partial class App : Application
         IServiceCollection collection = new ServiceCollection();
         collection.AddCommonServices();
         collection.AddAvaloniaNavigation();
+        collection.AddAvaloniaEventHub();
 
         // Creates a ServiceProvider containing services from the provided IServiceCollection
         Services = collection.BuildServiceProvider();

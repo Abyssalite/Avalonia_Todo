@@ -164,15 +164,16 @@ public static class TaskHelpers
         }
         if (ischanged)
             {
-                store.SelectedList = new GroupList
-                {
-                    ListName = newListName,
-                    IsArchived = false,
-                    Groups = new(editedList)
-                };
-                store.Lists.Remove(list);
-                store.Lists.Add(store.SelectedList);
-                await SaveAsync(store);
+                return;
+                //store.SelectedList = new GroupList
+                //{
+                //    ListName = newListName,
+                //    IsArchived = false,
+                //    Groups = new(editedList)
+                //};
+                //store.Lists.Remove(list);
+                //store.Lists.Add(store.SelectedList);
+                //await SaveAsync(store);
             }
     }
 
