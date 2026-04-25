@@ -36,7 +36,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         set
         {
             _isInEditMode = value;
-            OnChangeListName?.Invoke(_isInEditMode && IsNotMainList);
+            _store.OnChangeListName(_isInEditMode && IsNotMainList);
             OnPropertyChanged(nameof(IsInEditMode));
         }
     }
@@ -55,8 +55,8 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
             }
         }
     }
-    public ICommand AddOrSaveTaskCommand { get; }
-    public ICommand CancelCommand { get; }
+    public ICommand? AddOrSaveTaskCommand { get; }
+    public ICommand? CancelCommand { get; }
     
     public TaskGroupViewModel(
         Store store,
@@ -67,46 +67,41 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         IEventHub events
     ): base(store, navigator, dialogService, stateService, notificate, events)
     {
-        ListName = store.SelectedListName;
-        IsNotMainList = !TaskHelpers.IsMainList(ListName);
-        OnPropertyChanged(nameof(IsNotMainList));
+        if (_store.SelectedList == null || _store.SelectedListName == null) return;
 
-        if (store.SelectedList != null)
-        {
-            GroupedTasks = store.SelectedList.Groups;
-            IsNotInArchive = !store.SelectedList.IsArchived;
-            OnPropertyChanged(nameof(IsNotInArchive));
-        }
+        ListName = _store.SelectedListName;
+        IsNotMainList = !TaskHelpers.IsMainList(ListName);
+
+        GroupedTasks = _store.SelectedList.Groups;
+        IsNotInArchive = !_store.SelectedList.IsArchived;
+        
 
         _stateService.CancelEditAction += CancelEdit;
-        _stateService.UpdateImportantAction += UpdateImportant;
-        _subscriptions.Add(_events.Subscribe<ListArchiveStateChangedEvent>(evt =>
-                {
-                    if (_store.SelectedList == null) return;
-                    if (evt.List.ListName != _store.SelectedList.ListName) return;
+        AddOrSaveTaskCommand = new AsyncRelayCommand(OpenAddOrSaveTaskAsync);
+        CancelCommand = new RelayCommand(CancelEdit);
 
-                    IsNotInArchive = !evt.IsArchived;
-                    OnPropertyChanged(nameof(IsNotInArchive));
-                }));
 
-                _subscriptions.Add(_events.Subscribe<ListEditedEvent>(evt =>
-                {
-                    if (_store.SelectedList == null) return;
-                    if (evt.List.ListName != _store.SelectedList.ListName) return;
+        _subscriptions.Add(_events.Subscribe<GroupListIsArchiveStateChangedEvent>(evt =>
+        {
+            if (evt.List.ListName != _store.SelectedList.ListName) return;
 
-                    GroupedTasks = evt.List.Groups;
-                }));
+            IsNotInArchive = !evt.IsArchived;
+            OnPropertyChanged(nameof(IsNotInArchive));
+        }));
 
-                _subscriptions.Add(_events.Subscribe<TaskGroupsChangedEvent>(evt =>
-                {
-                    if (_store.SelectedList == null) return;
-                    if (evt.List.ListName != _store.SelectedList.ListName) return;
 
-                    GroupedTasks = evt.List.Groups;
-                }));
+        _subscriptions.Add(_events.Subscribe<GroupListChangedEvent>(evt =>
+        {
+            if (evt.Groups != _store.SelectedList.Groups) return;
 
-                AddOrSaveTaskCommand = new AsyncRelayCommand(OpenAddOrSaveTaskAsync);
-                CancelCommand = new RelayCommand(CancelEdit);
+            GroupedTasks = evt.Groups;
+        }));
+
+        _subscriptions.Add(_events.Subscribe<ChangeImportantListEvent>(evt =>
+        {
+            if (evt.name != GlobalVariables.Important) return;
+            GroupedTasks = TaskHelpers.FilterImportant(_store.MainLists.MainLists);
+        }));
     }
 
     protected override async Task ToggleArchiveListAsync()
@@ -142,12 +137,6 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         }
     }
 
-    private void UpdateImportant()
-    {
-        if (ListName == GlobalVariables.Important)
-            GroupedTasks = TaskHelpers.FilterImportant(_store.Lists);
-    }
-
     private void CancelEdit()
     {
         if (_isInEditMode && _clone != null && GroupedTasks != null)
@@ -169,15 +158,16 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
 
         if (_isInEditMode)
         {
-            await TaskHelpers.EditList(ListName, _store.TopbarText, GroupedTasks, _store);
-            ListName = _store.TopbarText;
+            var tmp = _store.TopbarText ?? "Miscelanious";
+            await TaskHelpers.EditList(ListName, tmp, GroupedTasks, _store);
+            ListName = tmp;
             //_store.SelectedListName = ListName;
         }
         else
         {
             if (QuickAddTaskName != null && QuickAddTaskName != "")
             {
-                var task = new BaseTask
+                var task = new BaseTask(_events)
                 {
                     Name = QuickAddTaskName,
                     IsDone = false,
@@ -189,7 +179,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
                 QuickAddTaskName = null;
                 OnPropertyChanged(nameof(QuickAddTaskName));
                 await TaskHelpers.AddTaskToCategory(task, _store);
-                _stateService.UpdateImportant();
+                _store.UpdateImportantList();
             }
             else
             {

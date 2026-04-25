@@ -25,12 +25,10 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
         get => _topbarText;
         set
         {
-            if (value != null)
-            {
-                _topbarText = value;
-                _store.TopbarText = _topbarText;
-                OnPropertyChanged(nameof(TopbarText));                
-            }
+            if (value == null) return;
+            _topbarText = value;
+            _store.EditTopBarText(_topbarText);
+            OnPropertyChanged(nameof(TopbarText));                
         }
     }
     private bool? _toggleImportant;
@@ -39,12 +37,9 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
         get => _toggleImportant;
         set
         {
-            if (value != null)
-            {
-                _toggleImportant = value;
-                _parent.GetSetImportant(value);
-                OnPropertyChanged(nameof(ToggleImportant));                
-            }
+            _toggleImportant = value;
+            _store.SetTaskImportant(_toggleImportant);
+            OnPropertyChanged(nameof(ToggleImportant));                
         }
     }
     public bool IsNotInArchive { get; set; } = true;
@@ -54,31 +49,32 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
     public ICommand? EditCommand { get; }
     public ICommand? BackOrDrawerCommand { get; }
     public ICommand? DeleteCommand { get; }
-    public RelayCommand RunAfterLoadedCommand { get; }
+    public ICommand? RunAfterLoadedCommand { get; }
     public Action<ViewModelBase>? OnSetParent { get; set; }
 
     public TopBarViewModel(Store store, ViewModelBase? parent, string text, IEventHub events)
     {
         if (parent == null) throw new NullReferenceException("No Parent View Setted");
+
         _store = store;
         _parent = parent;
         _events = events;
+        _topbarText = text;
 
-        if (parent is GroupListViewModel)
-            TopbarText = text;
-        else
-            _topbarText = text;
+        if (_store.SelectedList == null) return;
+        if (_store.SelectedTask == null) return;
 
+        IsNotInArchive = !_store.SelectedList.IsArchived;
+        _toggleImportant = _store.SelectedTask.IsImportant;
 
-        if (store.SelectedList != null)
+        _subscriptions.Add(_events.Subscribe<ChangeListNameEvent>(evt =>
         {
-            IsNotInArchive = !store.SelectedList.IsArchived;
-            OnPropertyChanged(nameof(IsNotInArchive));
-        }
+            CanEditBarName = evt.value;
+            OnPropertyChanged(nameof(CanEditBarName));
+        }));
 
-        _subscriptions.Add(_events.Subscribe<ListArchiveStateChangedEvent>(evt =>
+        _subscriptions.Add(_events.Subscribe<GroupListIsArchiveStateChangedEvent>(evt =>
         {
-            if (_store.SelectedList == null) return;
             if (evt.List.ListName != _store.SelectedList.ListName) return;
 
             IsNotInArchive = !evt.IsArchived;
@@ -114,14 +110,6 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
                 button.Flyout?.Hide();
             await _parent.BackOrDrawerCommand.ExecuteAsync(null);
         });
-
-        _parent.OnChangeListName = (value) =>
-        {
-            CanEditBarName = value;
-            OnPropertyChanged(nameof(CanEditBarName));
-        };
-        _toggleImportant = _parent.GetSetImportant(null);
-        OnPropertyChanged(nameof(ToggleImportant));
         RunAfterLoadedCommand = new RelayCommand(() => OnSetParent?.Invoke(_parent));
     }
     

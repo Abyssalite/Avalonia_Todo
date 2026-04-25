@@ -1,8 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using App1.Events;
+using App1.ViewModels;
+using Avalonia_EventHub;
 
-public class GroupList : INotifyPropertyChanged
+public class GroupList : ModelBase
 {
     public Guid ID = Guid.NewGuid();
     public required string ListName { get; set; }
@@ -15,7 +17,7 @@ public class GroupList : INotifyPropertyChanged
         {
             if (_isArchived == value) return;
             _isArchived = value;
-            OnPropertyChanged(nameof(IsArchived));
+            _events.Publish(new GroupListIsArchiveStateChangedEvent(this, value));
         }
     }
 
@@ -25,14 +27,12 @@ public class GroupList : INotifyPropertyChanged
         get => _groups;
         set
         {
-            _groups = value ?? new();
-            OnPropertyChanged(nameof(Groups));
+            _groups = value;
+            _events.Publish(new GroupListChangedEvent(value));
         }
     }
 
-    public GroupList() {}
+    public GroupList(IEventHub events) : base (events)
+    {}
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

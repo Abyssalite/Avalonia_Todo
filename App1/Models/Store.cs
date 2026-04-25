@@ -1,85 +1,90 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using Avalonia_EventHub;
 using App1.Events;
+using System;
+using App1.ViewModels;
 
-public class Store : INotifyPropertyChanged
+public class Store : ModelBase
 {
-    private readonly IEventHub _events;
-
     private ObservableCollection<GroupList> _lists = new();
-    private string _topBarText = "";
 
-    public Store(IEventHub events)
-    {
-        _events = events;
-        Archive = new();
-    }
-
-    public string SelectedListName { get; private set; } = "";
+    public string? SelectedListName { get; private set; }
     public GroupList? SelectedList { get; private set; }
     public BaseTask? SelectedTask { get; set; }
-    public ArchivedList Archive { get; }
+    public ArchivedList ArchiveLists { get; set; }
     public string WelcomeText { get; set; } = "Welcome";
     public bool Initialized { get; set; }
+    public required MainList MainLists { get; set; }
+    public string? TopbarText { get; set; }
+
+    public Store(IEventHub events) : base (events)
+    {
+        MainLists = new MainList(_events);
+        ArchiveLists = new ArchivedList(_events);
+
+    }
 
     public ObservableCollection<GroupList> FilteredLists =>
         new(_lists.Where(g => g.ListName != GlobalVariables.Quick));
 
-    public ObservableCollection<GroupList> Lists
+    public void ArchiveListsChange(ArchivedList? archiveLists)
     {
-        get => _lists;
-        set
-        {
-            _lists = value ?? new();
-            OnPropertyChanged(nameof(Lists));
-            OnPropertyChanged(nameof(FilteredLists));
-            _events.Publish(new ListsChangedEvent());
-        }
+        if (archiveLists == null) return;
+        ArchiveLists = archiveLists;
+        _events.Publish(new ArchiveListsChangedEvent(archiveLists));
     }
 
-    public string TopbarText
+    public void MainListsChange(MainList? mainLists)
     {
-        get => _topBarText;
-        set
-        {
-            if (_topBarText == value) return;
-            _topBarText = value;
-            OnPropertyChanged(nameof(TopbarText));
-            _events.Publish(new TopbarTextChangedEvent(_topBarText));
-        }
+        if (mainLists == null) return;
+        MainLists = mainLists;
+        _events.Publish(new MainListsChangedEvent(mainLists));
     }
 
     public void SelectList(GroupList? list)
     {
+        if (list == null) return;
         SelectedList = list;
-        SelectedListName = list?.ListName ?? "";
-        OnPropertyChanged(nameof(SelectedList));
-        OnPropertyChanged(nameof(SelectedListName));
+        SelectedListName = list.ListName;
         _events.Publish(new SelectedListChangedEvent(SelectedList, SelectedListName));
     }
 
-    public void NotifyListsChanged()
+    public void SelectTask(BaseTask? task)
     {
-        OnPropertyChanged(nameof(Lists));
-        OnPropertyChanged(nameof(FilteredLists));
-        _events.Publish(new ListsChangedEvent());
+        if (task == null) return;
+        SelectedTask = task;
+        _events.Publish(new SelectedTaskChangedEvent(SelectedTask));
     }
 
-    public void NotifyArchiveChanged()
+    public void EditTopBarText(string? text)
     {
-        OnPropertyChanged(nameof(Archive));
-        _events.Publish(new ArchiveListsChangedEvent());
+        if (text == null) return;
+        TopbarText = text;
+        _events.Publish(new TopbarTextChangedEvent(text));
     }
 
-    public void NotifyArchiveToggled()
+    public void SetTaskImportant(bool? value)
     {
-        OnPropertyChanged(nameof(GroupList.IsArchived));
-        _events.Publish(new ArchiveListsChangedEvent());
+        if (SelectedTask == null) return;
+        SelectedTask.IsImportant = value;
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    public void SetTaskDone(bool? value)
+    {
+        if (SelectedTask == null) return;
+        SelectedTask.IsDone = value;
+    }
+
+    public void UpdateImportantList()
+    {
+        if (SelectedListName == null) return;
+        _events.Publish(new ChangeImportantListEvent(SelectedListName));
+    }
+
+    public void OnChangeListName(bool value)
+    {
+        _events.Publish(new ChangeListNameEvent(value));
+    }
+
 }

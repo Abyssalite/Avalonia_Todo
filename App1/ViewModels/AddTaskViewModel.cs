@@ -3,6 +3,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Avalonia_Navigation;
 using Avalonia_EventHub;
+using App1.Events;
 
 namespace App1.ViewModels;
 
@@ -13,8 +14,8 @@ public partial class AddTaskViewModel : ViewModelBase
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
-    public bool _isImportant;
-    private string _listName;
+    public bool? _isImportant;
+    private string _listName = "";
 
 
     public AddTaskViewModel(
@@ -28,22 +29,15 @@ public partial class AddTaskViewModel : ViewModelBase
     {
         SaveTaskCommand = new AsyncRelayCommand(AddTask);
         CancelCommand = new AsyncRelayCommand(ClearAsync);
+        if (_store.SelectedListName == null) return;
+        
         _listName = _store.SelectedListName;
         _isImportant = _listName == GlobalVariables.Important;
-    }
 
-    public override bool? GetSetImportant(bool? value)
-    {
-        if (value == null) return _isImportant;
-        else if (value == true)
+        _subscriptions.Add(_events.Subscribe<TaskIsImportantChangedEvent>(evt =>
         {
-            _isImportant = true;
-        }
-        else if (value == false)
-        {
-            _isImportant = false;
-        } 
-        return null;
+            _isImportant = evt.IsImportant;
+        }));
     }
 
     private async Task ClearAsync()
@@ -65,7 +59,7 @@ public partial class AddTaskViewModel : ViewModelBase
             Notificate.ShowNotification("Task name cannot be Empty!");
             return;
         }
-        var task = new BaseTask
+        var task = new BaseTask(_events)
         {
             Name = name,
             IsDone = false,
@@ -75,7 +69,8 @@ public partial class AddTaskViewModel : ViewModelBase
             IsImportant = _isImportant
         };
         await TaskHelpers.AddTaskToCategory(task, _store);
-        _stateService.UpdateImportant();
+        _store.UpdateImportantList();
+        
         await ClearAsync();
     }
 }

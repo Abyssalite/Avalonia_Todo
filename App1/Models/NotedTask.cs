@@ -1,4 +1,4 @@
-class NotedTask : BaseTask
+class NotedTask
 {
     public required string Note { get; set; }
 }

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
+using App1.Events;
+using App1.ViewModels;
+using Avalonia_EventHub;
 
-public class TaskGroup : INotifyPropertyChanged
+public class TaskGroup : ModelBase
 {
     public Guid ID = Guid.NewGuid();
     public required string Category { get; set; }
@@ -14,17 +16,18 @@ public class TaskGroup : INotifyPropertyChanged
         get => _tasks;
         set
         {
-            _tasks = value ?? new();
-            OnPropertyChanged(nameof(Tasks));
+            _tasks = value;
+            _events.Publish(new TaskGroupChangedEvent(value));
         }
     }
 
-    public TaskGroup() {}
+    public TaskGroup(IEventHub events) : base (events)
+    {}
 
-    public TaskGroup(TaskGroup other)
+    public TaskGroup(TaskGroup other, IEventHub events) : base (events)
     {
         Category = other.Category;
-        Tasks = new ObservableCollection<BaseTask>(other.Tasks.Select(task => new BaseTask(task)
+        Tasks = new ObservableCollection<BaseTask>(other.Tasks.Select(task => new BaseTask(task, _events)
         {
             ID = task.ID,
             Name = task.Name,
@@ -35,8 +38,4 @@ public class TaskGroup : INotifyPropertyChanged
             IsImportant = task.IsImportant
         }));
     }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

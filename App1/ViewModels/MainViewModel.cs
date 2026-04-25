@@ -26,8 +26,8 @@ public partial class MainViewModel : ViewModelBase
 
     public async Task InitializeAsync()
     {
-        _store.Lists = await TaskHelpers.LoadAsync();
-        _store.Archive.ArchivedLists = await TaskHelpers.LoadAsync(true);
+        _store.MainLists.MainLists = await TaskHelpers.LoadAsync();
+        _store.ArchiveLists.ArchivedLists = await TaskHelpers.LoadAsync(true);
 
         var vm = App.Services?.GetRequiredService<WelcomeViewModel>();
         _navigator.FirstView = new NavigationState(

@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using App1.Events;
 using Avalonia_EventHub;
 using Avalonia_Navigation;
 
@@ -8,8 +9,8 @@ public partial class TaskDetailViewModel : ViewModelBase
 {
     public BaseTask? Task { get; }
     public bool IsNotInArchive { get; } = true;
-    private bool _isDone = false;
-    public bool IsDone
+    private bool? _isDone = false;
+    public bool? IsDone
     {
         get => _isDone;
         set
@@ -17,7 +18,7 @@ public partial class TaskDetailViewModel : ViewModelBase
             if (Task != null)
             {
                 _isDone = value;
-                Task.IsDone = _isDone;
+                _store.SetTaskDone(_isDone);
                 OnPropertyChanged(nameof(IsDone));         
             }
         }
@@ -32,27 +33,11 @@ public partial class TaskDetailViewModel : ViewModelBase
         IEventHub events
     ): base(store, navigator, dialogService, stateService, notificate, events)
     {
-        if (store.SelectedTask != null && store.SelectedList != null)
-        {
-            Task = store.SelectedTask;
-            IsNotInArchive = !store.SelectedList.IsArchived;
-            _isDone = Task.IsDone;
-        }
-    }
-
-    public override bool? GetSetImportant(bool? value)
-    {
-        if (Task == null) return null;
-        if (value == null) return Task.IsImportant;
-        else if (value == true)
-        {
-            Task.IsImportant = true;
-        }
-        else if (value == false)
-        {
-            Task.IsImportant = false;
-        } 
-        return null;
+        if (_store.SelectedTask == null || _store.SelectedList == null) return;
+        
+        Task = _store.SelectedTask;
+        IsNotInArchive = !_store.SelectedList.IsArchived;
+        _isDone = Task.IsDone;
     }
     
     protected override async Task DeleteAsync()

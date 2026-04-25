@@ -1,38 +1,40 @@
 using System;
-using System.ComponentModel;
+using App1.Events;
+using App1.ViewModels;
+using Avalonia_EventHub;
 
-public class BaseTask : INotifyPropertyChanged
+public class BaseTask : ModelBase
 {
     public Guid ID = Guid.NewGuid();
     public required string Name { set; get; }
     public string? Description { set; get; }
     public required string Category { get; set; }
     public required string ListName { get; set; }
-    private bool _isDone;
-    public bool IsDone
+    private bool? _isDone;
+    public bool? IsDone
     {
         get => _isDone;
         set
         {
             if (_isDone == value) return;
             _isDone = value;
-            OnPropertyChanged(nameof(IsDone));
+            _events.Publish(new TaskIsDoneChangedEvent(this, value));
         }
     }
-    private bool _isImportant;
-    public bool IsImportant
+    private bool? _isImportant;
+    public bool? IsImportant
     {
         get => _isImportant;
         set
         {
             if (_isImportant == value) return;
             _isImportant = value;
-            OnPropertyChanged(nameof(IsImportant));
+            _events.Publish(new TaskIsImportantChangedEvent(this, value));
         }
     }
     
-    public BaseTask() {}
-    public BaseTask(BaseTask other)
+    public BaseTask(IEventHub events) : base (events) {}
+    public BaseTask(BaseTask other, IEventHub events) : base (events)
     {
         ID = other.ID;
         Name = other.Name;
@@ -42,8 +44,5 @@ public class BaseTask : INotifyPropertyChanged
         IsDone = other.IsDone;
         IsImportant = other.IsImportant;
     }
-    
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
 }

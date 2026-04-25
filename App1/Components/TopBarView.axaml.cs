@@ -50,7 +50,7 @@ public partial class TopBarView : UserControl
                         break;
                 }
             };
-            vm.RunAfterLoadedCommand.Execute(null);
+            vm.RunAfterLoadedCommand?.Execute(null);
         }
     }
 

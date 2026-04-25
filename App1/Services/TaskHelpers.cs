@@ -17,17 +17,17 @@ public static class TaskHelpers
     public static ObservableCollection<TaskGroup> Clone(ObservableCollection<TaskGroup> groupedTasks)
     {
         return new ObservableCollection<TaskGroup>(
-            groupedTasks.Select(group => new TaskGroup(group)
-            {
-                Tasks = group.Tasks,
-                Category = group.Category
-            })
+            //groupedTasks.Select(group => new TaskGroup(group)
+            //{
+            //    Tasks = group.Tasks,
+            //    Category = group.Category
+            //})
         );
     }
 
     public static async Task AddTaskToCategory(BaseTask task, Store store)
     {
-        var list = store.Lists.FirstOrDefault(l => l.ListName == task.ListName);
+        var list = store.MainLists.MainLists.FirstOrDefault(l => l.ListName == task.ListName);
         if (list == null) return;
 
         var group = list.Groups.FirstOrDefault(g => g.Category == task.Category);
@@ -38,13 +38,13 @@ public static class TaskHelpers
         else
         {
             // Create new category group if it doesn't exist
-            list.Groups.Add(new TaskGroup
-            {
-                Category = task.Category,
-                Tasks = new ObservableCollection<BaseTask> { task }
-            });
+            //list.Groups.Add(new TaskGroup()
+            //{
+            //    Category = task.Category,
+            //    Tasks = new ObservableCollection<BaseTask> { task }
+            //});
         }
-        await SaveAsync(store);
+        //await SaveAsync(store);
     }
 
     public static ObservableCollection<TaskGroup> FilterImportant(ObservableCollection<GroupList> lists)
@@ -56,16 +56,16 @@ public static class TaskHelpers
             foreach (var group in list.Groups)
                 foreach (var task in group.Tasks)
                 {
-                    if (task.IsImportant) tasks.Add(task);
+                    if (task.IsImportant == true) tasks.Add(task);
                 }
 
             if (tasks.Count() != 0)
             {
-                groups.Add(new TaskGroup()
-                {
-                    Category = list.ListName,
-                    Tasks = tasks
-                });
+                //groups.Add(new TaskGroup()
+                //{
+                //    Category = list.ListName,
+                //    Tasks = tasks
+                //});
             }
         }
         return (groups.Count() != 0) ? groups : [];       
@@ -73,26 +73,26 @@ public static class TaskHelpers
 
     public static async Task<bool> AddList(string listName, Store store)
     {
-        var list = store.Lists.FirstOrDefault(l => l.ListName == listName);
+        var list = store.MainLists.MainLists.FirstOrDefault(l => l.ListName == listName);
         if (list != null || listName == "")
             return true;
 
         // Create new list group if it doesn't exist
-        store.Lists.Add(new GroupList
-        {
-            ListName = listName,
-            IsArchived = false,
-            Groups = new ObservableCollection<TaskGroup>()
-        });
-        await SaveAsync(store);
+        //store.MainLists.MainLists.Add(new GroupList
+        //{
+        //    ListName = listName,
+        //    IsArchived = false,
+        //    Groups = new ObservableCollection<TaskGroup>()
+        //});
+        //await SaveAsync(store);
         return false;
     }
 
     public static async Task DeleteTask(BaseTask task, Store store, bool isArchive = false)
     {
         var list = isArchive ?
-            store.Archive.ArchivedLists.FirstOrDefault(l => l.ListName == task.ListName) :
-            store.Lists.FirstOrDefault(l => l.ListName == task.ListName);
+            store.ArchiveLists.ArchivedLists.FirstOrDefault(l => l.ListName == task.ListName) :
+            store.MainLists.MainLists.FirstOrDefault(l => l.ListName == task.ListName);
         if (list == null) return;
 
         var group = list.Groups.FirstOrDefault(g => g.Category == task.Category);
@@ -108,43 +108,43 @@ public static class TaskHelpers
     public static async Task DeleteList(string listName, Store store, bool isArchive = false)
     {
         var list = isArchive ?
-            store.Archive.ArchivedLists.FirstOrDefault(l => l.ListName == listName) :
-            store.Lists.FirstOrDefault(l => l.ListName == listName);
+            store.ArchiveLists.ArchivedLists.FirstOrDefault(l => l.ListName == listName) :
+            store.MainLists.MainLists.FirstOrDefault(l => l.ListName == listName);
     
         if (list == null) return;
 
-        var newList = isArchive ? store.Archive.ArchivedLists : store.Lists;
+        var newList = isArchive ? store.ArchiveLists.ArchivedLists : store.MainLists.MainLists;
         newList.Remove(list);
         await SaveAsync(store, isArchive);
     }
 
     public static async Task MoveToArchive(string archivingList, Store store)
     {
-        var list = store.Lists.FirstOrDefault(l => l.ListName == archivingList);
+        var list = store.MainLists.MainLists.FirstOrDefault(l => l.ListName == archivingList);
         if (list == null) return;
 
-        store.Lists.Remove(list);
+        store.MainLists.MainLists.Remove(list);
         await SaveAsync(store);
         list.IsArchived = true;
-        store.Archive.ArchivedLists.Add(list);
+        store.ArchiveLists.ArchivedLists.Add(list);
         await SaveAsync(store, true);
     }
 
     public static async Task MoveToList(string restoreList, Store store)
     {
-        var list = store.Archive.ArchivedLists.FirstOrDefault(l => l.ListName == restoreList);
+        var list = store.ArchiveLists.ArchivedLists.FirstOrDefault(l => l.ListName == restoreList);
         if (list == null) return;
 
-        store.Archive.ArchivedLists.Remove(list);
+        store.ArchiveLists.ArchivedLists.Remove(list);
         await SaveAsync(store, true);
         list.IsArchived = false;
-        store.Lists.Add(list);
+        store.MainLists.MainLists.Add(list);
         await SaveAsync(store);
     }
 
     public static async Task EditList(string oldListname, string newListName, ObservableCollection<TaskGroup>? editedList, Store store)
     {      
-        var list = store.Lists.FirstOrDefault(l => l.ListName == oldListname);
+        var list = store.MainLists.MainLists.FirstOrDefault(l => l.ListName == oldListname);
         if (list == null || editedList == null) return;
         var ischanged = oldListname != newListName;
 
@@ -193,8 +193,8 @@ public static class TaskHelpers
     public static async Task SaveAsync(Store store, bool isArchive = false)
     {
         string json = isArchive ?
-            JsonSerializer.Serialize(store.Archive.ArchivedLists, AppJsonContext.Default.ObservableCollectionGroupList) :
-            JsonSerializer.Serialize(store.Lists, AppJsonContext.Default.ObservableCollectionGroupList);
+            JsonSerializer.Serialize(store.ArchiveLists.ArchivedLists, AppJsonContext.Default.ObservableCollectionGroupList) :
+            JsonSerializer.Serialize(store.MainLists.MainLists, AppJsonContext.Default.ObservableCollectionGroupList);
 
         string path = Path.Combine(GetAppDataPath(), isArchive ? "Archive.json" : "Tasks.json");
 
@@ -231,11 +231,11 @@ public static class TaskHelpers
     private static ObservableCollection<GroupList> GetDefaultList(bool isArchive = false) =>
         isArchive ? [] : new()
         {
-            new GroupList
-            {
-                ListName = GlobalVariables.Quick,
-                IsArchived = false,
-                Groups = new ObservableCollection<TaskGroup>()
-            }
+            //new GroupList
+            //{
+            //    ListName = GlobalVariables.Quick,
+            //    IsArchived = false,
+            //    Groups = new ObservableCollection<TaskGroup>()
+            //}
         };
 }

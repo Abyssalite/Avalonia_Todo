@@ -23,7 +23,6 @@ public partial class ViewModelBase : ObservableObject, IDisposable
     public AsyncRelayCommand ToggleArchiveCommand { get; }
     public AsyncRelayCommand BackOrDrawerCommand { get; }
     public RelayCommand EditCommand { get; }
-    public Action<bool>? OnChangeListName { get; set; }
 
     protected ViewModelBase(
         Store store,
@@ -58,7 +57,6 @@ public partial class ViewModelBase : ObservableObject, IDisposable
     }
     
     protected virtual void Edit() { }
-    public virtual bool? GetSetImportant(bool? value) { return null; }
 
     public void Dispose()
     {

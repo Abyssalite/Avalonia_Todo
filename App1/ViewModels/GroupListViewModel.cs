@@ -14,8 +14,8 @@ namespace App1.ViewModels;
 public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDisposable
 {
     public ObservableCollection<GroupList>? FilteredLists { get; set; } = new();
-    public ICommand OpenListCommand { get; }
-    public ICommand AddListCommand { get; }
+    public ICommand? OpenListCommand { get; }
+    public ICommand? AddListCommand { get; }
     public Action? OnSaveAddList { get; set; }
     private bool _toggleArchive = false;
     public bool ToggleArchive
@@ -24,7 +24,7 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
         set
         {
             _toggleArchive = value;
-            if (_toggleArchive) FilteredLists = _store.Archive.ArchivedLists;
+            if (_toggleArchive) FilteredLists = _store.ArchiveLists.ArchivedLists;
             else FilteredLists = _store.FilteredLists;
 
             OnPropertyChanged(nameof(FilteredLists));
@@ -55,20 +55,15 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
         IEventHub events
     ): base(store, navigator, dialogService, stateService, notificate, events)
     {
+        if (_store.FilteredLists == null) return;
+
         FilteredLists = _store.FilteredLists;
-        _subscriptions.Add(_events.Subscribe<ListsChangedEvent>(_ =>
-        {
-            if (!_toggleArchive)
-            {
-                FilteredLists = _store.FilteredLists;
-                OnPropertyChanged(nameof(FilteredLists));
-            }
-        }));
+
         _subscriptions.Add(_events.Subscribe<ArchiveListsChangedEvent>(_ =>
         {
             if (_toggleArchive)
             {
-                FilteredLists = _store.Archive.ArchivedLists;
+                FilteredLists = _store.ArchiveLists.ArchivedLists;
                 OnPropertyChanged(nameof(FilteredLists));
             }
         }));
@@ -77,16 +72,16 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
         {
             if (TaskHelpers.IsMainList(listName))
             {
-                var list = _store.Lists.FirstOrDefault(l => l.ListName == listName);
+                var list = _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == listName);
                 if (list != null)
                     await OpenListAsync(list);
             }
             else if (listName == GlobalVariables.Important)
             {
-                var list = new GroupList
+                var list = new GroupList(_events)
                 {
                     ListName = listName,
-                    Groups = TaskHelpers.FilterImportant(_store.Lists)
+                    Groups = TaskHelpers.FilterImportant(_store.MainLists.MainLists)
                 };
                 await OpenListAsync(list);
             }
@@ -120,7 +115,7 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
 
     async Task IHandleLastPage.HandleLastPageAsync()
     {
-        _stateService.ClearSelectedList();
+        ClearSelectedList();
         await Task.CompletedTask;
     }
 
