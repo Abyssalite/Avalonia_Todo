@@ -57,7 +57,7 @@
                 </ToggleButton>
             </Grid>
 
-            <ListBox ItemsSource="{Binding FilteredLists}"
+            <ListBox ItemsSource="{Binding DisplayLists}"
                     BorderThickness="0"
                     Margin="5,0,25,0"
                     Background="Transparent"

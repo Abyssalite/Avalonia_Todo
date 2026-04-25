@@ -47,7 +47,7 @@ public partial class TopBarView : UserControl
                         WelcomeTopBar(); break;
 
                     default:
-                        break;
+                        DiableTopBar(); break;
                 }
             };
             vm.RunAfterLoadedCommand?.Execute(null);
@@ -84,5 +84,14 @@ public partial class TopBarView : UserControl
         else BackOrDrawerButton.IsVisible = false;
         StarButton.IsVisible = false;
         ButtonFlyout.IsVisible = false;
+    }
+
+    private void DiableTopBar()
+    {
+        BackOrDrawerButton.IsVisible = false;
+        StarButton.IsVisible = false;
+        ButtonFlyout.IsVisible = false;
+        DeleteButton.IsVisible = false;
+        ToggleArchiveButton.IsVisible = false;
     }
 }

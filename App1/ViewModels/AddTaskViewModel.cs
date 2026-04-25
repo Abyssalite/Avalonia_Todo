@@ -68,8 +68,8 @@ public partial class AddTaskViewModel : ViewModelBase
             Description = TaskHelpers.InputOrDefault(TaskDesc, ""),
             IsImportant = _isImportant
         };
-        await TaskHelpers.AddTaskToCategory(task, _store);
-        _store.UpdateImportantList();
+        _store.StoreAddTaskToCategory(task);
+        if (_isImportant == true) _store.StoreUpdateImportantList();
         
         await ClearAsync();
     }

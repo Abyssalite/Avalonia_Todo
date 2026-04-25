@@ -20,7 +20,7 @@ public partial class ViewModelBase : ObservableObject, IDisposable
 
     public INotificationService Notificate { get; }
     public AsyncRelayCommand DeleteCommand { get; }
-    public AsyncRelayCommand ToggleArchiveCommand { get; }
+    public RelayCommand ToggleArchiveCommand { get; }
     public AsyncRelayCommand BackOrDrawerCommand { get; }
     public RelayCommand EditCommand { get; }
 
@@ -40,12 +40,12 @@ public partial class ViewModelBase : ObservableObject, IDisposable
         Notificate = notificate;
 
         DeleteCommand = new AsyncRelayCommand(DeleteAsync);
-        ToggleArchiveCommand = new AsyncRelayCommand(ToggleArchiveListAsync);
+        ToggleArchiveCommand = new RelayCommand(ToggleArchiveList);
         BackOrDrawerCommand = new AsyncRelayCommand(BackOrToggleDrawerAsync);
         EditCommand = new RelayCommand(Edit);
     }
     protected virtual Task DeleteAsync() => Task.CompletedTask;
-    protected virtual Task ToggleArchiveListAsync() => Task.CompletedTask;
+    protected virtual void ToggleArchiveList() {}
     protected virtual async Task BackOrToggleDrawerAsync()
     {
         if (GlobalVariables.IsAndroid)

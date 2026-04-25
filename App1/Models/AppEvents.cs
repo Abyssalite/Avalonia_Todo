@@ -12,6 +12,7 @@ public sealed record GroupListChangedEvent(ObservableCollection<TaskGroup> Group
 public sealed record TaskGroupChangedEvent(ObservableCollection<BaseTask> Tasks);
 
 public sealed record ArchiveListsChangedEvent(ArchivedList Lists);
+public sealed record FilteredListsChangedEvent(ObservableCollection<GroupList> Lists);
 public sealed record MainListsChangedEvent(MainList Lists);
 
 public sealed record SelectedListChangedEvent(GroupList? SelectedList, string SelectedListName);
@@ -19,4 +20,4 @@ public sealed record SelectedTaskChangedEvent(BaseTask? SelectedTask);
 public sealed record TopbarTextChangedEvent(string Text);
 public sealed record ChangeListNameEvent(bool value);
 
-public sealed record ChangeImportantListEvent(string name);
+public sealed record ChangeImportantListEvent();

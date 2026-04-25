@@ -26,14 +26,16 @@ public partial class MainViewModel : ViewModelBase
 
     public async Task InitializeAsync()
     {
-        _store.MainLists.MainLists = await TaskHelpers.LoadAsync();
-        _store.ArchiveLists.ArchivedLists = await TaskHelpers.LoadAsync(true);
+        _store.MainLists.MainLists = await TaskHelpers.LoadAsync("Tasks")  ?? [];
+        _store.ArchiveLists.ArchivedLists = await TaskHelpers.LoadAsync("Archive") ?? [];
+        
+        _store.StoreUpdateImportantList();
 
         var vm = App.Services?.GetRequiredService<WelcomeViewModel>();
         _navigator.FirstView = new NavigationState(
             vm,
             App.Services?.GetRequiredService<GroupListViewModel>(),
-            new Components.TopBarViewModel(_store, vm, "", _events)
+            new Components.TopBarViewModel(_store, vm, _events)
         );
 
         await _navigator.Navigate(_navigator.FirstView);

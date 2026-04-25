@@ -36,7 +36,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         set
         {
             _isInEditMode = value;
-            _store.OnChangeListName(_isInEditMode && IsNotMainList);
+            _store.OnChangeListName(_isInEditMode);
             OnPropertyChanged(nameof(IsInEditMode));
         }
     }
@@ -99,18 +99,17 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
 
         _subscriptions.Add(_events.Subscribe<ChangeImportantListEvent>(evt =>
         {
-            if (evt.name != GlobalVariables.Important) return;
-            GroupedTasks = TaskHelpers.FilterImportant(_store.MainLists.MainLists);
+            GroupedTasks = _store.ImportantList;
         }));
     }
 
-    protected override async Task ToggleArchiveListAsync()
+    protected override void ToggleArchiveList()
     {
         if (!IsNotMainList || ListName == "") return;
         IsInEditMode = false;
 
-        if (IsNotInArchive) await TaskHelpers.MoveToArchive(ListName, _store);
-        else await TaskHelpers.MoveToList(ListName, _store);
+        if (IsNotInArchive) _store.StoreMoveToArchive(ListName);
+        else _store.StoreMoveToList(ListName);
     }
 
     protected override async Task DeleteAsync()
@@ -121,7 +120,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
         if (confirmed == true)
         {
-            await TaskHelpers.DeleteList(ListName, _store, !IsNotInArchive);
+            _store.StoreDeleteList(ListName, !IsNotInArchive);
             await _navigator.OpenPrevious();
         }        
     }
@@ -132,7 +131,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
 
         if (IsNotInArchive && !_isInEditMode)
         {
-            _clone = TaskHelpers.Clone(GroupedTasks);
+            //_clone = StoreHelpers.Clone(GroupedTasks);
             IsInEditMode = true;
         }
     }
@@ -159,7 +158,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         if (_isInEditMode)
         {
             var tmp = _store.TopbarText ?? "Miscelanious";
-            await TaskHelpers.EditList(ListName, tmp, GroupedTasks, _store);
+            _store.StoreEditList(ListName, tmp, GroupedTasks);
             ListName = tmp;
             //_store.SelectedListName = ListName;
         }
@@ -178,8 +177,8 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
                 };
                 QuickAddTaskName = null;
                 OnPropertyChanged(nameof(QuickAddTaskName));
-                await TaskHelpers.AddTaskToCategory(task, _store);
-                _store.UpdateImportantList();
+                _store.StoreAddTaskToCategory(task);
+                _store.StoreUpdateImportantList();
             }
             else
             {
@@ -187,7 +186,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
                 await _navigator.Navigate(new NavigationState(
                     vm, 
                     App.Services?.GetRequiredService<NewTaskOptionViewModel>(),
-                    new Components.TopBarViewModel(_store, vm, "New Task", _events)
+                    new Components.TopBarViewModel(_store, vm, _events, "New Task")
                 ));
 
             }
@@ -209,7 +208,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
     {
         _store.SelectedTask = task;
         var vm = App.Services?.GetRequiredService<TaskDetailViewModel>();
-        await _navigator.NavigateMainAndTop(vm, new Components.TopBarViewModel(_store, vm, ListName, _events));
+        await _navigator.NavigateMainAndTop(vm, new Components.TopBarViewModel(_store, vm, _events, ListName));
 
     }
 }

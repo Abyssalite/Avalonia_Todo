@@ -19,7 +19,7 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
     private readonly IEventHub _events;
     private readonly List<IDisposable> _subscriptions = new();
     
-    private string _topbarText = "";
+    private string _topbarText;
     public string TopbarText
     {
         get => _topbarText;
@@ -52,33 +52,35 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
     public ICommand? RunAfterLoadedCommand { get; }
     public Action<ViewModelBase>? OnSetParent { get; set; }
 
-    public TopBarViewModel(Store store, ViewModelBase? parent, string text, IEventHub events)
+    public TopBarViewModel(Store store, ViewModelBase? parent, IEventHub events, string? text = null)
     {
         if (parent == null) throw new NullReferenceException("No Parent View Setted");
 
         _store = store;
         _parent = parent;
         _events = events;
-        _topbarText = text;
+        _topbarText = text ?? "";
 
-        if (_store.SelectedList == null) return;
-        if (_store.SelectedTask == null) return;
+        if (_store.SelectedTask != null)
+            _toggleImportant = _store.SelectedTask.IsImportant;
 
-        IsNotInArchive = !_store.SelectedList.IsArchived;
-        _toggleImportant = _store.SelectedTask.IsImportant;
+        if (_store.SelectedList != null)
+        {
+            IsNotInArchive = !_store.SelectedList.IsArchived;
+            _subscriptions.Add(_events.Subscribe<GroupListIsArchiveStateChangedEvent>(evt =>
+            {
+                if (evt.List.ListName != _store.SelectedList.ListName) return;
+
+                IsNotInArchive = !evt.IsArchived;
+                OnPropertyChanged(nameof(IsNotInArchive));
+            }));
+        }
+
 
         _subscriptions.Add(_events.Subscribe<ChangeListNameEvent>(evt =>
         {
             CanEditBarName = evt.value;
             OnPropertyChanged(nameof(CanEditBarName));
-        }));
-
-        _subscriptions.Add(_events.Subscribe<GroupListIsArchiveStateChangedEvent>(evt =>
-        {
-            if (evt.List.ListName != _store.SelectedList.ListName) return;
-
-            IsNotInArchive = !evt.IsArchived;
-            OnPropertyChanged(nameof(IsNotInArchive));
         }));
 
         _subscriptions.Add(_events.Subscribe<TopbarTextChangedEvent>(evt =>
@@ -87,11 +89,11 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
             OnPropertyChanged(nameof(TopbarText));
         }));
 
-        ToggleArchiveCommand = new AsyncRelayCommand<object>(async (param) =>
+        ToggleArchiveCommand = new RelayCommand<object>((param) =>
         {
             if (param is Button button)
                 button.Flyout?.Hide();
-            await _parent.ToggleArchiveCommand.ExecuteAsync(null);
+            _parent.ToggleArchiveCommand.Execute(null);
         });
         DeleteCommand = new AsyncRelayCommand<object>(async (param) => {
             if (param is Button button)
@@ -110,6 +112,7 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
                 button.Flyout?.Hide();
             await _parent.BackOrDrawerCommand.ExecuteAsync(null);
         });
+
         RunAfterLoadedCommand = new RelayCommand(() => OnSetParent?.Invoke(_parent));
     }
     

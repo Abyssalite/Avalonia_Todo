@@ -9,6 +9,7 @@ public static class ServiceCollectionExtensions
         collection.AddSingleton<IDialogService, DialogService>();
         collection.AddSingleton<INotificationService, NotificationService>();
         collection.AddSingleton<IChangeStateService, ChangeStateService>();
+        
         collection.AddTransient<MainViewModel>();
         collection.AddTransient<TaskDetailViewModel>();
         collection.AddTransient<AddTaskViewModel>();

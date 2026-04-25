@@ -45,7 +45,7 @@ public partial class TaskDetailViewModel : ViewModelBase
         bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
         if (confirmed == true && Task != null)
         {
-            await TaskHelpers.DeleteTask(Task, _store, !IsNotInArchive);
+            _store.StoreDeleteTask(Task, IsNotInArchive);
             await _navigator.OpenPrevious();
         }
     }
