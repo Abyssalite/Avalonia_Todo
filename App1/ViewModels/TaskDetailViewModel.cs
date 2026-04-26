@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using App1.Events;
 using Avalonia_EventHub;
 using Avalonia_Navigation;
 

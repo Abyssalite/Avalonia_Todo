@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using App1.Events;
 using App1.ViewModels;
 using Avalonia_EventHub;
 

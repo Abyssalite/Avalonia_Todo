@@ -72,8 +72,8 @@ public partial class TopBarView : UserControl
         if (listName == GlobalVariables.Important) 
             ButtonFlyout.IsVisible = false;
                             
-        ToggleArchiveButton.IsEnabled = !TaskHelpers.IsMainList(listName);
-        DeleteButton.IsEnabled = !TaskHelpers.IsMainList(listName);
+        ToggleArchiveButton.IsEnabled = !TaskHelpers.IsQuickList(listName);
+        DeleteButton.IsEnabled = !TaskHelpers.IsQuickList(listName);
         StarButton.IsVisible = false;
     }
     

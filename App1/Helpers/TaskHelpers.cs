@@ -9,7 +9,7 @@ public static class TaskHelpers
     public static string InputOrDefault(string? input, string defaultValue) =>
         string.IsNullOrWhiteSpace(input) ? defaultValue : input;
 
-    public static bool IsMainList(string? listName) =>
+    public static bool IsQuickList(string? listName) =>
         listName == GlobalVariables.Quick;
 
     public static void Print(object? data)

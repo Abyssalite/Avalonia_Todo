@@ -17,20 +17,7 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
     public ICommand? OpenListCommand { get; }
     public ICommand? AddListCommand { get; }
     public Action? OnSaveAddList { get; set; }
-    private bool _toggleArchive = false;
-    public bool ToggleArchive
-    {
-        get => _toggleArchive;
-        set
-        {
-            _toggleArchive = value;
-            if (_toggleArchive) DisplayLists = _store.ArchiveLists.ArchivedLists;
-            else DisplayLists = _store.FilteredLists;
-
-            OnPropertyChanged(nameof(DisplayLists));
-            OnPropertyChanged(nameof(ToggleArchive));
-        }
-    }
+    public bool ToggleArchive { get; set; } = false;
     private GroupList? _selectedList;
     public GroupList? SelectedList
     {
@@ -55,32 +42,34 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
         IEventHub events
     ): base(store, navigator, dialogService, stateService, notificate, events)
     {
-        if (_store.FilteredLists == null) return;
-
         DisplayLists = _store.FilteredLists;
 
-        _subscriptions.Add(_events.Subscribe<FilteredListsChangedEvent>(_ =>
+        _subscriptions.Add(_events.Subscribe<FilteredListsChangedEvent>(evt =>
         {
-            if (_toggleArchive)
+            if (!ToggleArchive)
             {
-                DisplayLists = _store.FilteredLists;
+                DisplayLists = evt.Lists;
                 OnPropertyChanged(nameof(DisplayLists));
             }
         }));
-
-        _subscriptions.Add(_events.Subscribe<ArchiveListsChangedEvent>(_ =>
+        _subscriptions.Add(_events.Subscribe<ArchiveListsChangedEvent>(evt =>
         {
-            if (_toggleArchive)
+            if (ToggleArchive)
             {
-                DisplayLists = _store.ArchiveLists.ArchivedLists;
+                DisplayLists = evt.Lists.ArchivedLists;
                 OnPropertyChanged(nameof(DisplayLists));
             }
+        }));
+        _subscriptions.Add(_events.Subscribe<SelectedListChangedEvent>(evt =>
+        {
+                _selectedList = evt.SelectedList;
+                OnPropertyChanged(nameof(SelectedList));
         }));
 
 
         OpenListCommand = new RelayCommand<string>(async (listName) =>
         {
-            if (TaskHelpers.IsMainList(listName))
+            if (TaskHelpers.IsQuickList(listName))
             {
                 var list = _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == listName);
                 if (list != null)
@@ -91,15 +80,14 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
                 var list = new GroupList(_events)
                 {
                     ListName = listName,
-                    Groups = _store.ImportantList ?? []
+                    Groups = _store.ImportantLists ?? []
                 };
                 await OpenListAsync(list);
             }
-            ClearSelectedList();
+            _store.SelectList(null);
         });
 
         AddListCommand = new RelayCommand<string>(AddList);
-        _stateService.ClearSelectedListAction += ClearSelectedList;
     }
 
     private void AddList(string? newListName)
@@ -125,13 +113,7 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
 
     async Task IHandleLastPage.HandleLastPageAsync()
     {
-        ClearSelectedList();
+        _store.SelectList(null);
         await Task.CompletedTask;
-    }
-
-    private void ClearSelectedList()
-    {
-        _selectedList = null;
-        //OnPropertyChanged(nameof(SelectedList));
     }
 }

@@ -36,7 +36,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         set
         {
             _isInEditMode = value;
-            _store.OnChangeListName(_isInEditMode);
+            _store.OnChangeListName(_isInEditMode && IsNotMainList);
             OnPropertyChanged(nameof(IsInEditMode));
         }
     }
@@ -70,7 +70,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         if (_store.SelectedList == null || _store.SelectedListName == null) return;
 
         ListName = _store.SelectedListName;
-        IsNotMainList = !TaskHelpers.IsMainList(ListName);
+        IsNotMainList = !TaskHelpers.IsQuickList(ListName);
 
         GroupedTasks = _store.SelectedList.Groups;
         IsNotInArchive = !_store.SelectedList.IsArchived;
@@ -88,18 +88,20 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
             IsNotInArchive = !evt.IsArchived;
             OnPropertyChanged(nameof(IsNotInArchive));
         }));
-
+        _subscriptions.Add(_events.Subscribe<SelectedListNameChangedEvent>(evt =>
+        {
+            ListName = evt.name;
+            OnPropertyChanged(nameof(ListName));
+        }));
 
         _subscriptions.Add(_events.Subscribe<GroupListChangedEvent>(evt =>
         {
-            if (evt.Groups != _store.SelectedList.Groups) return;
-
             GroupedTasks = evt.Groups;
         }));
-
-        _subscriptions.Add(_events.Subscribe<ChangeImportantListEvent>(evt =>
+        _subscriptions.Add(_events.Subscribe<ImportantListChangedEvent>(evt =>
         {
-            GroupedTasks = _store.ImportantList;
+            if (ListName == GlobalVariables.Important)
+            GroupedTasks = evt.Lists;
         }));
     }
 
@@ -120,7 +122,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
         if (confirmed == true)
         {
-            _store.StoreDeleteList(ListName, !IsNotInArchive);
+            _store.StoreDeleteList(ListName, IsNotInArchive);
             await _navigator.OpenPrevious();
         }        
     }
@@ -160,7 +162,6 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
             var tmp = _store.TopbarText ?? "Miscelanious";
             _store.StoreEditList(ListName, tmp, GroupedTasks);
             ListName = tmp;
-            //_store.SelectedListName = ListName;
         }
         else
         {
@@ -178,7 +179,8 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
                 QuickAddTaskName = null;
                 OnPropertyChanged(nameof(QuickAddTaskName));
                 _store.StoreAddTaskToCategory(task);
-                _store.StoreUpdateImportantList();
+
+                if (ListName == GlobalVariables.Important) _store.StoreUpdateImportantList();
             }
             else
             {
@@ -188,7 +190,6 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
                     App.Services?.GetRequiredService<NewTaskOptionViewModel>(),
                     new Components.TopBarViewModel(_store, vm, _events, "New Task")
                 ));
-
             }
         }
         IsInEditMode = false;

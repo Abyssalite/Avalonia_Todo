@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Avalonia_EventHub;
 
 public class StoreHelpers
@@ -16,9 +15,6 @@ public class StoreHelpers
     
     public bool AddList(string listName)
     {
-        if (string.IsNullOrWhiteSpace(listName))
-            return true;
-
         var existing = _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == listName);
         if (existing != null)
             return true;
@@ -61,8 +57,8 @@ public class StoreHelpers
     public void DeleteTask(BaseTask task, bool isMainList = true)
     {
         var list = isMainList
-            ? _store.ArchiveLists.ArchivedLists.FirstOrDefault(l => l.ListName == task.ListName)
-            : _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == task.ListName);
+            ? _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == task.ListName)
+            : _store.ArchiveLists.ArchivedLists.FirstOrDefault(l => l.ListName == task.ListName);
 
         if (list == null) return;
 
@@ -80,8 +76,9 @@ public class StoreHelpers
     public void DeleteList(string listName, bool isMainList = true)
     {
         var list = isMainList
-            ? _store.ArchiveLists.ArchivedLists.FirstOrDefault(l => l.ListName == listName)
-            : _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == listName);
+            ? _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == listName)
+            : _store.ArchiveLists.ArchivedLists.FirstOrDefault(l => l.ListName == listName);
+
 
         if (list == null) return;
 
@@ -208,7 +205,6 @@ public class StoreHelpers
                 });
             }
         }
-
         return groups.Count != 0 ? groups : [];
     }
 }

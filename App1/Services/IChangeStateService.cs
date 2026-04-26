@@ -14,18 +14,6 @@ public class ChangeStateService : IChangeStateService
     {
         CancelEditAction?.Invoke();
     }
-
-    public event Action? ClearSelectedListAction;
-    public void ClearSelectedList()
-    {
-        ClearSelectedListAction?.Invoke();
-    }
-
-    public event Action? UpdateImportantAction;
-    public void UpdateImportant()
-    {
-        UpdateImportantAction?.Invoke();
-    }
 }
 
 public interface IChangeStateService
@@ -36,10 +24,4 @@ public interface IChangeStateService
 
     event Action? CancelEditAction;
     void CancelEdit();
-
-    event Action? ClearSelectedListAction;
-    void ClearSelectedList();
-
-    event Action? UpdateImportantAction;
-    void UpdateImportant();
 }
