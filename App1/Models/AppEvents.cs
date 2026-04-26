@@ -8,19 +8,20 @@ public sealed record TaskIsImportantChangedEvent(BaseTask Task, bool? IsImportan
 
 //GroupList.cs
 public sealed record GroupListIsArchiveStateChangedEvent(GroupList List, bool IsArchived);
-public sealed record GroupListChangedEvent(ObservableCollection<TaskGroup> Groups);
+public sealed record GroupListChangedEvent(ObservableCollection<TaskGroup>? Groups);
 
 //TaskGroup.cs
-public sealed record TaskGroupChangedEvent(ObservableCollection<BaseTask> Tasks);
+public sealed record TaskGroupChangedEvent(ObservableCollection<BaseTask>? Tasks);
 
 public sealed record MainListsChangedEvent(MainList Lists);
 public sealed record ArchiveListsChangedEvent(ArchivedList Lists);
 public sealed record FilteredListsChangedEvent(ObservableCollection<GroupList> Lists);
-public sealed record ImportantListChangedEvent(ObservableCollection<TaskGroup> Lists);
+public sealed record QuickListsChangedEvent(GroupList? List);
+public sealed record ImportantListChangedEvent(ObservableCollection<TaskGroup> List);
 
 public sealed record SelectedListChangedEvent(GroupList? SelectedList, string? SelectedListName);
 public sealed record SelectedTaskChangedEvent(BaseTask? SelectedTask);
 public sealed record TopbarTextChangedEvent(string Text);
 public sealed record SelectedListNameChangedEvent(string name);
-public sealed record ChangeListNameEvent(bool value);
+public sealed record ChangeListNameEvent(bool value, string name);
 

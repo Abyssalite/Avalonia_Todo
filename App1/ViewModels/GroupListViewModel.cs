@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
@@ -17,19 +16,30 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
     public ICommand? OpenListCommand { get; }
     public ICommand? AddListCommand { get; }
     public Action? OnSaveAddList { get; set; }
-    public bool ToggleArchive { get; set; } = false;
-    private GroupList? _selectedList;
+    private bool _toggleArchive = false;
+    public bool ToggleArchive
+    {
+        get => _toggleArchive;
+        set
+        {
+            _toggleArchive = value;
+            if (_toggleArchive) DisplayLists = _store.ArchiveLists.ArchivedLists;
+            else DisplayLists = _store.FilteredLists;
+
+            OnPropertyChanged(nameof(DisplayLists));
+            OnPropertyChanged(nameof(ToggleArchive));
+        }
+    }    private GroupList? _selectedList;
     public GroupList? SelectedList
     {
         get => _selectedList;
         set
         {
-            if (value != null && _selectedList != value)
-            {
-                _selectedList = value;
-                _ = OpenListAsync(_selectedList);
-                OnPropertyChanged(nameof(SelectedList));
-            }
+            if (value == null || _selectedList == value) return;
+
+            _selectedList = value;
+            _ = OpenListAsync(_selectedList);
+            OnPropertyChanged(nameof(SelectedList));
         }
     }
 
@@ -71,7 +81,7 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
         {
             if (TaskHelpers.IsQuickList(listName))
             {
-                var list = _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == listName);
+                var list = _store.QuickList;
                 if (list != null)
                     await OpenListAsync(list);
             }
@@ -84,18 +94,19 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
                 };
                 await OpenListAsync(list);
             }
-            _store.SelectList(null);
+            _selectedList = null;
+            OnPropertyChanged(nameof(SelectedList));
         });
 
-        AddListCommand = new RelayCommand<string>(AddList);
+        AddListCommand = new AsyncRelayCommand<string>(AddList);
     }
 
-    private void AddList(string? newListName)
+    private async Task AddList(string? newListName)
     {
         OnSaveAddList?.Invoke();
         if (newListName != null)
         {
-            bool isExisted = _store.StoreAddList(newListName);
+            bool isExisted = await _store.StoreAddListAsync(newListName);
             if (isExisted) Notificate.ShowNotification("The list is Existed");
         }
     }

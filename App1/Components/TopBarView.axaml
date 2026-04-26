@@ -87,7 +87,8 @@
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
                                 BorderBrush="Transparent"
-                                Background="#FAAA">
+                                Background="#FAAA"
+                                IsEnabled="{Binding !IsInEditMode}">
                             <Image Source="avares://App1/Assets/icons8-menu-2-100.png"
                                 Stretch="Uniform"
                                 Width="40"
@@ -104,7 +105,7 @@
                                             </MenuItem>
                                             <MenuItem x:Name="ToggleArchiveButton"
                                                     Foreground="Black"
-                                                    Command="{Binding ToggleArchiveCommand}"
+                                                    Command="{Binding SetArchiveCommand}"
                                                     CommandParameter="{Binding ElementName=ButtonFlyout}">
                                                 <MenuItem.Header>
                                                     <MultiBinding Converter="{StaticResource BoolToTextConverter}" ConverterParameter="Archive">

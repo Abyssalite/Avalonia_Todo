@@ -9,8 +9,8 @@ namespace App1.ViewModels;
 
 public partial class AddTaskViewModel : ViewModelBase
 {
-    public ICommand SaveTaskCommand { get; }
-    public ICommand CancelCommand { get; }
+    public ICommand? SaveTaskCommand { get; }
+    public ICommand? CancelCommand { get; }
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
@@ -26,10 +26,11 @@ public partial class AddTaskViewModel : ViewModelBase
         INotificationService notificate,
         IEventHub events
     ): base(store, navigator, dialogService, stateService, notificate, events)
-    {
+    {        
+        if (_store.SelectedListName == null) return;
+
         SaveTaskCommand = new AsyncRelayCommand(AddTask);
         CancelCommand = new AsyncRelayCommand(ClearAsync);
-        if (_store.SelectedListName == null) return;
         
         _listName = _store.SelectedListName;
         _isImportant = _listName == GlobalVariables.Important;
@@ -68,8 +69,7 @@ public partial class AddTaskViewModel : ViewModelBase
             Description = TaskHelpers.InputOrDefault(TaskDesc, ""),
             IsImportant = _isImportant
         };
-        _store.StoreAddTaskToCategory(task);
-        if (_isImportant == true) _store.StoreUpdateImportantList();
+        await _store.StoreAddTaskToCategoryAsync(task, _listName);
         
         await ClearAsync();
     }

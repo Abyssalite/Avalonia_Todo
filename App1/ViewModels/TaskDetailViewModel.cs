@@ -14,12 +14,11 @@ public partial class TaskDetailViewModel : ViewModelBase
         get => _isDone;
         set
         {
-            if (Task != null)
-            {
-                _isDone = value;
-                _store.SetTaskDone(_isDone);
-                OnPropertyChanged(nameof(IsDone));         
-            }
+            if (Task == null) return;
+
+            _isDone = value;
+            _store.SetTaskDone(_isDone);
+            OnPropertyChanged(nameof(IsDone));         
         }
     }
 
@@ -44,7 +43,7 @@ public partial class TaskDetailViewModel : ViewModelBase
         bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
         if (confirmed == true && Task != null)
         {
-            _store.StoreDeleteTask(Task, IsNotInArchive);
+            await _store.StoreDeleteTaskAsync(Task, IsNotInArchive);
             await _navigator.OpenPrevious();
         }
     }

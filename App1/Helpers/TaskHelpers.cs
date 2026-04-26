@@ -27,21 +27,21 @@ public static class TaskHelpers
         return appFolder;
     }
 
-    public static async Task SaveAsync(Store store, bool isArchive = false)
+    public static async Task SaveAsync(Store store, bool isMain = false)
     {
-        string json = isArchive
-            ? JsonSerializer.Serialize(store.ArchiveLists.ArchivedLists, AppJsonContext.Default.ObservableCollectionGroupList)
-            : JsonSerializer.Serialize(store.MainLists.MainLists, AppJsonContext.Default.ObservableCollectionGroupList);
+        string json = isMain
+            ? JsonSerializer.Serialize(store.MainLists.MainLists, AppJsonContext.Default.ObservableCollectionGroupList)
+            : JsonSerializer.Serialize(store.ArchiveLists.ArchivedLists, AppJsonContext.Default.ObservableCollectionGroupList);
 
-        string path = Path.Combine(GetAppDataPath(), isArchive ? "Archive.json" : "Tasks.json");
+        string path = Path.Combine(GetAppDataPath(), isMain ? "Tasks.json" : "Archive.json");
 
         await File.WriteAllTextAsync(path, json);
         Console.WriteLine("Saved to: " + path);
     }
 
-    public static async Task<ObservableCollection<GroupList>?> LoadAsync(string name)
+    public static async Task<ObservableCollection<GroupList>?> LoadAsync(bool isMain = false)
     {
-        string path = Path.Combine(GetAppDataPath(),  name + ".json");
+        string path = Path.Combine(GetAppDataPath(), isMain ? "Tasks.json" : "Archive.json");
 
         try
         {

@@ -50,7 +50,7 @@ public partial class TopBarView : UserControl
                         DiableTopBar(); break;
                 }
             };
-            vm.RunAfterLoadedCommand?.Execute(null);
+            vm.RunAfterLoadedCommand.Execute(null);
         }
     }
 

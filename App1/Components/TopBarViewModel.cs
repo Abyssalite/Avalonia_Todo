@@ -26,6 +26,7 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
         set
         {
             if (value == null) return;
+
             _topbarText = value;
             _store.EditTopBarText(_topbarText);
             OnPropertyChanged(nameof(TopbarText));                
@@ -44,12 +45,13 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
     }
     public bool IsNotInArchive { get; set; } = true;
     public bool CanEditBarName { get; set; } = false;
+    public bool IsInEditMode { get; set; } = false;
 
-    public ICommand? ToggleArchiveCommand { get; }
+    public ICommand? SetArchiveCommand { get; }
     public ICommand? EditCommand { get; }
     public ICommand? BackOrDrawerCommand { get; }
     public ICommand? DeleteCommand { get; }
-    public ICommand? RunAfterLoadedCommand { get; }
+    public RelayCommand RunAfterLoadedCommand { get; }
     public Action<ViewModelBase>? OnSetParent { get; set; }
 
     public TopBarViewModel(Store store, ViewModelBase? parent, IEventHub events, string? text = null)
@@ -79,21 +81,18 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
 
         _subscriptions.Add(_events.Subscribe<ChangeListNameEvent>(evt =>
         {
-            CanEditBarName = evt.value;
+            IsInEditMode = evt.value;
+            CanEditBarName = IsInEditMode && !TaskHelpers.IsQuickList(evt.name);
             OnPropertyChanged(nameof(CanEditBarName));
+            OnPropertyChanged(nameof(IsInEditMode));
         }));
+        
 
-        _subscriptions.Add(_events.Subscribe<TopbarTextChangedEvent>(evt =>
-        {
-            _topbarText = evt.Text;
-            OnPropertyChanged(nameof(TopbarText));
-        }));
-
-        ToggleArchiveCommand = new RelayCommand<object>((param) =>
+        SetArchiveCommand = new RelayCommand<object>((param) =>
         {
             if (param is Button button)
                 button.Flyout?.Hide();
-            _parent.ToggleArchiveCommand.Execute(null);
+            _parent.SetArchiveCommand.Execute(null);
         });
         DeleteCommand = new AsyncRelayCommand<object>(async (param) => {
             if (param is Button button)

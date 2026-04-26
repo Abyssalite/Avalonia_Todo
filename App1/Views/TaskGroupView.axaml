@@ -73,6 +73,7 @@
                             FontSize="16"
                             IsVisible="{Binding !IsInEditMode}"
                             Text="{Binding QuickAddTaskName, Mode=TwoWay}" />
+                            
                    <Button Grid.Column="0"
                             Width="50" 
                             Height="50" 
@@ -95,6 +96,7 @@
 
                     <Button x:Name="QuickAddTaskButton"
                             Grid.Column="1"
+                            IsVisible="{Binding !IsInEditMode}"
                             Width="50" 
                             Height="50" 
                             Padding="0"
@@ -106,12 +108,32 @@
                             VerticalContentAlignment="Center"
                             BorderBrush="Transparent"
                             Background="#FAAA"
-                            Command="{Binding AddOrSaveTaskCommand}">
+                            Command="{Binding AddTaskCommand}">
                         <Image Source="avares://App1/Assets/icons8-plus-100.png"
                             Stretch="Uniform"
                             Width="50"
                             Height="50" />
                     </Button>    
+                    <Button x:Name="SaveTaskButton"
+                            IsVisible="{Binding IsInEditMode}"
+                            Grid.Column="1"
+                            Width="50" 
+                            Height="50" 
+                            Padding="0"
+                            Margin="10,0,0,0"
+                            CornerRadius="30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            BorderBrush="Transparent"
+                            Background="#FAAA"
+                            Command="{Binding SaveTaskCommand}">
+                        <Image Source="avares://App1/Assets/icons8-done-100.png"
+                            Stretch="Uniform"
+                            Width="50"
+                            Height="50" />
+                    </Button>  
                 </Grid>
             </Border>
         </Grid>

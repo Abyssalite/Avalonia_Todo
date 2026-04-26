@@ -28,7 +28,7 @@ public class GroupList : ModelBase
         set
         {
             _groups = value;
-            _events.Publish(new GroupListChangedEvent(value));
+            //_events.Publish(new GroupListChangedEvent(value));
         }
     }
 

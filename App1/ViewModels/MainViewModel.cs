@@ -26,10 +26,11 @@ public partial class MainViewModel : ViewModelBase
 
     public async Task InitializeAsync()
     {
-        _store.MainLists.MainLists = await TaskHelpers.LoadAsync("Tasks")  ?? _store.CreateDefaultList();
-        _store.ArchiveLists.ArchivedLists = await TaskHelpers.LoadAsync("Archive") ?? [];
+        _store.MainLists.MainLists = await TaskHelpers.LoadAsync(true)  ?? _store.CreateDefaultList();
+        _store.ArchiveLists.ArchivedLists = await TaskHelpers.LoadAsync(false) ?? [];
 
         _store.StoreUpdateImportantList();
+        _store.StoreUpdateQuickList();
         _store.StoreUpdateFilteredLists();
 
         var vm = App.Services?.GetRequiredService<WelcomeViewModel>();

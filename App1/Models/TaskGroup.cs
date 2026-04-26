@@ -17,7 +17,7 @@ public class TaskGroup : ModelBase
         set
         {
             _tasks = value;
-            _events.Publish(new TaskGroupChangedEvent(value));
+            //_events.Publish(new TaskGroupChangedEvent(value));
         }
     }
 

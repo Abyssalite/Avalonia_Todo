@@ -26,7 +26,6 @@ public class StoreHelpers
             Groups = new ObservableCollection<TaskGroup>()
         });
 
-        //UpdateFilteredList();
         //await TaskHelpers.SaveAsync(this);
         return false;
     }
@@ -51,26 +50,6 @@ public class StoreHelpers
         }
 
         //await TaskHelpers.SaveAsync(this);
-        //UpdateFilteredList();
-    }
-
-    public void DeleteTask(BaseTask task, bool isMainList = true)
-    {
-        var list = isMainList
-            ? _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == task.ListName)
-            : _store.ArchiveLists.ArchivedLists.FirstOrDefault(l => l.ListName == task.ListName);
-
-        if (list == null) return;
-
-        var group = list.Groups.FirstOrDefault(g => g.Category == task.Category);
-        if (group == null) return;
-
-        group.Tasks.Remove(task);
-        if (group.Tasks.Count == 0)
-            list.Groups.Remove(group);
-
-        //await TaskHelpers.SaveAsync(this, isArchive);
-        //UpdateFilteredList();
     }
 
     public void DeleteList(string listName, bool isMainList = true)
@@ -89,7 +68,24 @@ public class StoreHelpers
             _store.SelectList(null);
 
         //await TaskHelpers.SaveAsync(this, isArchive);
-        //UpdateFilteredList();
+    }
+
+    public void DeleteTask(BaseTask task, bool isMainList = true)
+    {
+        var list = isMainList
+            ? _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == task.ListName)
+            : _store.ArchiveLists.ArchivedLists.FirstOrDefault(l => l.ListName == task.ListName);
+
+        if (list == null) return;
+
+        var group = list.Groups.FirstOrDefault(g => g.Category == task.Category);
+        if (group == null) return;
+
+        group.Tasks.Remove(task);
+        if (group.Tasks.Count == 0)
+            list.Groups.Remove(group);
+
+        //await TaskHelpers.SaveAsync(this, isArchive);
     }
 
     public void MoveToArchive(string listName)
@@ -107,7 +103,6 @@ public class StoreHelpers
         if (_store.SelectedList?.ListName == listName)
             _store.SelectList(list);
 
-        //UpdateFilteredList();
     }
 
     public void MoveToList(string listName)
@@ -124,8 +119,6 @@ public class StoreHelpers
 
         if (_store.SelectedList?.ListName == listName)
             _store.SelectList(list);
-
-        //UpdateFilteredList();
     }
 
     public void EditList(
@@ -134,7 +127,7 @@ public class StoreHelpers
         ObservableCollection<TaskGroup>? editedGroups)
     {
         var list = _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == oldListName);
-        if (list == null || editedGroups == null) return;
+        if (editedGroups == null || list == null) return;
 
         bool isChanged = oldListName != newListName;
 
@@ -167,17 +160,16 @@ public class StoreHelpers
 
         _store.SelectList(updatedList);
         //await TaskHelpers.SaveAsync(this);
-        //UpdateFilteredList();
     }
 
-    public ObservableCollection<TaskGroup> Clone(ObservableCollection<TaskGroup> groupedTasks)
+    public ObservableCollection<TaskGroup> Clone(ObservableCollection<TaskGroup>? groupedTasks)
     {
         return new ObservableCollection<TaskGroup>(
-            groupedTasks.Select(group => new TaskGroup(group, _events)
+            groupedTasks?.Select(group => new TaskGroup(group, _events)
             {
                 Tasks = group.Tasks,
                 Category = group.Category
-            })
+            }) ?? []
         );
     }
 
