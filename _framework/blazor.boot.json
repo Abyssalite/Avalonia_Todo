@@ -1,10 +1,10 @@
 {
   "mainAssemblyName": "App1.Browser",
   "resources": {
-    "hash": "sha256-VDYdwWt/HcH8Qv5J/c1DceeL5bH6aVflzpUaT4HqiEU=",
+    "hash": "sha256-hZWv4NyrZ/42djkflNgopX/F9GLR36zKCWyB0nu9K/w=",
     "fingerprinting": {
-      "App1.Browser.jgapg7neyk.wasm": "App1.Browser.wasm",
-      "App1.175t4hrqhj.wasm": "App1.wasm",
+      "App1.Browser.dxzs3tlsls.wasm": "App1.Browser.wasm",
+      "App1.34r075pcgv.wasm": "App1.wasm",
       "Avalonia_EventHub.5u2uatr3gi.wasm": "Avalonia_EventHub.wasm",
       "Avalonia_Navigation.zksjrh902r.wasm": "Avalonia_Navigation.wasm",
       "Avalonia.Base.hi23v6rqyq.wasm": "Avalonia.Base.wasm",
@@ -231,8 +231,8 @@
       "System.Runtime.InteropServices.JavaScript.y6arj9x08o.wasm": "sha256-psxcmbeJz0be8ujAFhjuXGVQegdT0beZvr9INmdS9vc="
     },
     "assembly": {
-      "App1.Browser.jgapg7neyk.wasm": "sha256-zYJF0HqjJC/QXSpz6fSIIXS6MGuYMX0SEETnJmgz1ag=",
-      "App1.175t4hrqhj.wasm": "sha256-jVcWchuDyvxO6Wie48vVBh2Hmuft6iB85g51H9fyF1s=",
+      "App1.Browser.dxzs3tlsls.wasm": "sha256-4Wsm/RRoJMxJ9OlTrhWE1+YlVk8kRHAAfzaDjncXIUw=",
+      "App1.34r075pcgv.wasm": "sha256-Q7TY/cpB6Y91r/6mI48Y0gLs9R5sHYfFYWTICTBlrds=",
       "Avalonia_EventHub.5u2uatr3gi.wasm": "sha256-3bcDd0ERaqxtsKUZRb53+e2H3b/A1Io3LprVj7sQvDk=",
       "Avalonia_Navigation.zksjrh902r.wasm": "sha256-jXnDs/gaSeKqqWp8AGJ3COQKKbyMWKOYliRL8qZtyDk=",
       "Avalonia.Base.hi23v6rqyq.wasm": "sha256-ebavvc6bUoV5askRxV1v/YaaOMiFt4w751RYEJtPezI=",
