@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Avalonia_Navigation;
 using Avalonia_EventHub;
 using App1.Events;
+using System;
 
 namespace App1.ViewModels;
 
@@ -14,7 +15,7 @@ public partial class AddTaskViewModel : ViewModelBase
     public string? NewTaskName { get; set; }
     public string? TaskDesc { get; set; }
     public string? TaskCatalog { get; set; }
-    public bool? _isImportant;
+    public bool _isImportant = false;
     private string _listName = "";
 
 
@@ -40,6 +41,10 @@ public partial class AddTaskViewModel : ViewModelBase
             _isImportant = evt.IsImportant;
         }));
     }
+    public override bool GetIsImportant()
+    {
+        return _isImportant;
+    }
 
     private async Task ClearAsync()
     {
@@ -60,7 +65,7 @@ public partial class AddTaskViewModel : ViewModelBase
             Notificate.ShowNotification("Task name cannot be Empty!");
             return;
         }
-        var task = new BaseTask(_events)
+        var task = new BaseTask()
         {
             Name = name,
             IsDone = false,
@@ -69,7 +74,7 @@ public partial class AddTaskViewModel : ViewModelBase
             Description = TaskHelpers.InputOrDefault(TaskDesc, ""),
             IsImportant = _isImportant
         };
-        await _store.StoreAddTaskToCategoryAsync(task, _listName);
+        await _store.StoreAddTaskToCategoryAsync(task, _isImportant);
         
         await ClearAsync();
     }

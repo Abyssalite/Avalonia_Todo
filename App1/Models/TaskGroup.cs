@@ -5,7 +5,7 @@ using App1.Events;
 using App1.ViewModels;
 using Avalonia_EventHub;
 
-public class TaskGroup : ModelBase
+public class TaskGroup
 {
     public Guid ID = Guid.NewGuid();
     public required string Category { get; set; }
@@ -17,17 +17,15 @@ public class TaskGroup : ModelBase
         set
         {
             _tasks = value;
-            //_events.Publish(new TaskGroupChangedEvent(value));
         }
     }
 
-    public TaskGroup(IEventHub events) : base (events)
-    {}
+    public TaskGroup() {}
 
-    public TaskGroup(TaskGroup other, IEventHub events) : base (events)
+    public TaskGroup(TaskGroup other)
     {
         Category = other.Category;
-        Tasks = new ObservableCollection<BaseTask>(other.Tasks.Select(task => new BaseTask(task, _events)
+        Tasks = new ObservableCollection<BaseTask>(other.Tasks.Select(task => new BaseTask(task)
         {
             ID = task.ID,
             Name = task.Name,

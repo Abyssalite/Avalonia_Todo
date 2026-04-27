@@ -4,7 +4,7 @@ namespace App1.Events;
 
 // BaseTask.cs
 public sealed record TaskIsDoneChangedEvent(BaseTask Task, bool? IsDone);
-public sealed record TaskIsImportantChangedEvent(BaseTask Task, bool? IsImportant);
+public sealed record TaskIsImportantChangedEvent(BaseTask? Task, bool IsImportant);
 
 //GroupList.cs
 public sealed record GroupListIsArchiveStateChangedEvent(GroupList List, bool IsArchived);
@@ -21,7 +21,7 @@ public sealed record ImportantListChangedEvent(ObservableCollection<TaskGroup> L
 
 public sealed record SelectedListChangedEvent(GroupList? SelectedList, string? SelectedListName);
 public sealed record SelectedTaskChangedEvent(BaseTask? SelectedTask);
+
 public sealed record TopbarTextChangedEvent(string Text);
-public sealed record SelectedListNameChangedEvent(string name);
-public sealed record ChangeListNameEvent(bool value, string name);
+public sealed record EnterEditModeEvent(bool IsEdit, string Name);
 

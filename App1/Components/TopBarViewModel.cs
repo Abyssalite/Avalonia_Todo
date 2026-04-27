@@ -28,7 +28,7 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
             if (value == null) return;
 
             _topbarText = value;
-            _store.EditTopBarText(_topbarText);
+            _store.SetTopBarText(_topbarText);
             OnPropertyChanged(nameof(TopbarText));                
         }
     }
@@ -37,9 +37,13 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
     {
         get => _toggleImportant;
         set
-        {
+        {                
             _toggleImportant = value;
-            _store.SetTaskImportant(_toggleImportant);
+
+            if (_toggleImportant == null)
+                _toggleImportant = false;
+
+            _store.SetTaskImportant((bool)_toggleImportant);              
             OnPropertyChanged(nameof(ToggleImportant));                
         }
     }
@@ -51,8 +55,9 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
     public ICommand? EditCommand { get; }
     public ICommand? BackOrDrawerCommand { get; }
     public ICommand? DeleteCommand { get; }
-    public RelayCommand RunAfterLoadedCommand { get; }
-    public Action<ViewModelBase>? OnSetParent { get; set; }
+
+    public RelayCommand RunAfterViewLoadedCommand { get; }
+    public Action<ViewModelBase>? OnParentViewModelSet { get; set; }
 
     public TopBarViewModel(Store store, ViewModelBase? parent, IEventHub events, string? text = null)
     {
@@ -63,6 +68,7 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
         _events = events;
         _topbarText = text ?? "";
 
+        _toggleImportant = _parent.GetIsImportant();
         if (_store.SelectedTask != null)
             _toggleImportant = _store.SelectedTask.IsImportant;
 
@@ -78,15 +84,13 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
             }));
         }
 
-
-        _subscriptions.Add(_events.Subscribe<ChangeListNameEvent>(evt =>
+        _subscriptions.Add(_events.Subscribe<EnterEditModeEvent>(evt =>
         {
-            IsInEditMode = evt.value;
-            CanEditBarName = IsInEditMode && !TaskHelpers.IsQuickList(evt.name);
+            IsInEditMode = evt.IsEdit;
+            CanEditBarName = IsInEditMode && !TaskHelpers.IsQuickList(evt.Name);
             OnPropertyChanged(nameof(CanEditBarName));
             OnPropertyChanged(nameof(IsInEditMode));
         }));
-        
 
         SetArchiveCommand = new RelayCommand<object>((param) =>
         {
@@ -110,9 +114,9 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
             if (param is Button button)
                 button.Flyout?.Hide();
             await _parent.BackOrDrawerCommand.ExecuteAsync(null);
-        });
+        });               
 
-        RunAfterLoadedCommand = new RelayCommand(() => OnSetParent?.Invoke(_parent));
+        RunAfterViewLoadedCommand = new RelayCommand(() => OnParentViewModelSet?.Invoke(_parent));
     }
     
         public void Dispose()

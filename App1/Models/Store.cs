@@ -2,12 +2,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia_EventHub;
 using App1.Events;
-using App1.ViewModels;
 using System.Threading.Tasks;
 
-public class Store : ModelBase
+public class Store
 {
     private StoreHelpers _helper;
+    private readonly IEventHub _events;
 
     public string? SelectedListName { get; private set; }
     public GroupList? SelectedList { get; private set; }
@@ -24,10 +24,11 @@ public class Store : ModelBase
     public GroupList? QuickList { get; private set; }
 
 
-    public Store(IEventHub events) : base (events)
+    public Store(IEventHub events)
     {
-        MainLists = new MainList(_events);
-        ArchiveLists = new ArchivedList(_events);
+        _events = events;
+        MainLists = new MainList();
+        ArchiveLists = new ArchivedList();
 
         _helper = new(this, _events);
     }
@@ -51,55 +52,61 @@ public class Store : ModelBase
         _events.Publish(new QuickListsChangedEvent(QuickList));
     }
 
+
     public void SelectList(GroupList? list)
     {
+        if (SelectedList == list) return;
+
         SelectedList = list;
         SelectedListName = list?.ListName;
+        
+        SelectTask(null);
         TopbarText = SelectedListName;
         _events.Publish(new SelectedListChangedEvent(SelectedList, SelectedListName));
     }
     public void SelectTask(BaseTask? task)
     {
-        if (task == null) return;
+        if (SelectedTask == task) return;
+
         SelectedTask = task;
         _events.Publish(new SelectedTaskChangedEvent(SelectedTask));
     }
     
-    public void SetTaskImportant(bool? value)
+
+    public void SetTaskImportant(bool isImportant)
     {
-        if (SelectedTask == null) return;
-        SelectedTask.IsImportant = value;
+        if (SelectedTask == null) {
+            _events.Publish(new TaskIsImportantChangedEvent(null, isImportant));
+            return;
+        }
+        SelectedTask.IsImportant = isImportant;
+        _events.Publish(new TaskIsImportantChangedEvent(SelectedTask, isImportant));
 
         StoreUpdateImportantList();
-
     }
-    public void SetTaskDone(bool? value)
+    public void SetTaskDone(bool? isDone)
     {
         if (SelectedTask == null) return;
-        SelectedTask.IsDone = value;
+        SelectedTask.IsDone = isDone;
+        _events.Publish(new TaskIsDoneChangedEvent(SelectedTask, isDone));
     }
-    public void OnChangeListName(bool value, string name)
+
+    
+    public void OnEnterEdit(bool isEdit, string name)
     {
-        _events.Publish(new ChangeListNameEvent(value, name));
+        _events.Publish(new EnterEditModeEvent(isEdit, name));
     }
-    public void EditTopBarText(string? text)
+    public void SetTopBarText(string? text)
     {
         if (text == null) return;
         TopbarText = text;
         _events.Publish(new TopbarTextChangedEvent(text));
     }
-    
-    public void EditSelectListName(string? text)
-    {
-        if (text == null) return;
 
-        SelectedListName = text;
-        _events.Publish(new SelectedListNameChangedEvent(text));
-    }
 
     public ObservableCollection<GroupList> CreateDefaultList() => new()
     {
-        new GroupList(_events)
+        new GroupList()
         {
             ListName = "Quick",
             Groups = []
@@ -122,12 +129,12 @@ public class Store : ModelBase
     }
     //GroupListChangedEvent
     //TaskGroupChangedEvent
-    public async Task StoreAddTaskToCategoryAsync(BaseTask task, string listname)
+    public async Task StoreAddTaskToCategoryAsync(BaseTask task, bool isImportant)
     {
         _helper.AddTaskToCategory(task);
 
-        if (listname == GlobalVariables.Important) StoreUpdateImportantList();
-        else if (listname == GlobalVariables.Quick) StoreUpdateQuickList();
+        if (isImportant) StoreUpdateImportantList();
+        else StoreUpdateQuickList();
 
         await TaskHelpers.SaveAsync(this, true);
     }
@@ -165,10 +172,13 @@ public class Store : ModelBase
 
     public async Task StoreMoveToArchiveAsync(string list)
     {
-        _helper.MoveToArchive(list);
+        if (SelectedList?.ListName != list) return;
+
+        _helper.MoveToArchive(SelectedList);
         _events.Publish(new MainListsChangedEvent(MainLists));
         _events.Publish(new ArchiveListsChangedEvent(ArchiveLists));
 
+        _events.Publish(new GroupListIsArchiveStateChangedEvent(SelectedList, SelectedList.IsArchived));
         StoreUpdateFilteredLists();    
 
         await TaskHelpers.SaveAsync(this, true);
@@ -176,10 +186,13 @@ public class Store : ModelBase
     }   
     public async Task StoreMoveToListAsync(string list)
     {
-        _helper.MoveToList(list);
+        if (SelectedList?.ListName != list) return;
+
+        _helper.MoveToList(SelectedList);
         _events.Publish(new MainListsChangedEvent(MainLists));
         _events.Publish(new ArchiveListsChangedEvent(ArchiveLists));
 
+        _events.Publish(new GroupListIsArchiveStateChangedEvent(SelectedList, SelectedList.IsArchived));
         StoreUpdateFilteredLists();
 
         await TaskHelpers.SaveAsync(this, true);
@@ -196,7 +209,7 @@ public class Store : ModelBase
         if (existing != null) return ;
 
         _helper.EditList(oldListName, newListName, editedGroups);
-        EditSelectListName(newListName);
+        SelectedListName = newListName;
 
         if (newListName == GlobalVariables.Quick) StoreUpdateQuickList();
         else StoreUpdateFilteredLists();  
@@ -206,10 +219,8 @@ public class Store : ModelBase
 
         await TaskHelpers.SaveAsync(this, true);
     }  
-
     public ObservableCollection<TaskGroup> CloneList()
     {
         return _helper.Clone(SelectedList?.Groups);
     }
-  
 }

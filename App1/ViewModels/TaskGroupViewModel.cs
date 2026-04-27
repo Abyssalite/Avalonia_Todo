@@ -35,7 +35,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         set
         {
             _isInEditMode = value;
-            _store.OnChangeListName(_isInEditMode, ListName);
+            _store.OnEnterEdit(_isInEditMode, ListName);
             OnPropertyChanged(nameof(IsInEditMode));
         }
     }
@@ -87,11 +87,6 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
 
             IsNotInArchive = !evt.IsArchived;
             OnPropertyChanged(nameof(IsNotInArchive));
-        }));
-        _subscriptions.Add(_events.Subscribe<SelectedListNameChangedEvent>(evt =>
-        {
-            ListName = evt.name;
-            OnPropertyChanged(nameof(ListName));
         }));
 
         _subscriptions.Add(_events.Subscribe<ImportantListChangedEvent>(evt =>
@@ -166,6 +161,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
 
         var tmp = _store.TopbarText ?? ListName;
         await _store.StoreEditList(ListName, tmp, GroupedTasks);
+        ListName = tmp;
     
         IsInEditMode = false;
     }
@@ -175,18 +171,19 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
 
         if (QuickAddTaskName != null && QuickAddTaskName != "")
         {
-            var task = new BaseTask(_events)
+            var isImportant = ListName == GlobalVariables.Important;
+            var task = new BaseTask()
             {
                 Name = QuickAddTaskName,
                 IsDone = false,
                 Category = "Miscelanious",
-                ListName = (ListName == GlobalVariables.Important) ? GlobalVariables.Quick : ListName,
+                ListName = isImportant ? GlobalVariables.Quick : ListName,
                 Description = "",
-                IsImportant = ListName == GlobalVariables.Important
+                IsImportant = isImportant
             };
             QuickAddTaskName = null;
             OnPropertyChanged(nameof(QuickAddTaskName));
-            await _store.StoreAddTaskToCategoryAsync(task, ListName);
+            await _store.StoreAddTaskToCategoryAsync(task, isImportant);
         }
         else
         {
@@ -206,7 +203,11 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
             CancelEdit();
             return await Task.FromResult(true);
         }
-        else return await Task.FromResult(false);
+        else
+        {
+            _store.SelectList(null);
+            return await Task.FromResult(false);
+        }
     }
 
     private async Task OpenTaskAsync(BaseTask task)
@@ -214,6 +215,5 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
         _store.SelectTask(task);
         var vm = App.Services?.GetRequiredService<TaskDetailViewModel>();
         await _navigator.NavigateMainAndTop(vm, new Components.TopBarViewModel(_store, vm, _events, ListName));
-
     }
 }

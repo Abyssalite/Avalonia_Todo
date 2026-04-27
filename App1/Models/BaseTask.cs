@@ -1,9 +1,6 @@
 using System;
-using App1.Events;
-using App1.ViewModels;
-using Avalonia_EventHub;
 
-public class BaseTask : ModelBase
+public class BaseTask
 {
     public Guid ID = Guid.NewGuid();
     public required string Name { set; get; }
@@ -18,7 +15,7 @@ public class BaseTask : ModelBase
         {
             if (_isDone == value) return;
             _isDone = value;
-            _events.Publish(new TaskIsDoneChangedEvent(this, value));
+            //_events.Publish(new TaskIsDoneChangedEvent(this, value));
         }
     }
     private bool? _isImportant;
@@ -29,12 +26,12 @@ public class BaseTask : ModelBase
         {
             if (_isImportant == value) return;
             _isImportant = value;
-            _events.Publish(new TaskIsImportantChangedEvent(this, value));
+            //_events.Publish(new TaskIsImportantChangedEvent(this, value));
         }
     }
     
-    public BaseTask(IEventHub events) : base (events) {}
-    public BaseTask(BaseTask other, IEventHub events) : base (events)
+    public BaseTask() {}
+    public BaseTask(BaseTask other)
     {
         ID = other.ID;
         Name = other.Name;

@@ -4,9 +4,9 @@ using Avalonia_Navigation;
 
 namespace App1.ViewModels;
 
-public partial class TaskDetailViewModel : ViewModelBase
+public partial class TaskDetailViewModel : ViewModelBase, IHandleBackNavigation
 {
-    public BaseTask? Task { get; }
+    public BaseTask? TaskItem { get; }
     public bool IsNotInArchive { get; } = true;
     private bool? _isDone = false;
     public bool? IsDone
@@ -14,7 +14,7 @@ public partial class TaskDetailViewModel : ViewModelBase
         get => _isDone;
         set
         {
-            if (Task == null) return;
+            if (TaskItem == null) return;
 
             _isDone = value;
             _store.SetTaskDone(_isDone);
@@ -33,18 +33,24 @@ public partial class TaskDetailViewModel : ViewModelBase
     {
         if (_store.SelectedTask == null || _store.SelectedList == null) return;
         
-        Task = _store.SelectedTask;
+        TaskItem = _store.SelectedTask;
         IsNotInArchive = !_store.SelectedList.IsArchived;
-        _isDone = Task.IsDone;
+        _isDone = TaskItem.IsDone;
     }
     
     protected override async Task DeleteAsync()
     {
         bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
-        if (confirmed == true && Task != null)
+        if (confirmed == true && TaskItem != null)
         {
-            await _store.StoreDeleteTaskAsync(Task, IsNotInArchive);
+            await _store.StoreDeleteTaskAsync(TaskItem, IsNotInArchive);
             await _navigator.OpenPrevious();
         }
+    }
+
+    async Task<bool> IHandleBackNavigation.HandleBackAsync()
+    {
+        _store.SelectTask(null);
+        return await Task.FromResult(false);
     }
 }

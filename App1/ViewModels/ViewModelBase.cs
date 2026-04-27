@@ -57,6 +57,7 @@ public partial class ViewModelBase : ObservableObject, IDisposable
     }
     
     protected virtual void Edit() {}
+    public virtual bool GetIsImportant() => false;
 
     public void Dispose()
     {

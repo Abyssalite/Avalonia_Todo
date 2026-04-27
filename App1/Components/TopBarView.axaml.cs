@@ -27,7 +27,7 @@ public partial class TopBarView : UserControl
     {
         if (DataContext is TopBarViewModel vm)
         {
-            vm.OnSetParent = (parent) =>
+            vm.OnParentViewModelSet = (parent) =>
             {            
                 switch (parent.GetType().Name)
                 {
@@ -50,7 +50,7 @@ public partial class TopBarView : UserControl
                         DiableTopBar(); break;
                 }
             };
-            vm.RunAfterLoadedCommand.Execute(null);
+            vm.RunAfterViewLoadedCommand.Execute(null);
         }
     }
 

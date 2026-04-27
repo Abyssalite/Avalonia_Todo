@@ -19,7 +19,7 @@ public class StoreHelpers
         if (existing != null)
             return true;
 
-        _store.MainLists.MainLists.Add(new GroupList(_events)
+        _store.MainLists.MainLists.Add(new GroupList()
         {
             ListName = listName,
             IsArchived = false,
@@ -42,7 +42,7 @@ public class StoreHelpers
         }
         else
         {
-            list.Groups.Add(new TaskGroup(_events)
+            list.Groups.Add(new TaskGroup()
             {
                 Category = task.Category,
                 Tasks = new ObservableCollection<BaseTask> { task }
@@ -88,9 +88,8 @@ public class StoreHelpers
         //await TaskHelpers.SaveAsync(this, isArchive);
     }
 
-    public void MoveToArchive(string listName)
+    public void MoveToArchive(GroupList list)
     {
-        var list = _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == listName);
         if (list == null) return;
 
          _store.MainLists.MainLists.Remove(list);
@@ -100,14 +99,12 @@ public class StoreHelpers
          _store.ArchiveLists.ArchivedLists.Add(list);
         //await TaskHelpers.SaveAsync(this, true);
 
-        if (_store.SelectedList?.ListName == listName)
-            _store.SelectList(list);
+        _store.SelectList(list);
 
     }
 
-    public void MoveToList(string listName)
+    public void MoveToList(GroupList list)
     {
-        var list = _store.ArchiveLists.ArchivedLists.FirstOrDefault(l => l.ListName == listName);
         if (list == null) return;
 
         _store.ArchiveLists.ArchivedLists.Remove(list);
@@ -117,8 +114,7 @@ public class StoreHelpers
         _store.MainLists.MainLists.Add(list);
         //await TaskHelpers.SaveAsync(this);
 
-        if (_store.SelectedList?.ListName == listName)
-            _store.SelectList(list);
+        _store.SelectList(list);
     }
 
     public void EditList(
@@ -148,7 +144,7 @@ public class StoreHelpers
 
         if (!isChanged) return;
 
-        var updatedList = new GroupList(_events)
+        var updatedList = new GroupList()
         {
             ListName = newListName,
             IsArchived = false,
@@ -165,7 +161,7 @@ public class StoreHelpers
     public ObservableCollection<TaskGroup> Clone(ObservableCollection<TaskGroup>? groupedTasks)
     {
         return new ObservableCollection<TaskGroup>(
-            groupedTasks?.Select(group => new TaskGroup(group, _events)
+            groupedTasks?.Select(group => new TaskGroup(group)
             {
                 Tasks = group.Tasks,
                 Category = group.Category
@@ -190,7 +186,7 @@ public class StoreHelpers
 
             if (tasks.Count != 0)
             {
-                groups.Add(new TaskGroup(_events)
+                groups.Add(new TaskGroup()
                 {
                     Category = list.ListName,
                     Tasks = tasks

@@ -38,6 +38,7 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
             if (value == null || _selectedList == value) return;
 
             _selectedList = value;
+
             _ = OpenListAsync(_selectedList);
             OnPropertyChanged(nameof(SelectedList));
         }
@@ -87,7 +88,7 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
             }
             else if (listName == GlobalVariables.Important)
             {
-                var list = new GroupList(_events)
+                var list = new GroupList()
                 {
                     ListName = listName,
                     Groups = _store.ImportantLists ?? []
