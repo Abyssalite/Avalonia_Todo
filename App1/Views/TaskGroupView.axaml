@@ -16,35 +16,37 @@
                         <DataTemplate>
                             <StackPanel>
                                 <TextBlock Text="{Binding Category}" 
-                                        FontSize="20" 
-                                        FontWeight="Bold"
-                                        Margin="15,10,100,2"
-                                        Padding="10,2,10,2" 
-                                        IsVisible="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}" />
+                                    FontSize="20" 
+                                    FontWeight="Bold"
+                                    Margin="15,10,100,2"
+                                    Padding="10,2,10,2" 
+                                    IsVisible="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}" />
+                                    
                                 <TextBox Text="{Binding Category, Mode=TwoWay}" 
-                                        FontSize="20"
-                                        Margin="15,10,100,2"
-                                        Padding="10,8,10,8" 
-                                        IsVisible="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}" />
+                                    FontSize="20"
+                                    Margin="15,10,100,2"
+                                    Padding="10,8,10,8" 
+                                    IsVisible="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}" />
 
                                 <ListBox ItemsSource="{Binding Tasks}"
-                                        BorderThickness="0"
-                                        Margin="15,2,15,2"
-                                        Background="Transparent"
-                                        SelectionMode="Single"
-                                        CornerRadius="8"
-                                        SelectedItem="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.SelectedTask, Mode=TwoWay}"
-                                        IsEnabled="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}">
+                                    BorderThickness="0"
+                                    Margin="15,2,15,2"
+                                    Background="Transparent"
+                                    SelectionMode="Single"
+                                    CornerRadius="8"
+                                    SelectedItem="{Binding $parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.SelectedTask, Mode=TwoWay}"
+                                    IsEnabled="{Binding !$parent[UserControl].((vm:TaskGroupViewModel)DataContext)?.IsInEditMode}">
+
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" Margin="5,8,5,8">
                                                 <CheckBox IsChecked="{Binding IsDone}" 
-                                                        VerticalAlignment="Center"
-                                                        Margin="0,0,15,0" />
+                                                    VerticalAlignment="Center"
+                                                    Margin="0,0,15,0" />
                                                 <TextBlock Text="{Binding Name}" 
-                                                        VerticalAlignment="Center"
-                                                        FontSize="15"
-                                                        Background="Transparent" />
+                                                    VerticalAlignment="Center"
+                                                    FontSize="15"
+                                                    Background="Transparent" />
                                             </StackPanel>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -64,30 +66,30 @@
                     Margin="25,15,25,0"
                     VerticalAlignment="Top">
                     <TextBox Grid.Column="0"
-                            x:Name="QuickAddTaskTextBox"
-                            Watermark="New Task" 
-                            Padding="8"
-                            MaxWidth="330"         
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            IsVisible="{Binding !IsInEditMode}"
-                            Text="{Binding QuickAddTaskName, Mode=TwoWay}" />
+                        x:Name="QuickAddTaskTextBox"
+                        Watermark="New Task" 
+                        Padding="8"
+                        MaxWidth="330"         
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        IsVisible="{Binding !IsInEditMode}"
+                        Text="{Binding QuickAddTaskName, Mode=TwoWay}" />
                             
                    <Button Grid.Column="0"
-                            Width="50" 
-                            Height="50" 
-                            Padding="0"
-                            Margin="0,0,10,0"
-                            CornerRadius="30"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"
-                            BorderBrush="Transparent"
-                            Background="#FAAA"
-                            IsVisible="{Binding IsInEditMode}"
-                            Command="{Binding CancelCommand}">
+                        Width="50" 
+                        Height="50" 
+                        Padding="0"
+                        Margin="0,0,10,0"
+                        CornerRadius="30"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Transparent"
+                        Background="#FAAA"
+                        IsVisible="{Binding IsInEditMode}"
+                        Command="{Binding CancelCommand}">
                         <Image Source="avares://App1/Assets/icons8-cross-100.png"
                             Stretch="Uniform"
                             Width="50"
@@ -95,40 +97,41 @@
                     </Button>  
 
                     <Button x:Name="QuickAddTaskButton"
-                            Grid.Column="1"
-                            IsVisible="{Binding !IsInEditMode}"
-                            Width="50" 
-                            Height="50" 
-                            Padding="0"
-                            Margin="10,0,0,0"
-                            CornerRadius="30"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"
-                            BorderBrush="Transparent"
-                            Background="#FAAA"
-                            Command="{Binding AddTaskCommand}">
+                        Grid.Column="1"
+                        IsVisible="{Binding !IsInEditMode}"
+                        Width="50" 
+                        Height="50" 
+                        Padding="0"
+                        Margin="10,0,0,0"
+                        CornerRadius="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Transparent"
+                        Background="#FAAA"
+                        Command="{Binding AddTaskCommand}">
                         <Image Source="avares://App1/Assets/icons8-plus-100.png"
                             Stretch="Uniform"
                             Width="50"
                             Height="50" />
                     </Button>    
+
                     <Button x:Name="SaveTaskButton"
-                            IsVisible="{Binding IsInEditMode}"
-                            Grid.Column="1"
-                            Width="50" 
-                            Height="50" 
-                            Padding="0"
-                            Margin="10,0,0,0"
-                            CornerRadius="30"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"
-                            BorderBrush="Transparent"
-                            Background="#FAAA"
-                            Command="{Binding SaveTaskCommand}">
+                        IsVisible="{Binding IsInEditMode}"
+                        Grid.Column="1"
+                        Width="50" 
+                        Height="50" 
+                        Padding="0"
+                        Margin="10,0,0,0"
+                        CornerRadius="30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="Transparent"
+                        Background="#FAAA"
+                        Command="{Binding SaveTaskCommand}">
                         <Image Source="avares://App1/Assets/icons8-done-100.png"
                             Stretch="Uniform"
                             Width="50"

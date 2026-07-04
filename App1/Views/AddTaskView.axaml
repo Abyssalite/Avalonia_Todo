@@ -9,29 +9,35 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AddTaskViewModel">   
         
-        <StackPanel HorizontalAlignment="Stretch" >
-            <Border x:Name="AddTaskPanel" Background="#FF1D1D1D" CornerRadius="10" ClipToBounds="True">      
-                <StackPanel Margin="10"> 
-                    <TextBox Watermark="Task name" Text="{Binding NewTaskName}" Margin="8" />
-                    <TextBox Watermark="Description" Text="{Binding TaskDesc}" Margin="8" />
-                    <TextBox Watermark="Category" Text="{Binding TaskCatalog}" Margin="8" />
-                    <Grid ColumnDefinitions="Auto,*"  Margin="5,4,0,0">
-                        <Button Grid.Column="0"
-                            Content="Add task"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Command="{Binding SaveTaskCommand}"
-                            Padding="10" 
-                            Margin="10" />   
-                        <Button Grid.Column="1"
-                            Content="Cancel"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Command="{Binding CancelCommand}"
-                            Padding="10" 
-                            Margin="10" />   
-                    </Grid>
-                </StackPanel>         
-            </Border>    
-        </StackPanel>         
+        <Border x:Name="AddTaskPanel" 
+            Background="#FF1D1D1D" 
+            CornerRadius="10" 
+            ClipToBounds="True" 
+            HorizontalAlignment="Stretch" 
+            VerticalAlignment="Top" 
+            Height="230">
+
+            <StackPanel Margin="10"> 
+                <TextBox Watermark="Task name" Text="{Binding NewTaskName}" Margin="8" />
+                <TextBox Watermark="Description" Text="{Binding TaskDesc}" Margin="8" />
+                <TextBox Watermark="Category" Text="{Binding TaskCatalog}" Margin="8" />
+
+                <Grid ColumnDefinitions="Auto,*"  Margin="5,4,0,0">
+                    <Button Grid.Column="0"
+                        Content="Add task"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Command="{Binding SaveTaskCommand}"
+                        Padding="10" 
+                        Margin="10" />   
+                    <Button Grid.Column="1"
+                        Content="Cancel"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Command="{Binding CancelCommand}"
+                        Padding="10" 
+                        Margin="10" />   
+                </Grid>
+            </StackPanel>         
+        </Border>    
 </UserControl>

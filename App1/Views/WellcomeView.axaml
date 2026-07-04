@@ -10,8 +10,8 @@
 
         <Grid>
             <TextBlock Text="{Binding Text}" 
-                       FontSize="40" 
-                       VerticalAlignment="Center" 
-                       HorizontalAlignment="Center" />
+                FontSize="40" 
+                VerticalAlignment="Center" 
+               HorizontalAlignment="Center" />
         </Grid>
 </UserControl>

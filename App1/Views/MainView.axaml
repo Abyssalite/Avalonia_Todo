@@ -11,53 +11,55 @@
              Background="#0000"
              Focusable="true"> 
 
-    <Design.DataContext>
-        <vm:MainViewModel />
-    </Design.DataContext>
-    <UserControl.Resources>
-    </UserControl.Resources>
+        <Design.DataContext>
+            <vm:MainViewModel />
+        </Design.DataContext>
+        <UserControl.Resources>
+        </UserControl.Resources>
 
-    <Grid>
-        <Panel>
-            <Panel.Styles>
-                <Style Selector="SplitView.Blur">
-                    <Setter Property="Effect" Value="blur(10)" />
-                </Style>
-            </Panel.Styles>
-            <SplitView x:Name="MainSplitView"
+        <Grid>
+            <Panel>
+                <Panel.Styles>
+                    <Style Selector="SplitView.Blur">
+                        <Setter Property="Effect" Value="blur(10)" />
+                    </Style>
+                </Panel.Styles>
+
+                <SplitView x:Name="MainSplitView"
                     OpenPaneLength="300" 
                     Classes.Blur="{Binding $parent[u:UrsaWindow].(u:OverlayDialogHost.IsInModalStatus)}">
-                <SplitView.Pane>
-                    <Border Background="#FF2D2D2D">
-                        <StackPanel x:Name="SideViewContent">
-                            <Grid ColumnDefinitions="*,Auto" >
-                                <TextBlock Grid.Column="0" Margin="10,0,10,0" Text="Todo" FontSize="20" VerticalAlignment="Center" />
-                                <Button Content="☰" 
-                                    Grid.Column="1" 
-                                    Click="TogglePane_Click"
-                                    x:Name="toggleClose" 
-                                    VerticalAlignment="Center" />
-                            </Grid>
-                            <ContentControl Content="{Binding ViewHost.SideView}" />
-                        </StackPanel>
-                    </Border>
-                </SplitView.Pane>
+                    <SplitView.Pane>
+                        <Border Background="#FF2D2D2D">
+                            <StackPanel x:Name="SideViewContent">
+                                <Grid ColumnDefinitions="*,Auto" >
+                                    <TextBlock Grid.Column="0" Margin="10,0,10,0" Text="Todo" FontSize="20" VerticalAlignment="Center" />
+                                    <Button Content="☰" 
+                                        Grid.Column="1" 
+                                        Click="TogglePane_Click"
+                                        x:Name="toggleClose" 
+                                        VerticalAlignment="Center" />
+                                </Grid>
+                                <ContentControl Content="{Binding ViewHost.SideView}" />
+                            </StackPanel>
+                        </Border>
+                    </SplitView.Pane>
 
-                <Grid ColumnDefinitions="Auto,*">  
-                    <Border Grid.Column="0" Background="#FF2D2D2D" x:Name="LeftBar">
-                        <StackPanel Spacing="10" Margin="10,15,10,10" x:Name="LeftBarContent">
-                            <Button Content="☰" 
-                                Click="TogglePane_Click"
-                                x:Name="toggleOpen" />
-                            <Button Content="0" />
-                        </StackPanel>
-                    </Border>
-                    <Grid Grid.Column="1" RowDefinitions="Auto,*" x:Name="MainViewContent">
-                        <ContentControl Grid.Row="0" Content="{Binding ViewHost.TopBar}" Margin="15,5,15,5" />
-                        <ContentControl Grid.Row="1" Content="{Binding ViewHost.MainView}" />
+                    <Grid ColumnDefinitions="Auto,*">  
+                        <Border Grid.Column="0" Background="#FF2D2D2D" x:Name="LeftBar">
+                            <StackPanel Spacing="10" Margin="10,15,10,10" x:Name="LeftBarContent">
+                                <Button Content="☰" 
+                                    Click="TogglePane_Click"
+                                    x:Name="toggleOpen" />
+                                <Button Content="0" />
+                            </StackPanel>
+                        </Border>
+                        
+                        <Grid Grid.Column="1" RowDefinitions="Auto,*" x:Name="MainViewContent">
+                            <ContentControl Grid.Row="0" Content="{Binding ViewHost.TopBar}" Margin="15,5,15,5" />
+                            <ContentControl Grid.Row="1" Content="{Binding ViewHost.MainView}" />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </SplitView>
-        </Panel>
-    </Grid>
+                </SplitView>
+            </Panel>
+        </Grid>
 </UserControl>
