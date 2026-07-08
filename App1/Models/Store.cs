@@ -205,8 +205,8 @@ public class Store
         string newListName,
         ObservableCollection<TaskGroup>? editedGroups
     ){
-        var existing = MainLists.MainLists.FirstOrDefault(l => l.ListName == newListName);
-        if (existing != null) return ;
+        //var existing = MainLists.MainLists.FirstOrDefault(l => l.ListName == newListName);
+        //if (existing != null) return ;
 
         _helper.EditList(oldListName, newListName, editedGroups);
         SelectedListName = newListName;

@@ -29,7 +29,8 @@ public partial class GroupListViewModel : ViewModelBase, IHandleLastPage, IDispo
             OnPropertyChanged(nameof(DisplayLists));
             OnPropertyChanged(nameof(ToggleArchive));
         }
-    }    private GroupList? _selectedList;
+    }    
+    private GroupList? _selectedList;
     public GroupList? SelectedList
     {
         get => _selectedList;

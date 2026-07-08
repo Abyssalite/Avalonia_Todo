@@ -150,7 +150,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
                 GroupedTasks.Add(item);
             }
             _clone = null;
-            _store.TopbarText = ListName;
+            _store.SetTopBarText(ListName);
         }
         IsInEditMode = false;
     }

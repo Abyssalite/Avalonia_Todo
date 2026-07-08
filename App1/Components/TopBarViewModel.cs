@@ -28,7 +28,7 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
             if (value == null) return;
 
             _topbarText = value;
-            _store.SetTopBarText(_topbarText);
+            _store.TopbarText = _topbarText;
             OnPropertyChanged(nameof(TopbarText));                
         }
     }
@@ -90,6 +90,11 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
             CanEditBarName = IsInEditMode && !TaskHelpers.IsQuickList(evt.Name);
             OnPropertyChanged(nameof(CanEditBarName));
             OnPropertyChanged(nameof(IsInEditMode));
+        }));
+
+        _subscriptions.Add(_events.Subscribe<TopbarTextChangedEvent>(evt =>
+        {
+            TopbarText = evt.Text;
         }));
 
         SetArchiveCommand = new RelayCommand<object>((param) =>

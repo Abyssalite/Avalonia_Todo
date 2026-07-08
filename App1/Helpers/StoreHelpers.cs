@@ -144,8 +144,10 @@ public class StoreHelpers
 
         if (!isChanged) return;
 
+        // update name and edited groups
         var updatedList = new GroupList()
         {
+            ID = list.ID,
             ListName = newListName,
             IsArchived = false,
             Groups = new ObservableCollection<TaskGroup>(editedGroups)
@@ -163,6 +165,7 @@ public class StoreHelpers
         return new ObservableCollection<TaskGroup>(
             groupedTasks?.Select(group => new TaskGroup(group)
             {
+                ID = group.ID,
                 Tasks = group.Tasks,
                 Category = group.Category
             }) ?? []
