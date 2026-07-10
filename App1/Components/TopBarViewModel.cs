@@ -48,11 +48,14 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
         }
     }
     public bool IsNotInArchive { get; set; } = true;
-    public bool CanEditBarName { get; set; } = false;
+    public bool IsEditBarName { get; set; } = false;
+    public bool CanRename { get; set; } = false;
     public bool IsInEditMode { get; set; } = false;
+    public bool IsWelcome { get; set; } = false;
 
     public ICommand? SetArchiveCommand { get; }
     public ICommand? EditCommand { get; }
+    public ICommand? RenameCommand { get; }
     public ICommand? BackOrDrawerCommand { get; }
     public ICommand? DeleteCommand { get; }
 
@@ -67,13 +70,17 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
         _parent = parent;
         _events = events;
         _topbarText = text ?? "";
+        IsWelcome = text == null;
 
         _toggleImportant = _parent.GetIsImportant();
         if (_store.SelectedTask != null)
             _toggleImportant = _store.SelectedTask.IsImportant;
 
         if (_store.SelectedList != null)
-        {
+        {   
+            CanRename = !TaskHelpers.IsQuickList(_store.SelectedList.ListName);
+            OnPropertyChanged(nameof(CanRename));
+
             IsNotInArchive = !_store.SelectedList.IsArchived;
             _subscriptions.Add(_events.Subscribe<GroupListIsArchiveStateChangedEvent>(evt =>
             {
@@ -87,9 +94,12 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
         _subscriptions.Add(_events.Subscribe<EnterEditModeEvent>(evt =>
         {
             IsInEditMode = evt.IsEdit;
-            CanEditBarName = IsInEditMode && !TaskHelpers.IsQuickList(evt.Name);
-            OnPropertyChanged(nameof(CanEditBarName));
             OnPropertyChanged(nameof(IsInEditMode));
+        }));
+        _subscriptions.Add(_events.Subscribe<EnterRenameEvent>(evt =>
+        {
+            IsEditBarName = evt.IsRename;
+            OnPropertyChanged(nameof(IsEditBarName));
         }));
 
         _subscriptions.Add(_events.Subscribe<TopbarTextChangedEvent>(evt =>
@@ -113,6 +123,13 @@ public partial class TopBarViewModel : ObservableObject, IDisposable
             if (param is Button button)
                 button.Flyout?.Hide();
             _parent.EditCommand.Execute(null);
+
+        });
+        RenameCommand = new RelayCommand<object>((param) =>
+        {
+            if (param is Button button)
+                button.Flyout?.Hide();
+            _parent.RenameCommand.Execute(null);
 
         });
         BackOrDrawerCommand = new AsyncRelayCommand<object>(async (param) => {

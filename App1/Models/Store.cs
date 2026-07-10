@@ -96,6 +96,10 @@ public class Store
     {
         _events.Publish(new EnterEditModeEvent(isEdit, name));
     }
+    public void OnEnterRename(bool isRename, string name)
+    {
+        _events.Publish(new EnterRenameEvent(isRename, name));
+    }
     public void SetTopBarText(string? text)
     {
         if (text == null) return;
@@ -201,22 +205,29 @@ public class Store
 
 
     public async Task StoreEditList(
-        string oldListName,
-        string newListName,
+        string ListName,
         ObservableCollection<TaskGroup>? editedGroups
     ){
-        //var existing = MainLists.MainLists.FirstOrDefault(l => l.ListName == newListName);
-        //if (existing != null) return ;
+        _helper.EditList(ListName, editedGroups);
 
-        _helper.EditList(oldListName, newListName, editedGroups);
-        SelectedListName = newListName;
-
-        if (newListName == GlobalVariables.Quick) StoreUpdateQuickList();
+        if (ListName == GlobalVariables.Quick) StoreUpdateQuickList();
         else StoreUpdateFilteredLists();  
 
         StoreUpdateImportantList();  
         _events.Publish(new GroupListChangedEvent(SelectedList?.Groups));
 
+        await TaskHelpers.SaveAsync(this, true);
+    }  
+    public async Task StoreRenameList(
+        string oldListName,
+        string newListName
+    ){
+        var existing = MainLists.MainLists.FirstOrDefault(l => l.ListName == newListName);
+        if (existing != null) return ;
+
+        _helper.RenameList(oldListName, newListName);
+        SelectedListName = newListName;
+        StoreUpdateFilteredLists();  
         await TaskHelpers.SaveAsync(this, true);
     }  
     public ObservableCollection<TaskGroup> CloneList()

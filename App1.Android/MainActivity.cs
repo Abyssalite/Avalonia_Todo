@@ -26,11 +26,13 @@ public class MainActivity : AvaloniaMainActivity<App>
         var navigatorService = App.Services?.GetRequiredService<INavigatorService>();
         
         if (navigatorService == null) return;
-        
         if (navigatorService.IsExit())
+        {        
             OnBackPressedDispatcher.OnBackPressed();
-        
-        else
+        }
+        else  
+        {        
             navigatorService.OpenPrevious();
+        }
     }
 }

@@ -39,6 +39,18 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
             OnPropertyChanged(nameof(IsInEditMode));
         }
     }
+    private bool _isEditBarName = false;
+    public bool IsEditBarName
+    {
+        get => _isEditBarName;
+        set
+        {
+            _isEditBarName = value;
+            _store.OnEnterRename(_isEditBarName, ListName);
+            OnPropertyChanged(nameof(IsEditBarName));
+        }
+    }
+
     private BaseTask? _selectedTask;
     public BaseTask? SelectedTask
     {
@@ -112,6 +124,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
     protected override async Task SetArchiveList()
     {
         if (!IsNotMainList || ListName == "") return;
+        if (_isInEditMode || _isEditBarName ) return;
 
         if (IsNotInArchive) await _store.StoreMoveToArchiveAsync(ListName);
         else await _store.StoreMoveToListAsync(ListName);
@@ -120,6 +133,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
     protected override async Task DeleteAsync()
     {
         if (!IsNotMainList || ListName == "") return;
+        if (_isInEditMode || _isEditBarName ) return;
 
         bool? confirmed = await _dialogService.ShowDialogAsync("Do you want to Delete?");
         if (confirmed == true)
@@ -133,12 +147,22 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
     {
         if (ListName == "" || GroupedTasks == null) return;
 
-        if (IsNotInArchive && !_isInEditMode)
+        if (IsNotInArchive && !_isInEditMode && !_isEditBarName)
         {
             _clone = _store.CloneList();
             IsInEditMode = true;
         }
     }
+
+    protected override void Rename()
+    {
+        if (ListName == "") return;
+        if (IsNotInArchive && !_isInEditMode && !_isEditBarName)
+        {
+            IsEditBarName = true;
+        }
+    }
+
 
     private void CancelEdit()
     {
@@ -150,19 +174,32 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
                 GroupedTasks.Add(item);
             }
             _clone = null;
+        }
+        if (_isEditBarName)
+        {
             _store.SetTopBarText(ListName);
         }
+        IsEditBarName = false;
         IsInEditMode = false;
     }
 
     private async Task SaveEdit()
     {
-        if (ListName == "" || (_store.TopbarText == "")) return;
 
-        var tmp = _store.TopbarText ?? ListName;
-        await _store.StoreEditList(ListName, tmp, GroupedTasks);
-        ListName = tmp;
+        if (_isInEditMode && GroupedTasks != null)
+        {
+            await _store.StoreEditList(ListName, GroupedTasks);
+        }
+
+        if (ListName != "" || (_store.TopbarText != ""))
+        {
+            var newName = _store.TopbarText ?? ListName;
+            await _store.StoreRenameList(ListName, newName);
+            ListName = newName;
+            _store.SetTopBarText(ListName);
+        }
     
+        IsEditBarName = false;
         IsInEditMode = false;
     }
 
@@ -198,7 +235,7 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
 
     async Task<bool> IHandleBackNavigation.HandleBackAsync()
     {
-        if (_isInEditMode)
+        if (_isInEditMode || _isEditBarName)
         {
             CancelEdit();
             return await Task.FromResult(true);
@@ -212,6 +249,8 @@ public partial class TaskGroupViewModel : ViewModelBase, IHandleBackNavigation
 
     private async Task OpenTaskAsync(BaseTask task)
     {
+        if (_isInEditMode || _isEditBarName) return;
+
         _store.SelectTask(task);
         var vm = App.Services?.GetRequiredService<TaskDetailViewModel>();
         await _navigator.NavigateMainAndTop(vm, new Components.TopBarViewModel(_store, vm, _events, ListName));

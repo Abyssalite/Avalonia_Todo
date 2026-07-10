@@ -23,6 +23,7 @@ public partial class ViewModelBase : ObservableObject, IDisposable
     public AsyncRelayCommand SetArchiveCommand { get; }
     public AsyncRelayCommand BackOrDrawerCommand { get; }
     public RelayCommand EditCommand { get; }
+    public RelayCommand RenameCommand { get; }
 
     protected ViewModelBase(
         Store store,
@@ -43,6 +44,7 @@ public partial class ViewModelBase : ObservableObject, IDisposable
         SetArchiveCommand = new AsyncRelayCommand(SetArchiveList);
         BackOrDrawerCommand = new AsyncRelayCommand(BackOrToggleDrawerAsync);
         EditCommand = new RelayCommand(Edit);
+        RenameCommand = new RelayCommand(Rename);
     }
     protected virtual async Task DeleteAsync() => await Task.CompletedTask;
     protected virtual async Task SetArchiveList() => await Task.CompletedTask;
@@ -57,6 +59,8 @@ public partial class ViewModelBase : ObservableObject, IDisposable
     }
     
     protected virtual void Edit() {}
+    protected virtual void Rename() {}
+
     public virtual bool GetIsImportant() => false;
 
     public void Dispose()

@@ -12,8 +12,10 @@
         <UserControl.Resources>
             <ResourceDictionary>
                 <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
+                <converters:AndConverter x:Key="AndConverter" />
             </ResourceDictionary>
         </UserControl.Resources>
+
         <UserControl.Styles>
             <Style Selector="FlyoutPresenter.DropDown">
                 <Setter Property="Background" Value="#FAAA" />
@@ -27,8 +29,8 @@
             </Style>
         </UserControl.Styles>
 
-                <Grid ColumnDefinitions="Auto,*,Auto" MinHeight="40" MaxHeight="80">
-                     <Button Grid.Column="0"
+        <Grid x:Name="TopbarGrid" ColumnDefinitions="Auto,*,Auto" MinHeight="40" MaxHeight="80">
+            <Button Grid.Column="0"
                             x:Name="BackOrDrawerButton"
                             Width="40" 
                             Height="40" 
@@ -41,26 +43,42 @@
                             BorderBrush="Transparent"
                             Background="#FAAA"
                             Command="{Binding BackOrDrawerCommand}">
-                        <Image x:Name="BackOrDrawerImage"
+                <Image x:Name="BackOrDrawerImage"
                             Stretch="Uniform"
                             Width="40"
                             Height="40" />
-                    </Button>
-                    <TextBlock Grid.Column="1"  
+            </Button>
+
+            <TextBlock
+                            Grid.Column="1"  
                             Text="{Binding TopbarText}" 
                             FontSize="22"
                             HorizontalAlignment="Center"                             
-                            VerticalAlignment="Center" 
-                            IsVisible="{Binding !CanEditBarName}" />
-                    <TextBox Grid.Column="1" 
+                            VerticalAlignment="Center">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{StaticResource AndConverter}">
+                                    <Binding Path="!IsEditBarName"/>
+                                    <Binding Path="!IsWelcome"/>
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+            </TextBlock>
+            <TextBox
+                            Grid.Column="1" 
                             Text="{Binding TopbarText, Mode=TwoWay}" 
                             FontSize="22"
                             Padding="8"
                             HorizontalAlignment="Center" 
-                            VerticalAlignment="Center" 
-                            IsVisible="{Binding CanEditBarName}" />
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">   
-                        <ToggleButton x:Name="StarButton"
+                            VerticalAlignment="Center">
+                            <TextBox.IsVisible>
+                                <MultiBinding Converter="{StaticResource AndConverter}">
+                                    <Binding Path="IsEditBarName"/>
+                                    <Binding Path="!IsWelcome"/>
+                                </MultiBinding>
+                            </TextBox.IsVisible>
+            </TextBox>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">   
+                <ToggleButton x:Name="StarButton"
                                 Width="40" 
                                 Height="40" 
                                 Padding="0"
@@ -72,12 +90,12 @@
                                 BorderBrush="Transparent"
                                 IsChecked="{Binding ToggleImportant, Mode=TwoWay}"
                                 IsEnabled="{Binding IsNotInArchive}">
-                            <Image Source="avares://App1/Assets/icons8-star-100.png"
+                    <Image Source="avares://App1/Assets/icons8-star-100.png"
                                 Stretch="Uniform"
                                 Width="40"
                                 Height="40" />
-                        </ToggleButton>
-                        <Button x:Name="ButtonFlyout"
+                </ToggleButton>
+                <Button x:Name="ButtonFlyout"
                                 Width="40" 
                                 Height="40" 
                                 Padding="0"
@@ -89,41 +107,47 @@
                                 BorderBrush="Transparent"
                                 Background="#FAAA"
                                 IsEnabled="{Binding !IsInEditMode}">
-                            <Image Source="avares://App1/Assets/icons8-menu-2-100.png"
+                    <Image Source="avares://App1/Assets/icons8-menu-2-100.png"
                                 Stretch="Uniform"
                                 Width="40"
                                 Height="40" />
-                            <Button.Flyout>
-                                <Flyout FlyoutPresenterClasses="DropDown" Placement="BottomEdgeAlignedRight">
-                                    <Flyout.Content>
-                                        <StackPanel VerticalAlignment="Center">
-                                            <MenuItem Header="Edit" 
+                <Button.Flyout>
+                    <Flyout FlyoutPresenterClasses="DropDown" Placement="BottomEdgeAlignedRight">
+                        <Flyout.Content>
+                            <StackPanel VerticalAlignment="Center">
+                                <MenuItem Header="Rename" 
+                                                    Foreground="Black" 
+                                                    IsVisible="{Binding IsNotInArchive}"
+                                                    IsEnabled="{Binding CanRename}"
+                                                    Command="{Binding RenameCommand}" 
+                                                    CommandParameter="{Binding ElementName=ButtonFlyout}">
+                                </MenuItem>
+                                <MenuItem Header="Edit" 
                                                     Foreground="Black" 
                                                     IsVisible="{Binding IsNotInArchive}"
                                                     Command="{Binding EditCommand}" 
                                                     CommandParameter="{Binding ElementName=ButtonFlyout}">
-                                            </MenuItem>
-                                            <MenuItem x:Name="ToggleArchiveButton"
+                                </MenuItem>
+                                <MenuItem x:Name="ToggleArchiveButton"
                                                     Foreground="Black"
                                                     Command="{Binding SetArchiveCommand}"
                                                     CommandParameter="{Binding ElementName=ButtonFlyout}">
-                                                <MenuItem.Header>
-                                                    <MultiBinding Converter="{StaticResource BoolToTextConverter}" ConverterParameter="Archive">
-                                                    <Binding Path="IsNotInArchive" />
-                                                    </MultiBinding>
-                                                </MenuItem.Header>
-                                            </MenuItem>
-                                            <MenuItem x:Name="DeleteButton"
+                                    <MenuItem.Header>
+                                        <MultiBinding Converter="{StaticResource BoolToTextConverter}" ConverterParameter="Archive">
+                                            <Binding Path="IsNotInArchive" />
+                                        </MultiBinding>
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <MenuItem x:Name="DeleteButton"
                                                     Header="Delete" 
                                                     Foreground="Black" 
                                                     Command="{Binding DeleteCommand}"
                                                     CommandParameter="{Binding ElementName=ButtonFlyout}" />
-                                        </StackPanel>
-                                    </Flyout.Content>
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
-                    </StackPanel>
-                </Grid>
-
+                            </StackPanel>
+                        </Flyout.Content>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </StackPanel>
+    </Grid>
 </UserControl>

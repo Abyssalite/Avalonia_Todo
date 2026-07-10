@@ -74,7 +74,7 @@ public partial class MainView : UserControl
             _resizeToken = new CancellationTokenSource();
 
             var token = _resizeToken.Token;
-            Task.Delay(50, token).ContinueWith(t =>
+            Task.Delay(30, token).ContinueWith(t =>
             {
                 if (t.IsCanceled) return;
                 Dispatcher.UIThread.InvokeAsync(AdjustPaneLayout);

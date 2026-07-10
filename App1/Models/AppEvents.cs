@@ -24,4 +24,5 @@ public sealed record SelectedTaskChangedEvent(BaseTask? SelectedTask);
 
 public sealed record TopbarTextChangedEvent(string Text);
 public sealed record EnterEditModeEvent(bool IsEdit, string Name);
+public sealed record EnterRenameEvent(bool IsRename, string Name);
 

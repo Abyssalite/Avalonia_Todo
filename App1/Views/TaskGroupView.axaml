@@ -10,6 +10,13 @@
              x:DataType="vm:TaskGroupViewModel"
              xmlns:custom="clr-namespace:App1.Components"> 
 
+        <UserControl.Resources>
+            <ResourceDictionary>
+                <converters:AndConverter x:Key="AndConverter" />
+                <converters:OrConverter x:Key="OrConverter" />
+            </ResourceDictionary>
+        </UserControl.Resources>
+
         <Grid RowDefinitions="*,Auto">
                 <ItemsControl ItemsSource="{Binding GroupedTasks}" Grid.Row="0" Margin="5" x:Name="ListsStack">
                     <ItemsControl.ItemTemplate>
@@ -73,8 +80,14 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         FontSize="16"
-                        IsVisible="{Binding !IsInEditMode}"
-                        Text="{Binding QuickAddTaskName, Mode=TwoWay}" />
+                        Text="{Binding QuickAddTaskName, Mode=TwoWay}">
+                        <TextBox.IsVisible>
+                            <MultiBinding Converter="{StaticResource AndConverter}">
+                                <Binding Path="!IsInEditMode"/>
+                                <Binding Path="!IsEditBarName"/>
+                            </MultiBinding>
+                        </TextBox.IsVisible>
+                    </TextBox>
                             
                    <Button Grid.Column="0"
                         Width="50" 
@@ -88,8 +101,13 @@
                         VerticalContentAlignment="Center"
                         BorderBrush="Transparent"
                         Background="#FAAA"
-                        IsVisible="{Binding IsInEditMode}"
                         Command="{Binding CancelCommand}">
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{StaticResource OrConverter}">
+                                <Binding Path="IsInEditMode"/>
+                                <Binding Path="IsEditBarName"/>
+                            </MultiBinding>
+                        </Button.IsVisible>
                         <Image Source="avares://App1/Assets/icons8-cross-100.png"
                             Stretch="Uniform"
                             Width="50"
@@ -98,7 +116,6 @@
 
                     <Button x:Name="QuickAddTaskButton"
                         Grid.Column="1"
-                        IsVisible="{Binding !IsInEditMode}"
                         Width="50" 
                         Height="50" 
                         Padding="0"
@@ -111,6 +128,12 @@
                         BorderBrush="Transparent"
                         Background="#FAAA"
                         Command="{Binding AddTaskCommand}">
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{StaticResource AndConverter}">
+                                <Binding Path="!IsInEditMode"/>
+                                <Binding Path="!IsEditBarName"/>
+                            </MultiBinding>
+                        </Button.IsVisible>
                         <Image Source="avares://App1/Assets/icons8-plus-100.png"
                             Stretch="Uniform"
                             Width="50"
@@ -118,7 +141,6 @@
                     </Button>    
 
                     <Button x:Name="SaveTaskButton"
-                        IsVisible="{Binding IsInEditMode}"
                         Grid.Column="1"
                         Width="50" 
                         Height="50" 
@@ -132,6 +154,12 @@
                         BorderBrush="Transparent"
                         Background="#FAAA"
                         Command="{Binding SaveTaskCommand}">
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{StaticResource OrConverter}">
+                                <Binding Path="IsInEditMode"/>
+                                <Binding Path="IsEditBarName"/>
+                            </MultiBinding>
+                        </Button.IsVisible>
                         <Image Source="avares://App1/Assets/icons8-done-100.png"
                             Stretch="Uniform"
                             Width="50"

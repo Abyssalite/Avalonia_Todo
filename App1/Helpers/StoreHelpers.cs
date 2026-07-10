@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia_EventHub;
@@ -118,14 +119,13 @@ public class StoreHelpers
     }
 
     public void EditList(
-        string oldListName,
-        string newListName,
+        string ListName,
         ObservableCollection<TaskGroup>? editedGroups)
     {
-        var list = _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == oldListName);
+        var list = _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == ListName);
         if (editedGroups == null || list == null) return;
 
-        bool isChanged = oldListName != newListName;
+        bool isChanged = false;
 
         foreach (var group in editedGroups)
         {
@@ -133,11 +133,11 @@ public class StoreHelpers
 
             foreach (var task in group.Tasks)
             {
-                if (group.Category == task.Category && newListName == task.ListName)
+                if (group.Category == task.Category)
                     continue;
 
                 isChanged = true;
-                task.ListName = newListName;
+                task.ListName = ListName;
                 task.Category = group.Category;
             }
         }
@@ -148,7 +148,7 @@ public class StoreHelpers
         var updatedList = new GroupList()
         {
             ID = list.ID,
-            ListName = newListName,
+            ListName = ListName,
             IsArchived = false,
             Groups = new ObservableCollection<TaskGroup>(editedGroups)
         };
@@ -157,6 +157,18 @@ public class StoreHelpers
         _store.MainLists.MainLists.Add(updatedList);
 
         _store.SelectList(updatedList);
+        //await TaskHelpers.SaveAsync(this);
+    }
+
+    public void RenameList(
+        string oldListName,
+        string newListName)
+    {
+        var list = _store.MainLists.MainLists.FirstOrDefault(l => l.ListName == oldListName);
+        if (list != null) 
+        {
+            list.ListName = newListName;
+        }
         //await TaskHelpers.SaveAsync(this);
     }
 

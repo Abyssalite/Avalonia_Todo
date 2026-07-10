@@ -4,5 +4,5 @@
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-	<application android:label="App1" android:icon="@drawable/Icon" android:allowBackup="true" android:supportsRtl="true"/>
+	<application android:label="App1" android:icon="@drawable/Icon" android:allowBackup="true" android:supportsRtl="true" android:enableOnBackInvokedCallback="false"/>
 </manifest>
