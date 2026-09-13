@@ -1,4 +1,1296 @@
 //! Licensed to the .NET Foundation under one or more agreements.
 //! The .NET Foundation licenses this file to you under the MIT license.
-var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,4,1,96,0,0,3,2,1,0,10,8,1,6,0,6,64,25,11,11])),o=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11])),n=Symbol.for("wasm promise_control");function r(e,t){let o=null;const r=new Promise((function(n,r){o={isDone:!1,promise:null,resolve:t=>{o.isDone||(o.isDone=!0,n(t),e&&e())},reject:e=>{o.isDone||(o.isDone=!0,r(e),t&&t())}}}));o.promise=r;const i=r;return i[n]=o,{promise:i,promise_control:o}}function i(e){return e[n]}function s(e){e&&function(e){return void 0!==e[n]}(e)||Ke(!1,"Promise is not controllable")}const a="__mono_message__",l=["debug","log","trace","warn","info","error"],c="MONO_WASM: ";let u,d,f,m;function g(e){m=e}function h(e){if(qe.diagnosticTracing){const t="function"==typeof e?e():e;console.debug(c+t)}}function p(e,...t){console.info(c+e,...t)}function b(e,...t){console.info(e,...t)}function w(e,...t){console.warn(c+e,...t)}function y(e,...t){if(t&&t.length>0&&t[0]&&"object"==typeof t[0]){if(t[0].silent)return;if(t[0].toString)return void console.error(c+e,t[0].toString())}console.error(c+e,...t)}function v(e,t,o){return function(...n){try{let r=n[0];if(void 0===r)r="undefined";else if(null===r)r="null";else if("function"==typeof r)r=r.toString();else if("string"!=typeof r)try{r=JSON.stringify(r)}catch(e){r=r.toString()}t(o?JSON.stringify({method:e,payload:r,arguments:n.slice(1)}):[e+r,...n.slice(1)])}catch(e){f.error(`proxyConsole failed: ${e}`)}}}function _(e,t,o){d=t,m=e,f={...t};const n=`${o}/console`.replace("https://","wss://").replace("http://","ws://");u=new WebSocket(n),u.addEventListener("error",R),u.addEventListener("close",j),function(){for(const e of l)d[e]=v(`console.${e}`,T,!0)}()}function E(e){let t=30;const o=()=>{u?0==u.bufferedAmount||0==t?(e&&b(e),function(){for(const e of l)d[e]=v(`console.${e}`,f.log,!1)}(),u.removeEventListener("error",R),u.removeEventListener("close",j),u.close(1e3,e),u=void 0):(t--,globalThis.setTimeout(o,100)):e&&f&&f.log(e)};o()}function T(e){u&&u.readyState===WebSocket.OPEN?u.send(e):f.log(e)}function R(e){f.error(`[${m}] proxy console websocket error: ${e}`,e)}function j(e){f.debug(`[${m}] proxy console websocket closed: ${e}`,e)}(new Date).valueOf();const x={},A={},S={};let O,D,k;function C(){const e=Object.values(S),t=Object.values(A),o=L(e),n=L(t),r=o+n;if(0===r)return;const i=We?"%c":"",s=We?["background: purple; color: white; padding: 1px 3px; border-radius: 3px;","font-weight: bold;","font-weight: normal;"]:[],a=qe.config.linkerEnabled?"":"\nThis application was built with linking (tree shaking) disabled. \nPublished applications will be significantly smaller if you install wasm-tools workload. \nSee also https://aka.ms/dotnet-wasm-features";console.groupCollapsed(`${i}dotnet${i} Loaded ${U(r)} resources${i}${a}`,...s),e.length&&(console.groupCollapsed(`Loaded ${U(o)} resources from cache`),console.table(S),console.groupEnd()),t.length&&(console.groupCollapsed(`Loaded ${U(n)} resources from network`),console.table(A),console.groupEnd()),console.groupEnd()}async function I(){const e=O;if(e){const t=(await e.keys()).map((async t=>{t.url in x||await e.delete(t)}));await Promise.all(t)}}function M(e){return`${e.resolvedUrl}.${e.hash}`}async function P(){O=await async function(e){if(!qe.config.cacheBootResources||void 0===globalThis.caches||void 0===globalThis.document)return null;if(!1===globalThis.isSecureContext)return null;const t=`dotnet-resources-${globalThis.document.baseURI.substring(globalThis.document.location.origin.length)}`;try{return await caches.open(t)||null}catch(e){return null}}()}function L(e){return e.reduce(((e,t)=>e+(t.responseBytes||0)),0)}function U(e){return`${(e/1048576).toFixed(2)} MB`}function $(){qe.preferredIcuAsset=N(qe.config);let e="invariant"==qe.config.globalizationMode;if(!e)if(qe.preferredIcuAsset)qe.diagnosticTracing&&h("ICU data archive(s) available, disabling invariant mode");else{if("custom"===qe.config.globalizationMode||"all"===qe.config.globalizationMode||"sharded"===qe.config.globalizationMode){const e="invariant globalization mode is inactive and no ICU data archives are available";throw y(`ERROR: ${e}`),new Error(e)}qe.diagnosticTracing&&h("ICU data archive(s) not available, using invariant globalization mode"),e=!0,qe.preferredIcuAsset=null}const t="DOTNET_SYSTEM_GLOBALIZATION_INVARIANT",o="DOTNET_SYSTEM_GLOBALIZATION_HYBRID",n=qe.config.environmentVariables;if(void 0===n[o]&&"hybrid"===qe.config.globalizationMode?n[o]="1":void 0===n[t]&&e&&(n[t]="1"),void 0===n.TZ)try{const e=Intl.DateTimeFormat().resolvedOptions().timeZone||null;e&&(n.TZ=e)}catch(e){p("failed to detect timezone, will fallback to UTC")}}function N(e){var t;if((null===(t=e.resources)||void 0===t?void 0:t.icu)&&"invariant"!=e.globalizationMode){const t=e.applicationCulture||(We?globalThis.navigator&&globalThis.navigator.languages&&globalThis.navigator.languages[0]:Intl.DateTimeFormat().resolvedOptions().locale),o=Object.keys(e.resources.icu),n={};for(let t=0;t<o.length;t++){const r=o[t];e.resources.fingerprinting?n[me(r)]=r:n[r]=r}let r=null;if("custom"===e.globalizationMode){if(o.length>=1)return o[0]}else"hybrid"===e.globalizationMode?r="icudt_hybrid.dat":t&&"all"!==e.globalizationMode?"sharded"===e.globalizationMode&&(r=function(e){const t=e.split("-")[0];return"en"===t||["fr","fr-FR","it","it-IT","de","de-DE","es","es-ES"].includes(e)?"icudt_EFIGS.dat":["zh","ko","ja"].includes(t)?"icudt_CJK.dat":"icudt_no_CJK.dat"}(t)):r="icudt.dat";if(r&&n[r])return n[r]}return e.globalizationMode="invariant",null}const z=class{constructor(e){this.url=e}toString(){return this.url}};async function W(e,t){try{const o="function"==typeof globalThis.fetch;if(Ue){const n=e.startsWith("file://");if(!n&&o)return globalThis.fetch(e,t||{credentials:"same-origin"});D||(k=He.require("url"),D=He.require("fs")),n&&(e=k.fileURLToPath(e));const r=await D.promises.readFile(e);return{ok:!0,headers:{length:0,get:()=>null},url:e,arrayBuffer:()=>r,json:()=>JSON.parse(r),text:()=>{throw new Error("NotImplementedException")}}}if(o)return globalThis.fetch(e,t||{credentials:"same-origin"});if("function"==typeof read)return{ok:!0,url:e,headers:{length:0,get:()=>null},arrayBuffer:()=>new Uint8Array(read(e,"binary")),json:()=>JSON.parse(read(e,"utf8")),text:()=>read(e,"utf8")}}catch(t){return{ok:!1,url:e,status:500,headers:{length:0,get:()=>null},statusText:"ERR28: "+t,arrayBuffer:()=>{throw t},json:()=>{throw t},text:()=>{throw t}}}throw new Error("No fetch implementation available")}function B(e){return"string"!=typeof e&&Ke(!1,"url must be a string"),!q(e)&&0!==e.indexOf("./")&&0!==e.indexOf("../")&&globalThis.URL&&globalThis.document&&globalThis.document.baseURI&&(e=new URL(e,globalThis.document.baseURI).toString()),e}const F=/^[a-zA-Z][a-zA-Z\d+\-.]*?:\/\//,V=/[a-zA-Z]:[\\/]/;function q(e){return Ue||Be?e.startsWith("/")||e.startsWith("\\")||-1!==e.indexOf("///")||V.test(e):F.test(e)}let G,H=0;const J=[],Z=[],Q=new Map,Y={"js-module-threads":!0,"js-module-globalization":!0,"js-module-runtime":!0,"js-module-dotnet":!0,"js-module-native":!0},K={...Y,"js-module-library-initializer":!0},X={...Y,dotnetwasm:!0,heap:!0,manifest:!0},ee={...K,manifest:!0},te={...K,dotnetwasm:!0},oe={dotnetwasm:!0,symbols:!0,"segmentation-rules":!0},ne={...K,dotnetwasm:!0,symbols:!0,"segmentation-rules":!0},re={symbols:!0,"segmentation-rules":!0};function ie(e){return!("icu"==e.behavior&&e.name!=qe.preferredIcuAsset)}function se(e,t,o){const n=Object.keys(t||{});Ke(1==n.length,`Expect to have one ${o} asset in resources`);const r=n[0],i={name:r,hash:t[r],behavior:o};return ae(i),e.push(i),i}function ae(e){X[e.behavior]&&Q.set(e.behavior,e)}function le(e){const t=function(e){Ke(X[e],`Unknown single asset behavior ${e}`);const t=Q.get(e);return Ke(t,`Single asset for ${e} not found`),t}(e);if(!t.resolvedUrl)if(t.resolvedUrl=qe.locateFile(t.name),Y[t.behavior]){const e=Te(t);e?("string"!=typeof e&&Ke(!1,"loadBootResource response for 'dotnetjs' type should be a URL string"),t.resolvedUrl=e):t.resolvedUrl=we(t.resolvedUrl,t.behavior)}else if("dotnetwasm"!==t.behavior)throw new Error(`Unknown single asset behavior ${e}`);return t}let ce=!1;async function ue(){if(!ce){ce=!0,qe.diagnosticTracing&&h("mono_download_assets");try{const e=[],t=[],o=(e,t)=>{!ne[e.behavior]&&ie(e)&&qe.expected_instantiated_assets_count++,!te[e.behavior]&&ie(e)&&(qe.expected_downloaded_assets_count++,t.push(he(e)))};for(const t of J)o(t,e);for(const e of Z)o(e,t);qe.allDownloadsQueued.promise_control.resolve(),Promise.all([...e,...t]).then((()=>{qe.allDownloadsFinished.promise_control.resolve()})).catch((e=>{throw qe.err("Error in mono_download_assets: "+e),at(1,e),e})),await qe.runtimeModuleLoaded.promise;const n=async e=>{const t=await e;if(t.buffer){if(!ne[t.behavior]){t.buffer&&"object"==typeof t.buffer||Ke(!1,"asset buffer must be array-like or buffer-like or promise of these"),"string"!=typeof t.resolvedUrl&&Ke(!1,"resolvedUrl must be string");const e=t.resolvedUrl,o=await t.buffer,n=new Uint8Array(o);Re(t),await Fe.beforeOnRuntimeInitialized.promise,Fe.instantiate_asset(t,e,n)}}else oe[t.behavior]?("symbols"===t.behavior?(await Fe.instantiate_symbols_asset(t),Re(t)):"segmentation-rules"===t.behavior&&(await Fe.instantiate_segmentation_rules_asset(t),Re(t)),oe[t.behavior]&&++qe.actual_downloaded_assets_count):(t.isOptional||Ke(!1,"Expected asset to have the downloaded buffer"),!te[t.behavior]&&ie(t)&&qe.expected_downloaded_assets_count--,!ne[t.behavior]&&ie(t)&&qe.expected_instantiated_assets_count--)},r=[],i=[];for(const t of e)r.push(n(t));for(const e of t)i.push(n(e));Promise.all(r).then((()=>{ze||Fe.coreAssetsInMemory.promise_control.resolve()})).catch((e=>{throw qe.err("Error in mono_download_assets: "+e),at(1,e),e})),Promise.all(i).then((async()=>{ze||(await Fe.coreAssetsInMemory.promise,Fe.allAssetsInMemory.promise_control.resolve())})).catch((e=>{throw qe.err("Error in mono_download_assets: "+e),at(1,e),e}))}catch(e){throw qe.err("Error in mono_download_assets: "+e),e}}}let de=!1;function fe(){if(de)return;de=!0;const e=qe.config,t=[];if(e.assets)for(const t of e.assets)"object"!=typeof t&&Ke(!1,`asset must be object, it was ${typeof t} : ${t}`),"string"!=typeof t.behavior&&Ke(!1,"asset behavior must be known string"),"string"!=typeof t.name&&Ke(!1,"asset name must be string"),t.resolvedUrl&&"string"!=typeof t.resolvedUrl&&Ke(!1,"asset resolvedUrl could be string"),t.hash&&"string"!=typeof t.hash&&Ke(!1,"asset resolvedUrl could be string"),t.pendingDownload&&"object"!=typeof t.pendingDownload&&Ke(!1,"asset pendingDownload could be object"),t.isCore?J.push(t):Z.push(t),ae(t);else if(e.resources){const o=e.resources;o.wasmNative||Ke(!1,"resources.wasmNative must be defined"),o.jsModuleNative||Ke(!1,"resources.jsModuleNative must be defined"),o.jsModuleRuntime||Ke(!1,"resources.jsModuleRuntime must be defined"),se(Z,o.wasmNative,"dotnetwasm"),se(t,o.jsModuleNative,"js-module-native"),se(t,o.jsModuleRuntime,"js-module-runtime"),"hybrid"==e.globalizationMode&&se(t,o.jsModuleGlobalization,"js-module-globalization");const n=(e,t)=>{!o.fingerprinting||"assembly"!=e.behavior&&"pdb"!=e.behavior&&"resource"!=e.behavior||(e.virtualPath=me(e.name)),t?(e.isCore=!0,J.push(e)):Z.push(e)};if(o.coreAssembly)for(const e in o.coreAssembly)n({name:e,hash:o.coreAssembly[e],behavior:"assembly"},!0);if(o.assembly)for(const e in o.assembly)n({name:e,hash:o.assembly[e],behavior:"assembly"},!o.coreAssembly);if(0!=e.debugLevel){if(o.corePdb)for(const e in o.corePdb)n({name:e,hash:o.corePdb[e],behavior:"pdb"},!0);if(o.pdb)for(const e in o.pdb)n({name:e,hash:o.pdb[e],behavior:"pdb"},!o.corePdb)}if(e.loadAllSatelliteResources&&o.satelliteResources)for(const e in o.satelliteResources)for(const t in o.satelliteResources[e])n({name:t,hash:o.satelliteResources[e][t],behavior:"resource",culture:e},!o.coreAssembly);if(o.coreVfs)for(const e in o.coreVfs)for(const t in o.coreVfs[e])n({name:t,hash:o.coreVfs[e][t],behavior:"vfs",virtualPath:e},!0);if(o.vfs)for(const e in o.vfs)for(const t in o.vfs[e])n({name:t,hash:o.vfs[e][t],behavior:"vfs",virtualPath:e},!o.coreVfs);const r=N(e);if(r&&o.icu)for(const e in o.icu)e===r?Z.push({name:e,hash:o.icu[e],behavior:"icu",loadRemote:!0}):e.startsWith("segmentation-rules")&&e.endsWith(".json")&&Z.push({name:e,hash:o.icu[e],behavior:"segmentation-rules"});if(o.wasmSymbols)for(const e in o.wasmSymbols)J.push({name:e,hash:o.wasmSymbols[e],behavior:"symbols"})}if(e.appsettings)for(let t=0;t<e.appsettings.length;t++){const o=e.appsettings[t],n=je(o);"appsettings.json"!==n&&n!==`appsettings.${e.applicationEnvironment}.json`||Z.push({name:o,behavior:"vfs",noCache:!0,useCredentials:!0})}e.assets=[...J,...Z,...t]}function me(e){var t;const o=null===(t=qe.config.resources)||void 0===t?void 0:t.fingerprinting;return o&&o[e]?o[e]:e}async function ge(e){const t=await he(e);return await t.pendingDownloadInternal.response,t.buffer}async function he(e){try{return await pe(e)}catch(t){if(!qe.enableDownloadRetry)throw t;if(Be||Ue)throw t;if(e.pendingDownload&&e.pendingDownloadInternal==e.pendingDownload)throw t;if(e.resolvedUrl&&-1!=e.resolvedUrl.indexOf("file://"))throw t;if(t&&404==t.status)throw t;e.pendingDownloadInternal=void 0,await qe.allDownloadsQueued.promise;try{return qe.diagnosticTracing&&h(`Retrying download '${e.name}'`),await pe(e)}catch(t){return e.pendingDownloadInternal=void 0,await new Promise((e=>globalThis.setTimeout(e,100))),qe.diagnosticTracing&&h(`Retrying download (2) '${e.name}' after delay`),await pe(e)}}}async function pe(e){for(;G;)await G.promise;try{++H,H==qe.maxParallelDownloads&&(qe.diagnosticTracing&&h("Throttling further parallel downloads"),G=r());const t=await async function(e){if(e.pendingDownload&&(e.pendingDownloadInternal=e.pendingDownload),e.pendingDownloadInternal&&e.pendingDownloadInternal.response)return e.pendingDownloadInternal.response;if(e.buffer){const t=await e.buffer;return e.resolvedUrl||(e.resolvedUrl="undefined://"+e.name),e.pendingDownloadInternal={url:e.resolvedUrl,name:e.name,response:Promise.resolve({ok:!0,arrayBuffer:()=>t,json:()=>JSON.parse(new TextDecoder("utf-8").decode(t)),text:()=>{throw new Error("NotImplementedException")},headers:{get:()=>{}}})},e.pendingDownloadInternal.response}const t=e.loadRemote&&qe.config.remoteSources?qe.config.remoteSources:[""];let o;for(let n of t){n=n.trim(),"./"===n&&(n="");const t=be(e,n);e.name===t?qe.diagnosticTracing&&h(`Attempting to download '${t}'`):qe.diagnosticTracing&&h(`Attempting to download '${t}' for ${e.name}`);try{e.resolvedUrl=t;const n=_e(e);if(e.pendingDownloadInternal=n,o=await n.response,!o||!o.ok)continue;return o}catch(e){o||(o={ok:!1,url:t,status:0,statusText:""+e});continue}}const n=e.isOptional||e.name.match(/\.pdb$/)&&qe.config.ignorePdbLoadErrors;if(o||Ke(!1,`Response undefined ${e.name}`),!n){const t=new Error(`download '${o.url}' for ${e.name} failed ${o.status} ${o.statusText}`);throw t.status=o.status,t}p(`optional download '${o.url}' for ${e.name} failed ${o.status} ${o.statusText}`)}(e);return t?(oe[e.behavior]||(e.buffer=await t.arrayBuffer(),++qe.actual_downloaded_assets_count),e):e}finally{if(--H,G&&H==qe.maxParallelDownloads-1){qe.diagnosticTracing&&h("Resuming more parallel downloads");const e=G;G=void 0,e.promise_control.resolve()}}}function be(e,t){let o;return null==t&&Ke(!1,`sourcePrefix must be provided for ${e.name}`),e.resolvedUrl?o=e.resolvedUrl:(o=""===t?"assembly"===e.behavior||"pdb"===e.behavior?e.name:"resource"===e.behavior&&e.culture&&""!==e.culture?`${e.culture}/${e.name}`:e.name:t+e.name,o=we(qe.locateFile(o),e.behavior)),o&&"string"==typeof o||Ke(!1,"attemptUrl need to be path or url string"),o}function we(e,t){return qe.modulesUniqueQuery&&ee[t]&&(e+=qe.modulesUniqueQuery),e}let ye=0;const ve=new Set;function _e(e){try{e.resolvedUrl||Ke(!1,"Request's resolvedUrl must be set");const t=async function(e){let t=await async function(e){const t=O;if(!t||e.noCache||!e.hash||0===e.hash.length)return;const o=M(e);let n;x[o]=!0;try{n=await t.match(o)}catch(e){}if(!n)return;const r=parseInt(n.headers.get("content-length")||"0");return S[e.name]={responseBytes:r},n}(e);return t||(t=await function(e){let t=e.resolvedUrl;if(qe.loadBootResource){const o=Te(e);if(o instanceof Promise)return o;"string"==typeof o&&(t=o)}const o={};return qe.config.disableNoCacheFetch||(o.cache="no-cache"),e.useCredentials?o.credentials="include":!qe.config.disableIntegrityCheck&&e.hash&&(o.integrity=e.hash),qe.fetch_like(t,o)}(e),function(e,t){const o=O;if(!o||e.noCache||!e.hash||0===e.hash.length)return;const n=t.clone();setTimeout((()=>{const t=M(e);!async function(e,t,o,n){const r=await n.arrayBuffer(),i=function(e){if("undefined"!=typeof performance)return performance.getEntriesByName(e)[0]}(n.url),s=i&&i.encodedBodySize||void 0;A[t]={responseBytes:s};const a=new Response(r,{headers:{"content-type":n.headers.get("content-type")||"","content-length":(s||n.headers.get("content-length")||"").toString()}});try{await e.put(o,a)}catch(e){}}(o,e.name,t,n)}),0)}(e,t)),t}(e),o={name:e.name,url:e.resolvedUrl,response:t};return ve.add(e.name),o.response.then((()=>{"assembly"==e.behavior&&qe.loadedAssemblies.push(e.name),ye++,qe.onDownloadResourceProgress&&qe.onDownloadResourceProgress(ye,ve.size)})),o}catch(t){const o={ok:!1,url:e.resolvedUrl,status:500,statusText:"ERR29: "+t,arrayBuffer:()=>{throw t},json:()=>{throw t}};return{name:e.name,url:e.resolvedUrl,response:Promise.resolve(o)}}}const Ee={resource:"assembly",assembly:"assembly",pdb:"pdb",icu:"globalization",vfs:"configuration",manifest:"manifest",dotnetwasm:"dotnetwasm","js-module-dotnet":"dotnetjs","js-module-native":"dotnetjs","js-module-runtime":"dotnetjs","js-module-threads":"dotnetjs"};function Te(e){var t;if(qe.loadBootResource){const o=null!==(t=e.hash)&&void 0!==t?t:"",n=e.resolvedUrl,r=Ee[e.behavior];if(r){const t=qe.loadBootResource(r,e.name,n,o,e.behavior);return"string"==typeof t?B(t):t}}}function Re(e){e.pendingDownloadInternal=null,e.pendingDownload=null,e.buffer=null,e.moduleExports=null}function je(e){let t=e.lastIndexOf("/");return t>=0&&t++,e.substring(t)}async function xe(e){if(!e)return;const t=Object.keys(e);await Promise.all(t.map((e=>async function(e){try{const t=we(qe.locateFile(e),"js-module-library-initializer");qe.diagnosticTracing&&h(`Attempting to import '${t}' for ${e}`);const o=await import(/*! webpackIgnore: true */t);qe.libraryInitializers.push({scriptName:e,exports:o})}catch(t){w(`Failed to import library initializer '${e}': ${t}`)}}(e))))}async function Ae(e,t){if(!qe.libraryInitializers)return;const o=[];for(let n=0;n<qe.libraryInitializers.length;n++){const r=qe.libraryInitializers[n];r.exports[e]&&o.push(Se(r.scriptName,e,(()=>r.exports[e](...t))))}await Promise.all(o)}async function Se(e,t,o){try{await o()}catch(o){throw w(`Failed to invoke '${t}' on library initializer '${e}': ${o}`),at(1,o),o}}var Oe="Release";function De(e,t){if(e===t)return e;const o={...t};return void 0!==o.assets&&o.assets!==e.assets&&(o.assets=[...e.assets||[],...o.assets||[]]),void 0!==o.resources&&(o.resources=Ce(e.resources||{assembly:{},jsModuleNative:{},jsModuleRuntime:{},wasmNative:{}},o.resources)),void 0!==o.environmentVariables&&(o.environmentVariables={...e.environmentVariables||{},...o.environmentVariables||{}}),void 0!==o.runtimeOptions&&o.runtimeOptions!==e.runtimeOptions&&(o.runtimeOptions=[...e.runtimeOptions||[],...o.runtimeOptions||[]]),Object.assign(e,o)}function ke(e,t){if(e===t)return e;const o={...t};return o.config&&(e.config||(e.config={}),o.config=De(e.config,o.config)),Object.assign(e,o)}function Ce(e,t){if(e===t)return e;const o={...t};return void 0!==o.assembly&&(o.assembly={...e.assembly||{},...o.assembly||{}}),void 0!==o.lazyAssembly&&(o.lazyAssembly={...e.lazyAssembly||{},...o.lazyAssembly||{}}),void 0!==o.pdb&&(o.pdb={...e.pdb||{},...o.pdb||{}}),void 0!==o.jsModuleWorker&&(o.jsModuleWorker={...e.jsModuleWorker||{},...o.jsModuleWorker||{}}),void 0!==o.jsModuleNative&&(o.jsModuleNative={...e.jsModuleNative||{},...o.jsModuleNative||{}}),void 0!==o.jsModuleGlobalization&&(o.jsModuleGlobalization={...e.jsModuleGlobalization||{},...o.jsModuleGlobalization||{}}),void 0!==o.jsModuleRuntime&&(o.jsModuleRuntime={...e.jsModuleRuntime||{},...o.jsModuleRuntime||{}}),void 0!==o.wasmSymbols&&(o.wasmSymbols={...e.wasmSymbols||{},...o.wasmSymbols||{}}),void 0!==o.wasmNative&&(o.wasmNative={...e.wasmNative||{},...o.wasmNative||{}}),void 0!==o.icu&&(o.icu={...e.icu||{},...o.icu||{}}),void 0!==o.satelliteResources&&(o.satelliteResources=Ie(e.satelliteResources||{},o.satelliteResources||{})),void 0!==o.modulesAfterConfigLoaded&&(o.modulesAfterConfigLoaded={...e.modulesAfterConfigLoaded||{},...o.modulesAfterConfigLoaded||{}}),void 0!==o.modulesAfterRuntimeReady&&(o.modulesAfterRuntimeReady={...e.modulesAfterRuntimeReady||{},...o.modulesAfterRuntimeReady||{}}),void 0!==o.extensions&&(o.extensions={...e.extensions||{},...o.extensions||{}}),void 0!==o.vfs&&(o.vfs=Ie(e.vfs||{},o.vfs||{})),Object.assign(e,o)}function Ie(e,t){if(e===t)return e;for(const o in t)e[o]={...e[o],...t[o]};return e}function Me(){const e=qe.config;if(e.environmentVariables=e.environmentVariables||{},e.runtimeOptions=e.runtimeOptions||[],e.resources=e.resources||{assembly:{},jsModuleNative:{},jsModuleGlobalization:{},jsModuleWorker:{},jsModuleRuntime:{},wasmNative:{},vfs:{},satelliteResources:{}},e.assets){qe.diagnosticTracing&&h("config.assets is deprecated, use config.resources instead");for(const t of e.assets){const o={};o[t.name]=t.hash||"";const n={};switch(t.behavior){case"assembly":n.assembly=o;break;case"pdb":n.pdb=o;break;case"resource":n.satelliteResources={},n.satelliteResources[t.culture]=o;break;case"icu":n.icu=o;break;case"symbols":n.wasmSymbols=o;break;case"vfs":n.vfs={},n.vfs[t.virtualPath]=o;break;case"dotnetwasm":n.wasmNative=o;break;case"js-module-threads":n.jsModuleWorker=o;break;case"js-module-globalization":n.jsModuleGlobalization=o;break;case"js-module-runtime":n.jsModuleRuntime=o;break;case"js-module-native":n.jsModuleNative=o;break;case"js-module-dotnet":break;default:throw new Error(`Unexpected behavior ${t.behavior} of asset ${t.name}`)}Ce(e.resources,n)}}void 0===e.debugLevel&&"Debug"===Oe&&(e.debugLevel=-1),void 0===e.cachedResourcesPurgeDelay&&(e.cachedResourcesPurgeDelay=1e4),e.applicationCulture&&(e.environmentVariables.LANG=`${e.applicationCulture}.UTF-8`),Fe.diagnosticTracing=qe.diagnosticTracing=!!e.diagnosticTracing,Fe.waitForDebugger=e.waitForDebugger,Fe.enablePerfMeasure=!!e.browserProfilerOptions&&globalThis.performance&&"function"==typeof globalThis.performance.measure,qe.maxParallelDownloads=e.maxParallelDownloads||qe.maxParallelDownloads,qe.enableDownloadRetry=void 0!==e.enableDownloadRetry?e.enableDownloadRetry:qe.enableDownloadRetry}let Pe=!1;async function Le(e){var t;if(Pe)return void await qe.afterConfigLoaded.promise;let o;try{if(e.configSrc||qe.config&&0!==Object.keys(qe.config).length&&(qe.config.assets||qe.config.resources)||(e.configSrc="./blazor.boot.json"),o=e.configSrc,Pe=!0,o&&(qe.diagnosticTracing&&h("mono_wasm_load_config"),await async function(e){const t=qe.locateFile(e.configSrc),o=void 0!==qe.loadBootResource?qe.loadBootResource("manifest","blazor.boot.json",t,"","manifest"):i(t);let n;n=o?"string"==typeof o?await i(B(o)):await o:await i(we(t,"manifest"));const r=await async function(e){const t=qe.config,o=await e.json();t.applicationEnvironment||(o.applicationEnvironment=e.headers.get("Blazor-Environment")||e.headers.get("DotNet-Environment")||"Production"),o.environmentVariables||(o.environmentVariables={});const n=e.headers.get("DOTNET-MODIFIABLE-ASSEMBLIES");n&&(o.environmentVariables.DOTNET_MODIFIABLE_ASSEMBLIES=n);const r=e.headers.get("ASPNETCORE-BROWSER-TOOLS");return r&&(o.environmentVariables.__ASPNETCORE_BROWSER_TOOLS=r),o}(n);function i(e){return qe.fetch_like(e,{method:"GET",credentials:"include",cache:"no-cache"})}De(qe.config,r)}(e)),Me(),await xe(null===(t=qe.config.resources)||void 0===t?void 0:t.modulesAfterConfigLoaded),await Ae("onRuntimeConfigLoaded",[qe.config]),e.onConfigLoaded)try{await e.onConfigLoaded(qe.config,Ge),Me()}catch(e){throw y("onConfigLoaded() failed",e),e}Me(),qe.afterConfigLoaded.promise_control.resolve(qe.config)}catch(t){const n=`Failed to load config file ${o} ${t} ${null==t?void 0:t.stack}`;throw qe.config=e.config=Object.assign(qe.config,{message:n,error:t,isError:!0}),at(1,new Error(n)),t}}"function"!=typeof importScripts||globalThis.onmessage||(globalThis.dotnetSidecar=!0);const Ue="object"==typeof process&&"object"==typeof process.versions&&"string"==typeof process.versions.node,$e="function"==typeof importScripts,Ne=$e&&"undefined"!=typeof dotnetSidecar,ze=$e&&!Ne,We="object"==typeof window||$e&&!Ue,Be=!We&&!Ue;let Fe={},Ve={},qe={},Ge={},He={},Je=!1;const Ze={},Qe={config:Ze},Ye={mono:{},binding:{},internal:He,module:Qe,loaderHelpers:qe,runtimeHelpers:Fe,globalizationHelpers:Ve,api:Ge};function Ke(e,t){if(e)return;const o="Assert failed: "+("function"==typeof t?t():t),n=new Error(o);y(o,n),Fe.nativeAbort(n)}function Xe(){return void 0!==qe.exitCode}function et(){return Fe.runtimeReady&&!Xe()}function tt(){Xe()&&Ke(!1,`.NET runtime already exited with ${qe.exitCode} ${qe.exitReason}. You can use runtime.runMain() which doesn't exit the runtime.`),Fe.runtimeReady||Ke(!1,".NET runtime didn't start yet. Please call dotnet.create() first.")}function ot(){We&&(globalThis.addEventListener("unhandledrejection",ct),globalThis.addEventListener("error",ut))}let nt,rt;function it(e){rt&&rt(e),at(e,qe.exitReason)}function st(e){nt&&nt(e||qe.exitReason),at(1,e||qe.exitReason)}function at(t,o){var n,r;const i=o&&"object"==typeof o;t=i&&"number"==typeof o.status?o.status:void 0===t?-1:t;const s=i&&"string"==typeof o.message?o.message:""+o;(o=i?o:Fe.ExitStatus?function(e,t){const o=new Fe.ExitStatus(e);return o.message=t,o.toString=()=>t,o}(t,s):new Error("Exit with code "+t+" "+s)).status=t,o.message||(o.message=s);const a=""+(o.stack||(new Error).stack);try{Object.defineProperty(o,"stack",{get:()=>a})}catch(e){}const l=!!o.silent;if(o.silent=!0,Xe())qe.diagnosticTracing&&h("mono_exit called after exit");else{try{Qe.onAbort==st&&(Qe.onAbort=nt),Qe.onExit==it&&(Qe.onExit=rt),We&&(globalThis.removeEventListener("unhandledrejection",ct),globalThis.removeEventListener("error",ut)),Fe.runtimeReady?(Fe.jiterpreter_dump_stats&&Fe.jiterpreter_dump_stats(!1),0===t&&(null===(n=qe.config)||void 0===n?void 0:n.interopCleanupOnExit)&&Fe.forceDisposeProxies(!0,!0),e&&0!==t&&(null===(r=qe.config)||void 0===r||r.dumpThreadsOnNonZeroExit)):(qe.diagnosticTracing&&h(`abort_startup, reason: ${o}`),function(e){qe.allDownloadsQueued.promise_control.reject(e),qe.allDownloadsFinished.promise_control.reject(e),qe.afterConfigLoaded.promise_control.reject(e),qe.wasmCompilePromise.promise_control.reject(e),qe.runtimeModuleLoaded.promise_control.reject(e),Fe.dotnetReady&&(Fe.dotnetReady.promise_control.reject(e),Fe.afterInstantiateWasm.promise_control.reject(e),Fe.beforePreInit.promise_control.reject(e),Fe.afterPreInit.promise_control.reject(e),Fe.afterPreRun.promise_control.reject(e),Fe.beforeOnRuntimeInitialized.promise_control.reject(e),Fe.afterOnRuntimeInitialized.promise_control.reject(e),Fe.afterPostRun.promise_control.reject(e))}(o))}catch(e){w("mono_exit A failed",e)}try{l||(function(e,t){if(0!==e&&t){const e=Fe.ExitStatus&&t instanceof Fe.ExitStatus?h:y;"string"==typeof t?e(t):(void 0===t.stack&&(t.stack=(new Error).stack+""),t.message?e(Fe.stringify_as_error_with_stack?Fe.stringify_as_error_with_stack(t.message+"\n"+t.stack):t.message+"\n"+t.stack):e(JSON.stringify(t)))}!ze&&qe.config&&(qe.config.logExitCode?qe.config.forwardConsoleLogsToWS?E("WASM EXIT "+e):b("WASM EXIT "+e):qe.config.forwardConsoleLogsToWS&&E())}(t,o),function(e){if(We&&!ze&&qe.config&&qe.config.appendElementOnExit&&document){const t=document.createElement("label");t.id="tests_done",0!==e&&(t.style.background="red"),t.innerHTML=""+e,document.body.appendChild(t)}}(t))}catch(e){w("mono_exit B failed",e)}qe.exitCode=t,qe.exitReason||(qe.exitReason=o),!ze&&Fe.runtimeReady&&Qe.runtimeKeepalivePop()}if(qe.config&&qe.config.asyncFlushOnExit&&0===t)throw(async()=>{try{await async function(){try{const e=await import(/*! webpackIgnore: true */"process"),t=e=>new Promise(((t,o)=>{e.on("error",o),e.end("","utf8",t)})),o=t(e.stderr),n=t(e.stdout);let r;const i=new Promise((e=>{r=setTimeout((()=>e("timeout")),1e3)}));await Promise.race([Promise.all([n,o]),i]),clearTimeout(r)}catch(e){y(`flushing std* streams failed: ${e}`)}}()}finally{lt(t,o)}})(),o;lt(t,o)}function lt(e,t){if(Fe.runtimeReady&&Fe.nativeExit)try{Fe.nativeExit(e)}catch(e){!Fe.ExitStatus||e instanceof Fe.ExitStatus||w("set_exit_code_and_quit_now failed: "+e.toString())}if(0!==e||!We)throw Ue&&He.process?He.process.exit(e):Fe.quit&&Fe.quit(e,t),t}function ct(e){dt(e,e.reason,"rejection")}function ut(e){dt(e,e.error,"error")}function dt(e,t,o){e.preventDefault();try{t||(t=new Error("Unhandled "+o)),void 0===t.stack&&(t.stack=(new Error).stack),t.stack=t.stack+"",t.silent||(y("Unhandled error:",t),at(1,t))}catch(e){}}!function(e){if(Je)throw new Error("Loader module already loaded");Je=!0,Fe=e.runtimeHelpers,Ve=e.globalizationHelpers,qe=e.loaderHelpers,Ge=e.api,He=e.internal,Object.assign(Ge,{INTERNAL:He,invokeLibraryInitializers:Ae}),Object.assign(e.module,{config:De(Ze,{environmentVariables:{}})});const n={mono_wasm_bindings_is_ready:!1,config:e.module.config,diagnosticTracing:!1,nativeAbort:e=>{throw e||new Error("abort")},nativeExit:e=>{throw new Error("exit:"+e)}},a={gitHash:"e36e4d1a8f8dfb08d7e3a6041459c9791d732c01",config:e.module.config,diagnosticTracing:!1,maxParallelDownloads:16,enableDownloadRetry:!0,_loaded_files:[],loadedFiles:[],loadedAssemblies:[],libraryInitializers:[],workerNextNumber:1,actual_downloaded_assets_count:0,actual_instantiated_assets_count:0,expected_downloaded_assets_count:0,expected_instantiated_assets_count:0,afterConfigLoaded:r(),allDownloadsQueued:r(),allDownloadsFinished:r(),wasmCompilePromise:r(),runtimeModuleLoaded:r(),loadingWorkers:r(),is_exited:Xe,is_runtime_running:et,assert_runtime_running:tt,mono_exit:at,createPromiseController:r,getPromiseController:i,assertIsControllablePromise:s,mono_download_assets:ue,resolve_single_asset_path:le,setup_proxy_console:_,set_thread_prefix:g,logDownloadStatsToConsole:C,purgeUnusedCacheEntriesAsync:I,installUnhandledErrorHandler:ot,retrieve_asset_download:ge,invokeLibraryInitializers:Ae,exceptions:t,simd:o};Object.assign(Fe,n),Object.assign(qe,a)}(Ye);let ft,mt,gt=!1,ht=!1;async function pt(e){if(!ht){if(ht=!0,We&&qe.config.forwardConsoleLogsToWS&&void 0!==globalThis.WebSocket&&_("main",globalThis.console,globalThis.location.origin),Qe||Ke(!1,"Null moduleConfig"),qe.config||Ke(!1,"Null moduleConfig.config"),"function"==typeof e){const t=e(Ye.api);if(t.ready)throw new Error("Module.ready couldn't be redefined.");Object.assign(Qe,t),ke(Qe,t)}else{if("object"!=typeof e)throw new Error("Can't use moduleFactory callback of createDotnetRuntime function.");ke(Qe,e)}await async function(e){if(Ue){const e=await import(/*! webpackIgnore: true */"process"),t=14;if(e.versions.node.split(".")[0]<t)throw new Error(`NodeJS at '${e.execPath}' has too low version '${e.versions.node}', please use at least ${t}. See also https://aka.ms/dotnet-wasm-features`)}const t=/*! webpackIgnore: true */import.meta.url,o=t.indexOf("?");var n;if(o>0&&(qe.modulesUniqueQuery=t.substring(o)),qe.scriptUrl=t.replace(/\\/g,"/").replace(/[?#].*/,""),qe.scriptDirectory=(n=qe.scriptUrl).slice(0,n.lastIndexOf("/"))+"/",qe.locateFile=e=>"URL"in globalThis&&globalThis.URL!==z?new URL(e,qe.scriptDirectory).toString():q(e)?e:qe.scriptDirectory+e,qe.fetch_like=W,qe.out=console.log,qe.err=console.error,qe.onDownloadResourceProgress=e.onDownloadResourceProgress,We&&globalThis.navigator){const e=globalThis.navigator,t=e.userAgentData&&e.userAgentData.brands;t&&t.length>0?qe.isChromium=t.some((e=>"Google Chrome"===e.brand||"Microsoft Edge"===e.brand||"Chromium"===e.brand)):e.userAgent&&(qe.isChromium=e.userAgent.includes("Chrome"),qe.isFirefox=e.userAgent.includes("Firefox"))}He.require=Ue?await import(/*! webpackIgnore: true */"module").then((e=>e.createRequire(/*! webpackIgnore: true */import.meta.url))):Promise.resolve((()=>{throw new Error("require not supported")})),void 0===globalThis.URL&&(globalThis.URL=z)}(Qe)}}async function bt(e){return await pt(e),nt=Qe.onAbort,rt=Qe.onExit,Qe.onAbort=st,Qe.onExit=it,Qe.ENVIRONMENT_IS_PTHREAD?async function(){(function(){const e=new MessageChannel,t=e.port1,o=e.port2;t.addEventListener("message",(e=>{var n,r;n=JSON.parse(e.data.config),r=JSON.parse(e.data.monoThreadInfo),gt?qe.diagnosticTracing&&h("mono config already received"):(De(qe.config,n),Fe.monoThreadInfo=r,Me(),qe.diagnosticTracing&&h("mono config received"),gt=!0,qe.afterConfigLoaded.promise_control.resolve(qe.config),We&&n.forwardConsoleLogsToWS&&void 0!==globalThis.WebSocket&&qe.setup_proxy_console("worker-idle",console,globalThis.location.origin)),t.close(),o.close()}),{once:!0}),t.start(),self.postMessage({[a]:{monoCmd:"preload",port:o}},[o])})(),await qe.afterConfigLoaded.promise,function(){const e=qe.config;e.assets||Ke(!1,"config.assets must be defined");for(const t of e.assets)ae(t),re[t.behavior]&&Z.push(t)}(),setTimeout((async()=>{try{await ue()}catch(e){at(1,e)}}),0);const e=wt(),t=await Promise.all(e);return await yt(t),Qe}():async function(){var e;await Le(Qe),fe();const t=wt();await P(),async function(){try{const e=le("dotnetwasm");await he(e),e&&e.pendingDownloadInternal&&e.pendingDownloadInternal.response||Ke(!1,"Can't load dotnet.native.wasm");const t=await e.pendingDownloadInternal.response,o=t.headers&&t.headers.get?t.headers.get("Content-Type"):void 0;let n;if("function"==typeof WebAssembly.compileStreaming&&"application/wasm"===o)n=await WebAssembly.compileStreaming(t);else{We&&"application/wasm"!==o&&w('WebAssembly resource does not have the expected content type "application/wasm", so falling back to slower ArrayBuffer instantiation.');const e=await t.arrayBuffer();qe.diagnosticTracing&&h("instantiate_wasm_module buffered"),n=Be?await Promise.resolve(new WebAssembly.Module(e)):await WebAssembly.compile(e)}e.pendingDownloadInternal=null,e.pendingDownload=null,e.buffer=null,e.moduleExports=null,qe.wasmCompilePromise.promise_control.resolve(n)}catch(e){qe.wasmCompilePromise.promise_control.reject(e)}}(),setTimeout((async()=>{try{$(),await ue()}catch(e){at(1,e)}}),0);const o=await Promise.all(t);return await yt(o),await Fe.dotnetReady.promise,await xe(null===(e=qe.config.resources)||void 0===e?void 0:e.modulesAfterRuntimeReady),await Ae("onRuntimeReady",[Ye.api]),Ge}()}function wt(){const e=le("js-module-runtime"),t=le("js-module-native");return ft&&mt||("object"==typeof e.moduleExports?ft=e.moduleExports:(qe.diagnosticTracing&&h(`Attempting to import '${e.resolvedUrl}' for ${e.name}`),ft=import(/*! webpackIgnore: true */e.resolvedUrl)),"object"==typeof t.moduleExports?mt=t.moduleExports:(qe.diagnosticTracing&&h(`Attempting to import '${t.resolvedUrl}' for ${t.name}`),mt=import(/*! webpackIgnore: true */t.resolvedUrl))),[ft,mt]}async function yt(e){const{initializeExports:t,initializeReplacements:o,configureRuntimeStartup:n,configureEmscriptenStartup:r,configureWorkerStartup:i,setRuntimeGlobals:s,passEmscriptenInternals:a}=e[0],{default:l}=e[1];if(s(Ye),t(Ye),"hybrid"===qe.config.globalizationMode){const e=await async function(){let e;const t=le("js-module-globalization");return"object"==typeof t.moduleExports?e=t.moduleExports:(h(`Attempting to import '${t.resolvedUrl}' for ${t.name}`),e=import(/*! webpackIgnore: true */t.resolvedUrl)),await e}(),{initHybrid:t}=e;t(Ve,Fe)}await n(Qe),qe.runtimeModuleLoaded.promise_control.resolve(),l((e=>(Object.assign(Qe,{ready:e.ready,__dotnet_runtime:{initializeReplacements:o,configureEmscriptenStartup:r,configureWorkerStartup:i,passEmscriptenInternals:a}}),Qe))).catch((e=>{if(e.message&&e.message.toLowerCase().includes("out of memory"))throw new Error(".NET runtime has failed to start, because too much memory was requested. Please decrease the memory by adjusting EmccMaximumHeapSize. See also https://aka.ms/dotnet-wasm-features");throw e}))}const vt=new class{withModuleConfig(e){try{return ke(Qe,e),this}catch(e){throw at(1,e),e}}withOnConfigLoaded(e){try{return ke(Qe,{onConfigLoaded:e}),this}catch(e){throw at(1,e),e}}withConsoleForwarding(){try{return De(Ze,{forwardConsoleLogsToWS:!0}),this}catch(e){throw at(1,e),e}}withExitOnUnhandledError(){try{return De(Ze,{exitOnUnhandledError:!0}),ot(),this}catch(e){throw at(1,e),e}}withAsyncFlushOnExit(){try{return De(Ze,{asyncFlushOnExit:!0}),this}catch(e){throw at(1,e),e}}withExitCodeLogging(){try{return De(Ze,{logExitCode:!0}),this}catch(e){throw at(1,e),e}}withElementOnExit(){try{return De(Ze,{appendElementOnExit:!0}),this}catch(e){throw at(1,e),e}}withInteropCleanupOnExit(){try{return De(Ze,{interopCleanupOnExit:!0}),this}catch(e){throw at(1,e),e}}withDumpThreadsOnNonZeroExit(){try{return De(Ze,{dumpThreadsOnNonZeroExit:!0}),this}catch(e){throw at(1,e),e}}withWaitingForDebugger(e){try{return De(Ze,{waitForDebugger:e}),this}catch(e){throw at(1,e),e}}withInterpreterPgo(e,t){try{return De(Ze,{interpreterPgo:e,interpreterPgoSaveDelay:t}),Ze.runtimeOptions?Ze.runtimeOptions.push("--interp-pgo-recording"):Ze.runtimeOptions=["--interp-pgo-recording"],this}catch(e){throw at(1,e),e}}withConfig(e){try{return De(Ze,e),this}catch(e){throw at(1,e),e}}withConfigSrc(e){try{return e&&"string"==typeof e||Ke(!1,"must be file path or URL"),ke(Qe,{configSrc:e}),this}catch(e){throw at(1,e),e}}withVirtualWorkingDirectory(e){try{return e&&"string"==typeof e||Ke(!1,"must be directory path"),De(Ze,{virtualWorkingDirectory:e}),this}catch(e){throw at(1,e),e}}withEnvironmentVariable(e,t){try{const o={};return o[e]=t,De(Ze,{environmentVariables:o}),this}catch(e){throw at(1,e),e}}withEnvironmentVariables(e){try{return e&&"object"==typeof e||Ke(!1,"must be dictionary object"),De(Ze,{environmentVariables:e}),this}catch(e){throw at(1,e),e}}withDiagnosticTracing(e){try{return"boolean"!=typeof e&&Ke(!1,"must be boolean"),De(Ze,{diagnosticTracing:e}),this}catch(e){throw at(1,e),e}}withDebugging(e){try{return null!=e&&"number"==typeof e||Ke(!1,"must be number"),De(Ze,{debugLevel:e}),this}catch(e){throw at(1,e),e}}withApplicationArguments(...e){try{return e&&Array.isArray(e)||Ke(!1,"must be array of strings"),De(Ze,{applicationArguments:e}),this}catch(e){throw at(1,e),e}}withRuntimeOptions(e){try{return e&&Array.isArray(e)||Ke(!1,"must be array of strings"),Ze.runtimeOptions?Ze.runtimeOptions.push(...e):Ze.runtimeOptions=e,this}catch(e){throw at(1,e),e}}withMainAssembly(e){try{return De(Ze,{mainAssemblyName:e}),this}catch(e){throw at(1,e),e}}withApplicationArgumentsFromQuery(){try{if(!globalThis.window)throw new Error("Missing window to the query parameters from");if(void 0===globalThis.URLSearchParams)throw new Error("URLSearchParams is supported");const e=new URLSearchParams(globalThis.window.location.search).getAll("arg");return this.withApplicationArguments(...e)}catch(e){throw at(1,e),e}}withApplicationEnvironment(e){try{return De(Ze,{applicationEnvironment:e}),this}catch(e){throw at(1,e),e}}withApplicationCulture(e){try{return De(Ze,{applicationCulture:e}),this}catch(e){throw at(1,e),e}}withResourceLoader(e){try{return qe.loadBootResource=e,this}catch(e){throw at(1,e),e}}async download(){try{await async function(){pt(Qe),await Le(Qe),fe(),await P(),$(),ue(),await qe.allDownloadsFinished.promise}()}catch(e){throw at(1,e),e}}async create(){try{return this.instance||(this.instance=await async function(){return await bt(Qe),Ye.api}()),this.instance}catch(e){throw at(1,e),e}}async run(){try{return Qe.config||Ke(!1,"Null moduleConfig.config"),this.instance||await this.create(),this.instance.runMainAndExit()}catch(e){throw at(1,e),e}}},_t=at,Et=bt;Be||"function"==typeof globalThis.URL||Ke(!1,"This browser/engine doesn't support URL API. Please use a modern version. See also https://aka.ms/dotnet-wasm-features"),"function"!=typeof globalThis.BigInt64Array&&Ke(!1,"This browser/engine doesn't support BigInt64Array API. Please use a modern version. See also https://aka.ms/dotnet-wasm-features");export{Et as default,vt as dotnet,_t as exit};
-//# sourceMappingURL=dotnet.js.map
+
+var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,4,1,96,0,0,3,2,1,0,10,8,1,6,0,6,64,25,11,11])),o=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,15,1,13,0,65,1,253,15,65,2,253,15,253,128,2,11])),n=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11])),r=Symbol.for("wasm promise_control");function i(e,t){let o=null;const n=new Promise((function(n,r){o={isDone:!1,promise:null,resolve:t=>{o.isDone||(o.isDone=!0,n(t),e&&e())},reject:e=>{o.isDone||(o.isDone=!0,r(e),t&&t())}}}));o.promise=n;const i=n;return i[r]=o,{promise:i,promise_control:o}}function s(e){return e[r]}function a(e){e&&function(e){return void 0!==e[r]}(e)||Be(!1,"Promise is not controllable")}const l="__mono_message__",c=["debug","log","trace","warn","info","error"],d="MONO_WASM: ";let u,f,m,g,p,h;function w(e){g=e}function b(e){if(Pe.diagnosticTracing){const t="function"==typeof e?e():e;console.debug(d+t)}}function y(e,...t){console.info(d+e,...t)}function v(e,...t){console.info(e,...t)}function E(e,...t){console.warn(d+e,...t)}function _(e,...t){if(t&&t.length>0&&t[0]&&"object"==typeof t[0]){if(t[0].silent)return;if(t[0].toString)return void console.error(d+e,t[0].toString())}console.error(d+e,...t)}function x(e,t,o){return function(...n){try{let r=n[0];if(void 0===r)r="undefined";else if(null===r)r="null";else if("function"==typeof r)r=r.toString();else if("string"!=typeof r)try{r=JSON.stringify(r)}catch(e){r=r.toString()}t(o?JSON.stringify({method:e,payload:r,arguments:n.slice(1)}):[e+r,...n.slice(1)])}catch(e){m.error(`proxyConsole failed: ${e}`)}}}function j(e,t,o){f=t,g=e,m={...t};const n=`${o}/console`.replace("https://","wss://").replace("http://","ws://");u=new WebSocket(n),u.addEventListener("error",A),u.addEventListener("close",S),function(){for(const e of c)f[e]=x(`console.${e}`,T,!0)}()}function R(e){let t=30;const o=()=>{u?0==u.bufferedAmount||0==t?(e&&v(e),function(){for(const e of c)f[e]=x(`console.${e}`,m.log,!1)}(),u.removeEventListener("error",A),u.removeEventListener("close",S),u.close(1e3,e),u=void 0):(t--,globalThis.setTimeout(o,100)):e&&m&&m.log(e)};o()}function T(e){u&&u.readyState===WebSocket.OPEN?u.send(e):m.log(e)}function A(e){m.error(`[${g}] proxy console websocket error: ${e}`,e)}function S(e){m.debug(`[${g}] proxy console websocket closed: ${e}`,e)}function D(){Pe.preferredIcuAsset=O(Pe.config);let e="invariant"==Pe.config.globalizationMode;if(!e)if(Pe.preferredIcuAsset)Pe.diagnosticTracing&&b("ICU data archive(s) available, disabling invariant mode");else{if("custom"===Pe.config.globalizationMode||"all"===Pe.config.globalizationMode||"sharded"===Pe.config.globalizationMode){const e="invariant globalization mode is inactive and no ICU data archives are available";throw _(`ERROR: ${e}`),new Error(e)}Pe.diagnosticTracing&&b("ICU data archive(s) not available, using invariant globalization mode"),e=!0,Pe.preferredIcuAsset=null}const t="DOTNET_SYSTEM_GLOBALIZATION_INVARIANT",o=Pe.config.environmentVariables;if(void 0===o[t]&&e&&(o[t]="1"),void 0===o.TZ)try{const e=Intl.DateTimeFormat().resolvedOptions().timeZone||null;e&&(o.TZ=e)}catch(e){y("failed to detect timezone, will fallback to UTC")}}function O(e){var t;if((null===(t=e.resources)||void 0===t?void 0:t.icu)&&"invariant"!=e.globalizationMode){const t=e.applicationCulture||(ke?globalThis.navigator&&globalThis.navigator.languages&&globalThis.navigator.languages[0]:Intl.DateTimeFormat().resolvedOptions().locale),o=e.resources.icu;let n=null;if("custom"===e.globalizationMode){if(o.length>=1)return o[0].name}else t&&"all"!==e.globalizationMode?"sharded"===e.globalizationMode&&(n=function(e){const t=e.split("-")[0];return"en"===t||["fr","fr-FR","it","it-IT","de","de-DE","es","es-ES"].includes(e)?"icudt_EFIGS.dat":["zh","ko","ja"].includes(t)?"icudt_CJK.dat":"icudt_no_CJK.dat"}(t)):n="icudt.dat";if(n)for(let e=0;e<o.length;e++){const t=o[e];if(t.virtualPath===n)return t.name}}return e.globalizationMode="invariant",null}(new Date).valueOf();const C=class{constructor(e){this.url=e}toString(){return this.url}};async function k(e,t){try{const o="function"==typeof globalThis.fetch;if(Se){const n=e.startsWith("file://");if(!n&&o)return globalThis.fetch(e,t||{credentials:"same-origin"});p||(h=Ne.require("url"),p=Ne.require("fs")),n&&(e=h.fileURLToPath(e));const r=await p.promises.readFile(e);return{ok:!0,headers:{length:0,get:()=>null},url:e,arrayBuffer:()=>r,json:()=>JSON.parse(r),text:()=>{throw new Error("NotImplementedException")}}}if(o)return globalThis.fetch(e,t||{credentials:"same-origin"});if("function"==typeof read)return{ok:!0,url:e,headers:{length:0,get:()=>null},arrayBuffer:()=>new Uint8Array(read(e,"binary")),json:()=>JSON.parse(read(e,"utf8")),text:()=>read(e,"utf8")}}catch(t){return{ok:!1,url:e,status:500,headers:{length:0,get:()=>null},statusText:"ERR28: "+t,arrayBuffer:()=>{throw t},json:()=>{throw t},text:()=>{throw t}}}throw new Error("No fetch implementation available")}function I(e){return"string"!=typeof e&&Be(!1,"url must be a string"),!M(e)&&0!==e.indexOf("./")&&0!==e.indexOf("../")&&globalThis.URL&&globalThis.document&&globalThis.document.baseURI&&(e=new URL(e,globalThis.document.baseURI).toString()),e}const U=/^[a-zA-Z][a-zA-Z\d+\-.]*?:\/\//,P=/[a-zA-Z]:[\\/]/;function M(e){return Se||Ie?e.startsWith("/")||e.startsWith("\\")||-1!==e.indexOf("///")||P.test(e):U.test(e)}let L,N=0;const $=[],z=[],W=new Map,F={"js-module-threads":!0,"js-module-runtime":!0,"js-module-dotnet":!0,"js-module-native":!0,"js-module-diagnostics":!0},B={...F,"js-module-library-initializer":!0},V={...F,dotnetwasm:!0,heap:!0,manifest:!0},q={...B,manifest:!0},H={...B,dotnetwasm:!0},J={dotnetwasm:!0,symbols:!0},Z={...B,dotnetwasm:!0,symbols:!0},Q={symbols:!0};function G(e){return!("icu"==e.behavior&&e.name!=Pe.preferredIcuAsset)}function K(e,t,o){null!=t||(t=[]),Be(1==t.length,`Expect to have one ${o} asset in resources`);const n=t[0];return n.behavior=o,X(n),e.push(n),n}function X(e){V[e.behavior]&&W.set(e.behavior,e)}function Y(e){Be(V[e],`Unknown single asset behavior ${e}`);const t=W.get(e);if(t&&!t.resolvedUrl)if(t.resolvedUrl=Pe.locateFile(t.name),F[t.behavior]){const e=ge(t);e?("string"!=typeof e&&Be(!1,"loadBootResource response for 'dotnetjs' type should be a URL string"),t.resolvedUrl=e):t.resolvedUrl=ce(t.resolvedUrl,t.behavior)}else if("dotnetwasm"!==t.behavior)throw new Error(`Unknown single asset behavior ${e}`);return t}function ee(e){const t=Y(e);return Be(t,`Single asset for ${e} not found`),t}let te=!1;async function oe(){if(!te){te=!0,Pe.diagnosticTracing&&b("mono_download_assets");try{const e=[],t=[],o=(e,t)=>{!Z[e.behavior]&&G(e)&&Pe.expected_instantiated_assets_count++,!H[e.behavior]&&G(e)&&(Pe.expected_downloaded_assets_count++,t.push(se(e)))};for(const t of $)o(t,e);for(const e of z)o(e,t);Pe.allDownloadsQueued.promise_control.resolve(),Promise.all([...e,...t]).then((()=>{Pe.allDownloadsFinished.promise_control.resolve()})).catch((e=>{throw Pe.err("Error in mono_download_assets: "+e),Xe(1,e),e})),await Pe.runtimeModuleLoaded.promise;const n=async e=>{const t=await e;if(t.buffer){if(!Z[t.behavior]){t.buffer&&"object"==typeof t.buffer||Be(!1,"asset buffer must be array-like or buffer-like or promise of these"),"string"!=typeof t.resolvedUrl&&Be(!1,"resolvedUrl must be string");const e=t.resolvedUrl,o=await t.buffer,n=new Uint8Array(o);pe(t),await Ue.beforeOnRuntimeInitialized.promise,Ue.instantiate_asset(t,e,n)}}else J[t.behavior]?("symbols"===t.behavior&&(await Ue.instantiate_symbols_asset(t),pe(t)),J[t.behavior]&&++Pe.actual_downloaded_assets_count):(t.isOptional||Be(!1,"Expected asset to have the downloaded buffer"),!H[t.behavior]&&G(t)&&Pe.expected_downloaded_assets_count--,!Z[t.behavior]&&G(t)&&Pe.expected_instantiated_assets_count--)},r=[],i=[];for(const t of e)r.push(n(t));for(const e of t)i.push(n(e));Promise.all(r).then((()=>{Ce||Ue.coreAssetsInMemory.promise_control.resolve()})).catch((e=>{throw Pe.err("Error in mono_download_assets: "+e),Xe(1,e),e})),Promise.all(i).then((async()=>{Ce||(await Ue.coreAssetsInMemory.promise,Ue.allAssetsInMemory.promise_control.resolve())})).catch((e=>{throw Pe.err("Error in mono_download_assets: "+e),Xe(1,e),e}))}catch(e){throw Pe.err("Error in mono_download_assets: "+e),e}}}let ne=!1;function re(){if(ne)return;ne=!0;const e=Pe.config,t=[];if(e.assets)for(const t of e.assets)"object"!=typeof t&&Be(!1,`asset must be object, it was ${typeof t} : ${t}`),"string"!=typeof t.behavior&&Be(!1,"asset behavior must be known string"),"string"!=typeof t.name&&Be(!1,"asset name must be string"),t.resolvedUrl&&"string"!=typeof t.resolvedUrl&&Be(!1,"asset resolvedUrl could be string"),t.hash&&"string"!=typeof t.hash&&Be(!1,"asset resolvedUrl could be string"),t.pendingDownload&&"object"!=typeof t.pendingDownload&&Be(!1,"asset pendingDownload could be object"),t.isCore?$.push(t):z.push(t),X(t);else if(e.resources){const o=e.resources;o.wasmNative||Be(!1,"resources.wasmNative must be defined"),o.jsModuleNative||Be(!1,"resources.jsModuleNative must be defined"),o.jsModuleRuntime||Be(!1,"resources.jsModuleRuntime must be defined"),K(z,o.wasmNative,"dotnetwasm"),K(t,o.jsModuleNative,"js-module-native"),K(t,o.jsModuleRuntime,"js-module-runtime"),o.jsModuleDiagnostics&&K(t,o.jsModuleDiagnostics,"js-module-diagnostics");const n=(e,t,o)=>{const n=e;n.behavior=t,o?(n.isCore=!0,$.push(n)):z.push(n)};if(o.coreAssembly)for(let e=0;e<o.coreAssembly.length;e++)n(o.coreAssembly[e],"assembly",!0);if(o.assembly)for(let e=0;e<o.assembly.length;e++)n(o.assembly[e],"assembly",!o.coreAssembly);if(0!=e.debugLevel&&Pe.isDebuggingSupported()){if(o.corePdb)for(let e=0;e<o.corePdb.length;e++)n(o.corePdb[e],"pdb",!0);if(o.pdb)for(let e=0;e<o.pdb.length;e++)n(o.pdb[e],"pdb",!o.corePdb)}if(e.loadAllSatelliteResources&&o.satelliteResources)for(const e in o.satelliteResources)for(let t=0;t<o.satelliteResources[e].length;t++){const r=o.satelliteResources[e][t];r.culture=e,n(r,"resource",!o.coreAssembly)}if(o.coreVfs)for(let e=0;e<o.coreVfs.length;e++)n(o.coreVfs[e],"vfs",!0);if(o.vfs)for(let e=0;e<o.vfs.length;e++)n(o.vfs[e],"vfs",!o.coreVfs);const r=O(e);if(r&&o.icu)for(let e=0;e<o.icu.length;e++){const t=o.icu[e];t.name===r&&n(t,"icu",!1)}if(o.wasmSymbols)for(let e=0;e<o.wasmSymbols.length;e++)n(o.wasmSymbols[e],"symbols",!1)}if(e.appsettings)for(let t=0;t<e.appsettings.length;t++){const o=e.appsettings[t],n=he(o);"appsettings.json"!==n&&n!==`appsettings.${e.applicationEnvironment}.json`||z.push({name:o,behavior:"vfs",cache:"no-cache",useCredentials:!0})}e.assets=[...$,...z,...t]}async function ie(e){const t=await se(e);return await t.pendingDownloadInternal.response,t.buffer}async function se(e){try{return await ae(e)}catch(t){if(!Pe.enableDownloadRetry)throw t;if(Ie||Se)throw t;if(e.pendingDownload&&e.pendingDownloadInternal==e.pendingDownload)throw t;if(e.resolvedUrl&&-1!=e.resolvedUrl.indexOf("file://"))throw t;if(t&&404==t.status)throw t;e.pendingDownloadInternal=void 0,await Pe.allDownloadsQueued.promise;try{return Pe.diagnosticTracing&&b(`Retrying download '${e.name}'`),await ae(e)}catch(t){return e.pendingDownloadInternal=void 0,await new Promise((e=>globalThis.setTimeout(e,100))),Pe.diagnosticTracing&&b(`Retrying download (2) '${e.name}' after delay`),await ae(e)}}}async function ae(e){for(;L;)await L.promise;try{++N,N==Pe.maxParallelDownloads&&(Pe.diagnosticTracing&&b("Throttling further parallel downloads"),L=i());const t=await async function(e){if(e.pendingDownload&&(e.pendingDownloadInternal=e.pendingDownload),e.pendingDownloadInternal&&e.pendingDownloadInternal.response)return e.pendingDownloadInternal.response;if(e.buffer){const t=await e.buffer;return e.resolvedUrl||(e.resolvedUrl="undefined://"+e.name),e.pendingDownloadInternal={url:e.resolvedUrl,name:e.name,response:Promise.resolve({ok:!0,arrayBuffer:()=>t,json:()=>JSON.parse(new TextDecoder("utf-8").decode(t)),text:()=>{throw new Error("NotImplementedException")},headers:{get:()=>{}}})},e.pendingDownloadInternal.response}const t=e.loadRemote&&Pe.config.remoteSources?Pe.config.remoteSources:[""];let o;for(let n of t){n=n.trim(),"./"===n&&(n="");const t=le(e,n);e.name===t?Pe.diagnosticTracing&&b(`Attempting to download '${t}'`):Pe.diagnosticTracing&&b(`Attempting to download '${t}' for ${e.name}`);try{e.resolvedUrl=t;const n=fe(e);if(e.pendingDownloadInternal=n,o=await n.response,!o||!o.ok)continue;return o}catch(e){o||(o={ok:!1,url:t,status:0,statusText:""+e});continue}}const n=e.isOptional||e.name.match(/\.pdb$/)&&Pe.config.ignorePdbLoadErrors;if(o||Be(!1,`Response undefined ${e.name}`),!n){const t=new Error(`download '${o.url}' for ${e.name} failed ${o.status} ${o.statusText}`);throw t.status=o.status,t}y(`optional download '${o.url}' for ${e.name} failed ${o.status} ${o.statusText}`)}(e);return t?(J[e.behavior]||(e.buffer=await t.arrayBuffer(),++Pe.actual_downloaded_assets_count),e):e}finally{if(--N,L&&N==Pe.maxParallelDownloads-1){Pe.diagnosticTracing&&b("Resuming more parallel downloads");const e=L;L=void 0,e.promise_control.resolve()}}}function le(e,t){let o;return null==t&&Be(!1,`sourcePrefix must be provided for ${e.name}`),e.resolvedUrl?o=e.resolvedUrl:(o=""===t?"assembly"===e.behavior||"pdb"===e.behavior?e.name:"resource"===e.behavior&&e.culture&&""!==e.culture?`${e.culture}/${e.name}`:e.name:t+e.name,o=ce(Pe.locateFile(o),e.behavior)),o&&"string"==typeof o||Be(!1,"attemptUrl need to be path or url string"),o}function ce(e,t){return Pe.modulesUniqueQuery&&q[t]&&(e+=Pe.modulesUniqueQuery),e}let de=0;const ue=new Set;function fe(e){try{e.resolvedUrl||Be(!1,"Request's resolvedUrl must be set");const t=function(e){let t=e.resolvedUrl;if(Pe.loadBootResource){const o=ge(e);if(o instanceof Promise)return o;"string"==typeof o&&(t=o)}const o={};return e.cache?o.cache=e.cache:Pe.config.disableNoCacheFetch||(o.cache="no-cache"),e.useCredentials?o.credentials="include":!Pe.config.disableIntegrityCheck&&e.hash&&(o.integrity=e.hash),Pe.fetch_like(t,o)}(e),o={name:e.name,url:e.resolvedUrl,response:t};return ue.add(e.name),o.response.then((()=>{"assembly"==e.behavior&&Pe.loadedAssemblies.push(e.name),de++,Pe.onDownloadResourceProgress&&Pe.onDownloadResourceProgress(de,ue.size)})),o}catch(t){const o={ok:!1,url:e.resolvedUrl,status:500,statusText:"ERR29: "+t,arrayBuffer:()=>{throw t},json:()=>{throw t}};return{name:e.name,url:e.resolvedUrl,response:Promise.resolve(o)}}}const me={resource:"assembly",assembly:"assembly",pdb:"pdb",icu:"globalization",vfs:"configuration",manifest:"manifest",dotnetwasm:"dotnetwasm","js-module-dotnet":"dotnetjs","js-module-native":"dotnetjs","js-module-runtime":"dotnetjs","js-module-threads":"dotnetjs"};function ge(e){var t;if(Pe.loadBootResource){const o=null!==(t=e.hash)&&void 0!==t?t:"",n=e.resolvedUrl,r=me[e.behavior];if(r){const t=Pe.loadBootResource(r,e.name,n,o,e.behavior);return"string"==typeof t?I(t):t}}}function pe(e){e.pendingDownloadInternal=null,e.pendingDownload=null,e.buffer=null,e.moduleExports=null}function he(e){let t=e.lastIndexOf("/");return t>=0&&t++,e.substring(t)}async function we(e){e&&await Promise.all((null!=e?e:[]).map((e=>async function(e){try{const t=e.name;if(!e.moduleExports){const o=ce(Pe.locateFile(t),"js-module-library-initializer");Pe.diagnosticTracing&&b(`Attempting to import '${o}' for ${e}`),e.moduleExports=await import(/*! webpackIgnore: true */o)}Pe.libraryInitializers.push({scriptName:t,exports:e.moduleExports})}catch(t){E(`Failed to import library initializer '${e}': ${t}`)}}(e))))}async function be(e,t){if(!Pe.libraryInitializers)return;const o=[];for(let n=0;n<Pe.libraryInitializers.length;n++){const r=Pe.libraryInitializers[n];r.exports[e]&&o.push(ye(r.scriptName,e,(()=>r.exports[e](...t))))}await Promise.all(o)}async function ye(e,t,o){try{await o()}catch(o){throw E(`Failed to invoke '${t}' on library initializer '${e}': ${o}`),Xe(1,o),o}}function ve(e,t){if(e===t)return e;const o={...t};return void 0!==o.assets&&o.assets!==e.assets&&(o.assets=[...e.assets||[],...o.assets||[]]),void 0!==o.resources&&(o.resources=_e(e.resources||{assembly:[],jsModuleNative:[],jsModuleRuntime:[],wasmNative:[]},o.resources)),void 0!==o.environmentVariables&&(o.environmentVariables={...e.environmentVariables||{},...o.environmentVariables||{}}),void 0!==o.runtimeOptions&&o.runtimeOptions!==e.runtimeOptions&&(o.runtimeOptions=[...e.runtimeOptions||[],...o.runtimeOptions||[]]),Object.assign(e,o)}function Ee(e,t){if(e===t)return e;const o={...t};return o.config&&(e.config||(e.config={}),o.config=ve(e.config,o.config)),Object.assign(e,o)}function _e(e,t){if(e===t)return e;const o={...t};return void 0!==o.coreAssembly&&(o.coreAssembly=[...e.coreAssembly||[],...o.coreAssembly||[]]),void 0!==o.assembly&&(o.assembly=[...e.assembly||[],...o.assembly||[]]),void 0!==o.lazyAssembly&&(o.lazyAssembly=[...e.lazyAssembly||[],...o.lazyAssembly||[]]),void 0!==o.corePdb&&(o.corePdb=[...e.corePdb||[],...o.corePdb||[]]),void 0!==o.pdb&&(o.pdb=[...e.pdb||[],...o.pdb||[]]),void 0!==o.jsModuleWorker&&(o.jsModuleWorker=[...e.jsModuleWorker||[],...o.jsModuleWorker||[]]),void 0!==o.jsModuleNative&&(o.jsModuleNative=[...e.jsModuleNative||[],...o.jsModuleNative||[]]),void 0!==o.jsModuleDiagnostics&&(o.jsModuleDiagnostics=[...e.jsModuleDiagnostics||[],...o.jsModuleDiagnostics||[]]),void 0!==o.jsModuleRuntime&&(o.jsModuleRuntime=[...e.jsModuleRuntime||[],...o.jsModuleRuntime||[]]),void 0!==o.wasmSymbols&&(o.wasmSymbols=[...e.wasmSymbols||[],...o.wasmSymbols||[]]),void 0!==o.wasmNative&&(o.wasmNative=[...e.wasmNative||[],...o.wasmNative||[]]),void 0!==o.icu&&(o.icu=[...e.icu||[],...o.icu||[]]),void 0!==o.satelliteResources&&(o.satelliteResources=function(e,t){if(e===t)return e;for(const o in t)e[o]=[...e[o]||[],...t[o]||[]];return e}(e.satelliteResources||{},o.satelliteResources||{})),void 0!==o.modulesAfterConfigLoaded&&(o.modulesAfterConfigLoaded=[...e.modulesAfterConfigLoaded||[],...o.modulesAfterConfigLoaded||[]]),void 0!==o.modulesAfterRuntimeReady&&(o.modulesAfterRuntimeReady=[...e.modulesAfterRuntimeReady||[],...o.modulesAfterRuntimeReady||[]]),void 0!==o.extensions&&(o.extensions={...e.extensions||{},...o.extensions||{}}),void 0!==o.vfs&&(o.vfs=[...e.vfs||[],...o.vfs||[]]),Object.assign(e,o)}function xe(){const e=Pe.config;if(e.environmentVariables=e.environmentVariables||{},e.runtimeOptions=e.runtimeOptions||[],e.resources=e.resources||{assembly:[],jsModuleNative:[],jsModuleWorker:[],jsModuleRuntime:[],wasmNative:[],vfs:[],satelliteResources:{}},e.assets){Pe.diagnosticTracing&&b("config.assets is deprecated, use config.resources instead");for(const t of e.assets){const o={};switch(t.behavior){case"assembly":o.assembly=[t];break;case"pdb":o.pdb=[t];break;case"resource":o.satelliteResources={},o.satelliteResources[t.culture]=[t];break;case"icu":o.icu=[t];break;case"symbols":o.wasmSymbols=[t];break;case"vfs":o.vfs=[t];break;case"dotnetwasm":o.wasmNative=[t];break;case"js-module-threads":o.jsModuleWorker=[t];break;case"js-module-runtime":o.jsModuleRuntime=[t];break;case"js-module-native":o.jsModuleNative=[t];break;case"js-module-diagnostics":o.jsModuleDiagnostics=[t];break;case"js-module-dotnet":break;default:throw new Error(`Unexpected behavior ${t.behavior} of asset ${t.name}`)}_e(e.resources,o)}}e.debugLevel,e.applicationEnvironment||(e.applicationEnvironment="Production"),e.applicationCulture&&(e.environmentVariables.LANG=`${e.applicationCulture}.UTF-8`),Ue.diagnosticTracing=Pe.diagnosticTracing=!!e.diagnosticTracing,Ue.waitForDebugger=e.waitForDebugger,Pe.maxParallelDownloads=e.maxParallelDownloads||Pe.maxParallelDownloads,Pe.enableDownloadRetry=void 0!==e.enableDownloadRetry?e.enableDownloadRetry:Pe.enableDownloadRetry}let je=!1;async function Re(e){var t;if(je)return void await Pe.afterConfigLoaded.promise;let o;try{if(e.configSrc||Pe.config&&0!==Object.keys(Pe.config).length&&(Pe.config.assets||Pe.config.resources)||(e.configSrc="dotnet.boot.js"),o=e.configSrc,je=!0,o&&(Pe.diagnosticTracing&&b("mono_wasm_load_config"),await async function(e){const t=e.configSrc,o=Pe.locateFile(t);let n=null;void 0!==Pe.loadBootResource&&(n=Pe.loadBootResource("manifest",t,o,"","manifest"));let r,i=null;if(n)if("string"==typeof n)n.includes(".json")?(i=await s(I(n)),r=await Ae(i)):r=(await import(I(n))).config;else{const e=await n;"function"==typeof e.json?(i=e,r=await Ae(i)):r=e.config}else o.includes(".json")?(i=await s(ce(o,"manifest")),r=await Ae(i)):r=(await import(ce(o,"manifest"))).config;function s(e){return Pe.fetch_like(e,{method:"GET",credentials:"include",cache:"no-cache"})}Pe.config.applicationEnvironment&&(r.applicationEnvironment=Pe.config.applicationEnvironment),ve(Pe.config,r)}(e)),xe(),await we(null===(t=Pe.config.resources)||void 0===t?void 0:t.modulesAfterConfigLoaded),await be("onRuntimeConfigLoaded",[Pe.config]),e.onConfigLoaded)try{await e.onConfigLoaded(Pe.config,Le),xe()}catch(e){throw _("onConfigLoaded() failed",e),e}xe(),Pe.afterConfigLoaded.promise_control.resolve(Pe.config)}catch(t){const n=`Failed to load config file ${o} ${t} ${null==t?void 0:t.stack}`;throw Pe.config=e.config=Object.assign(Pe.config,{message:n,error:t,isError:!0}),Xe(1,new Error(n)),t}}function Te(){return!!globalThis.navigator&&(Pe.isChromium||Pe.isFirefox)}async function Ae(e){const t=Pe.config,o=await e.json();t.applicationEnvironment||o.applicationEnvironment||(o.applicationEnvironment=e.headers.get("Blazor-Environment")||e.headers.get("DotNet-Environment")||void 0),o.environmentVariables||(o.environmentVariables={});const n=e.headers.get("DOTNET-MODIFIABLE-ASSEMBLIES");n&&(o.environmentVariables.DOTNET_MODIFIABLE_ASSEMBLIES=n);const r=e.headers.get("ASPNETCORE-BROWSER-TOOLS");return r&&(o.environmentVariables.__ASPNETCORE_BROWSER_TOOLS=r),o}"function"!=typeof importScripts||globalThis.onmessage||(globalThis.dotnetSidecar=!0);const Se="object"==typeof process&&"object"==typeof process.versions&&"string"==typeof process.versions.node,De="function"==typeof importScripts,Oe=De&&"undefined"!=typeof dotnetSidecar,Ce=De&&!Oe,ke="object"==typeof window||De&&!Se,Ie=!ke&&!Se;let Ue={},Pe={},Me={},Le={},Ne={},$e=!1;const ze={},We={config:ze},Fe={mono:{},binding:{},internal:Ne,module:We,loaderHelpers:Pe,runtimeHelpers:Ue,diagnosticHelpers:Me,api:Le};function Be(e,t){if(e)return;const o="Assert failed: "+("function"==typeof t?t():t),n=new Error(o);_(o,n),Ue.nativeAbort(n)}function Ve(){return void 0!==Pe.exitCode}function qe(){return Ue.runtimeReady&&!Ve()}function He(){Ve()&&Be(!1,`.NET runtime already exited with ${Pe.exitCode} ${Pe.exitReason}. You can use runtime.runMain() which doesn't exit the runtime.`),Ue.runtimeReady||Be(!1,".NET runtime didn't start yet. Please call dotnet.create() first.")}function Je(){ke&&(globalThis.addEventListener("unhandledrejection",et),globalThis.addEventListener("error",tt))}let Ze,Qe;function Ge(e){Qe&&Qe(e),Xe(e,Pe.exitReason)}function Ke(e){Ze&&Ze(e||Pe.exitReason),Xe(1,e||Pe.exitReason)}function Xe(t,o){var n,r;const i=o&&"object"==typeof o;t=i&&"number"==typeof o.status?o.status:void 0===t?-1:t;const s=i&&"string"==typeof o.message?o.message:""+o;(o=i?o:Ue.ExitStatus?function(e,t){const o=new Ue.ExitStatus(e);return o.message=t,o.toString=()=>t,o}(t,s):new Error("Exit with code "+t+" "+s)).status=t,o.message||(o.message=s);const a=""+(o.stack||(new Error).stack);try{Object.defineProperty(o,"stack",{get:()=>a})}catch(e){}const l=!!o.silent;if(o.silent=!0,Ve())Pe.diagnosticTracing&&b("mono_exit called after exit");else{try{We.onAbort==Ke&&(We.onAbort=Ze),We.onExit==Ge&&(We.onExit=Qe),ke&&(globalThis.removeEventListener("unhandledrejection",et),globalThis.removeEventListener("error",tt)),Ue.runtimeReady?(Ue.jiterpreter_dump_stats&&Ue.jiterpreter_dump_stats(!1),0===t&&(null===(n=Pe.config)||void 0===n?void 0:n.interopCleanupOnExit)&&Ue.forceDisposeProxies(!0,!0),e&&0!==t&&(null===(r=Pe.config)||void 0===r||r.dumpThreadsOnNonZeroExit)):(Pe.diagnosticTracing&&b(`abort_startup, reason: ${o}`),function(e){Pe.allDownloadsQueued.promise_control.reject(e),Pe.allDownloadsFinished.promise_control.reject(e),Pe.afterConfigLoaded.promise_control.reject(e),Pe.wasmCompilePromise.promise_control.reject(e),Pe.runtimeModuleLoaded.promise_control.reject(e),Ue.dotnetReady&&(Ue.dotnetReady.promise_control.reject(e),Ue.afterInstantiateWasm.promise_control.reject(e),Ue.beforePreInit.promise_control.reject(e),Ue.afterPreInit.promise_control.reject(e),Ue.afterPreRun.promise_control.reject(e),Ue.beforeOnRuntimeInitialized.promise_control.reject(e),Ue.afterOnRuntimeInitialized.promise_control.reject(e),Ue.afterPostRun.promise_control.reject(e))}(o))}catch(e){E("mono_exit A failed",e)}try{l||(function(e,t){if(0!==e&&t){const e=Ue.ExitStatus&&t instanceof Ue.ExitStatus?b:_;"string"==typeof t?e(t):(void 0===t.stack&&(t.stack=(new Error).stack+""),t.message?e(Ue.stringify_as_error_with_stack?Ue.stringify_as_error_with_stack(t.message+"\n"+t.stack):t.message+"\n"+t.stack):e(JSON.stringify(t)))}!Ce&&Pe.config&&(Pe.config.logExitCode?Pe.config.forwardConsoleLogsToWS?R("WASM EXIT "+e):v("WASM EXIT "+e):Pe.config.forwardConsoleLogsToWS&&R())}(t,o),function(e){if(ke&&!Ce&&Pe.config&&Pe.config.appendElementOnExit&&document){const t=document.createElement("label");t.id="tests_done",0!==e&&(t.style.background="red"),t.innerHTML=""+e,document.body.appendChild(t)}}(t))}catch(e){E("mono_exit B failed",e)}Pe.exitCode=t,Pe.exitReason||(Pe.exitReason=o),!Ce&&Ue.runtimeReady&&We.runtimeKeepalivePop()}if(Pe.config&&Pe.config.asyncFlushOnExit&&0===t)throw(async()=>{try{await async function(){try{const e=await import(/*! webpackIgnore: true */"process"),t=e=>new Promise(((t,o)=>{e.on("error",o),e.end("","utf8",t)})),o=t(e.stderr),n=t(e.stdout);let r;const i=new Promise((e=>{r=setTimeout((()=>e("timeout")),1e3)}));await Promise.race([Promise.all([n,o]),i]),clearTimeout(r)}catch(e){_(`flushing std* streams failed: ${e}`)}}()}finally{Ye(t,o)}})(),o;Ye(t,o)}function Ye(e,t){if(Ue.runtimeReady&&Ue.nativeExit)try{Ue.nativeExit(e)}catch(e){!Ue.ExitStatus||e instanceof Ue.ExitStatus||E("set_exit_code_and_quit_now failed: "+e.toString())}if(0!==e||!ke)throw Se&&Ne.process?Ne.process.exit(e):Ue.quit&&Ue.quit(e,t),t}function et(e){ot(e,e.reason,"rejection")}function tt(e){ot(e,e.error,"error")}function ot(e,t,o){e.preventDefault();try{t||(t=new Error("Unhandled "+o)),void 0===t.stack&&(t.stack=(new Error).stack),t.stack=t.stack+"",t.silent||(_("Unhandled error:",t),Xe(1,t))}catch(e){}}!function(e){if($e)throw new Error("Loader module already loaded");$e=!0,Ue=e.runtimeHelpers,Pe=e.loaderHelpers,Me=e.diagnosticHelpers,Le=e.api,Ne=e.internal,Object.assign(Le,{INTERNAL:Ne,invokeLibraryInitializers:be}),Object.assign(e.module,{config:ve(ze,{environmentVariables:{}})});const r={mono_wasm_bindings_is_ready:!1,config:e.module.config,diagnosticTracing:!1,nativeAbort:e=>{throw e||new Error("abort")},nativeExit:e=>{throw new Error("exit:"+e)}},l={gitHash:"901ca941248413c79832d2fdbd709da0c4386353",config:e.module.config,diagnosticTracing:!1,maxParallelDownloads:16,enableDownloadRetry:!0,_loaded_files:[],loadedFiles:[],loadedAssemblies:[],libraryInitializers:[],workerNextNumber:1,actual_downloaded_assets_count:0,actual_instantiated_assets_count:0,expected_downloaded_assets_count:0,expected_instantiated_assets_count:0,afterConfigLoaded:i(),allDownloadsQueued:i(),allDownloadsFinished:i(),wasmCompilePromise:i(),runtimeModuleLoaded:i(),loadingWorkers:i(),is_exited:Ve,is_runtime_running:qe,assert_runtime_running:He,mono_exit:Xe,createPromiseController:i,getPromiseController:s,assertIsControllablePromise:a,mono_download_assets:oe,resolve_single_asset_path:ee,setup_proxy_console:j,set_thread_prefix:w,installUnhandledErrorHandler:Je,retrieve_asset_download:ie,invokeLibraryInitializers:be,isDebuggingSupported:Te,exceptions:t,simd:n,relaxedSimd:o};Object.assign(Ue,r),Object.assign(Pe,l)}(Fe);let nt,rt,it,st=!1,at=!1;async function lt(e){if(!at){if(at=!0,ke&&Pe.config.forwardConsoleLogsToWS&&void 0!==globalThis.WebSocket&&j("main",globalThis.console,globalThis.location.origin),We||Be(!1,"Null moduleConfig"),Pe.config||Be(!1,"Null moduleConfig.config"),"function"==typeof e){const t=e(Fe.api);if(t.ready)throw new Error("Module.ready couldn't be redefined.");Object.assign(We,t),Ee(We,t)}else{if("object"!=typeof e)throw new Error("Can't use moduleFactory callback of createDotnetRuntime function.");Ee(We,e)}await async function(e){if(Se){const e=await import(/*! webpackIgnore: true */"process"),t=14;if(e.versions.node.split(".")[0]<t)throw new Error(`NodeJS at '${e.execPath}' has too low version '${e.versions.node}', please use at least ${t}. See also https://aka.ms/dotnet-wasm-features`)}const t=/*! webpackIgnore: true */import.meta.url,o=t.indexOf("?");var n;if(o>0&&(Pe.modulesUniqueQuery=t.substring(o)),Pe.scriptUrl=t.replace(/\\/g,"/").replace(/[?#].*/,""),Pe.scriptDirectory=(n=Pe.scriptUrl).slice(0,n.lastIndexOf("/"))+"/",Pe.locateFile=e=>"URL"in globalThis&&globalThis.URL!==C?new URL(e,Pe.scriptDirectory).toString():M(e)?e:Pe.scriptDirectory+e,Pe.fetch_like=k,Pe.out=console.log,Pe.err=console.error,Pe.onDownloadResourceProgress=e.onDownloadResourceProgress,ke&&globalThis.navigator){const e=globalThis.navigator,t=e.userAgentData&&e.userAgentData.brands;t&&t.length>0?Pe.isChromium=t.some((e=>"Google Chrome"===e.brand||"Microsoft Edge"===e.brand||"Chromium"===e.brand)):e.userAgent&&(Pe.isChromium=e.userAgent.includes("Chrome"),Pe.isFirefox=e.userAgent.includes("Firefox"))}Ne.require=Se?await import(/*! webpackIgnore: true */"module").then((e=>e.createRequire(/*! webpackIgnore: true */import.meta.url))):Promise.resolve((()=>{throw new Error("require not supported")})),void 0===globalThis.URL&&(globalThis.URL=C)}(We)}}async function ct(e){return await lt(e),Ze=We.onAbort,Qe=We.onExit,We.onAbort=Ke,We.onExit=Ge,We.ENVIRONMENT_IS_PTHREAD?async function(){(function(){const e=new MessageChannel,t=e.port1,o=e.port2;t.addEventListener("message",(e=>{var n,r;n=JSON.parse(e.data.config),r=JSON.parse(e.data.monoThreadInfo),st?Pe.diagnosticTracing&&b("mono config already received"):(ve(Pe.config,n),Ue.monoThreadInfo=r,xe(),Pe.diagnosticTracing&&b("mono config received"),st=!0,Pe.afterConfigLoaded.promise_control.resolve(Pe.config),ke&&n.forwardConsoleLogsToWS&&void 0!==globalThis.WebSocket&&Pe.setup_proxy_console("worker-idle",console,globalThis.location.origin)),t.close(),o.close()}),{once:!0}),t.start(),self.postMessage({[l]:{monoCmd:"preload",port:o}},[o])})(),await Pe.afterConfigLoaded.promise,function(){const e=Pe.config;e.assets||Be(!1,"config.assets must be defined");for(const t of e.assets)X(t),Q[t.behavior]&&z.push(t)}(),setTimeout((async()=>{try{await oe()}catch(e){Xe(1,e)}}),0);const e=dt(),t=await Promise.all(e);return await ut(t),We}():async function(){var e;await Re(We),re();const t=dt();(async function(){try{const e=ee("dotnetwasm");await se(e),e&&e.pendingDownloadInternal&&e.pendingDownloadInternal.response||Be(!1,"Can't load dotnet.native.wasm");const t=await e.pendingDownloadInternal.response,o=t.headers&&t.headers.get?t.headers.get("Content-Type"):void 0;let n;if("function"==typeof WebAssembly.compileStreaming&&"application/wasm"===o)n=await WebAssembly.compileStreaming(t);else{ke&&"application/wasm"!==o&&E('WebAssembly resource does not have the expected content type "application/wasm", so falling back to slower ArrayBuffer instantiation.');const e=await t.arrayBuffer();Pe.diagnosticTracing&&b("instantiate_wasm_module buffered"),n=Ie?await Promise.resolve(new WebAssembly.Module(e)):await WebAssembly.compile(e)}e.pendingDownloadInternal=null,e.pendingDownload=null,e.buffer=null,e.moduleExports=null,Pe.wasmCompilePromise.promise_control.resolve(n)}catch(e){Pe.wasmCompilePromise.promise_control.reject(e)}})(),setTimeout((async()=>{try{D(),await oe()}catch(e){Xe(1,e)}}),0);const o=await Promise.all(t);return await ut(o),await Ue.dotnetReady.promise,await we(null===(e=Pe.config.resources)||void 0===e?void 0:e.modulesAfterRuntimeReady),await be("onRuntimeReady",[Fe.api]),Le}()}function dt(){const e=ee("js-module-runtime"),t=ee("js-module-native");if(nt&&rt)return[nt,rt,it];"object"==typeof e.moduleExports?nt=e.moduleExports:(Pe.diagnosticTracing&&b(`Attempting to import '${e.resolvedUrl}' for ${e.name}`),nt=import(/*! webpackIgnore: true */e.resolvedUrl)),"object"==typeof t.moduleExports?rt=t.moduleExports:(Pe.diagnosticTracing&&b(`Attempting to import '${t.resolvedUrl}' for ${t.name}`),rt=import(/*! webpackIgnore: true */t.resolvedUrl));const o=Y("js-module-diagnostics");return o&&("object"==typeof o.moduleExports?it=o.moduleExports:(Pe.diagnosticTracing&&b(`Attempting to import '${o.resolvedUrl}' for ${o.name}`),it=import(/*! webpackIgnore: true */o.resolvedUrl))),[nt,rt,it]}async function ut(e){const{initializeExports:t,initializeReplacements:o,configureRuntimeStartup:n,configureEmscriptenStartup:r,configureWorkerStartup:i,setRuntimeGlobals:s,passEmscriptenInternals:a}=e[0],{default:l}=e[1],c=e[2];s(Fe),t(Fe),c&&c.setRuntimeGlobals(Fe),await n(We),Pe.runtimeModuleLoaded.promise_control.resolve(),l((e=>(Object.assign(We,{ready:e.ready,__dotnet_runtime:{initializeReplacements:o,configureEmscriptenStartup:r,configureWorkerStartup:i,passEmscriptenInternals:a}}),We))).catch((e=>{if(e.message&&e.message.toLowerCase().includes("out of memory"))throw new Error(".NET runtime has failed to start, because too much memory was requested. Please decrease the memory by adjusting EmccMaximumHeapSize. See also https://aka.ms/dotnet-wasm-features");throw e}))}const ft=new class{withModuleConfig(e){try{return Ee(We,e),this}catch(e){throw Xe(1,e),e}}withOnConfigLoaded(e){try{return Ee(We,{onConfigLoaded:e}),this}catch(e){throw Xe(1,e),e}}withConsoleForwarding(){try{return ve(ze,{forwardConsoleLogsToWS:!0}),this}catch(e){throw Xe(1,e),e}}withExitOnUnhandledError(){try{return ve(ze,{exitOnUnhandledError:!0}),Je(),this}catch(e){throw Xe(1,e),e}}withAsyncFlushOnExit(){try{return ve(ze,{asyncFlushOnExit:!0}),this}catch(e){throw Xe(1,e),e}}withExitCodeLogging(){try{return ve(ze,{logExitCode:!0}),this}catch(e){throw Xe(1,e),e}}withElementOnExit(){try{return ve(ze,{appendElementOnExit:!0}),this}catch(e){throw Xe(1,e),e}}withInteropCleanupOnExit(){try{return ve(ze,{interopCleanupOnExit:!0}),this}catch(e){throw Xe(1,e),e}}withDumpThreadsOnNonZeroExit(){try{return ve(ze,{dumpThreadsOnNonZeroExit:!0}),this}catch(e){throw Xe(1,e),e}}withWaitingForDebugger(e){try{return ve(ze,{waitForDebugger:e}),this}catch(e){throw Xe(1,e),e}}withInterpreterPgo(e,t){try{return ve(ze,{interpreterPgo:e,interpreterPgoSaveDelay:t}),ze.runtimeOptions?ze.runtimeOptions.push("--interp-pgo-recording"):ze.runtimeOptions=["--interp-pgo-recording"],this}catch(e){throw Xe(1,e),e}}withConfig(e){try{return ve(ze,e),this}catch(e){throw Xe(1,e),e}}withConfigSrc(e){try{return e&&"string"==typeof e||Be(!1,"must be file path or URL"),Ee(We,{configSrc:e}),this}catch(e){throw Xe(1,e),e}}withVirtualWorkingDirectory(e){try{return e&&"string"==typeof e||Be(!1,"must be directory path"),ve(ze,{virtualWorkingDirectory:e}),this}catch(e){throw Xe(1,e),e}}withEnvironmentVariable(e,t){try{const o={};return o[e]=t,ve(ze,{environmentVariables:o}),this}catch(e){throw Xe(1,e),e}}withEnvironmentVariables(e){try{return e&&"object"==typeof e||Be(!1,"must be dictionary object"),ve(ze,{environmentVariables:e}),this}catch(e){throw Xe(1,e),e}}withDiagnosticTracing(e){try{return"boolean"!=typeof e&&Be(!1,"must be boolean"),ve(ze,{diagnosticTracing:e}),this}catch(e){throw Xe(1,e),e}}withDebugging(e){try{return null!=e&&"number"==typeof e||Be(!1,"must be number"),ve(ze,{debugLevel:e}),this}catch(e){throw Xe(1,e),e}}withApplicationArguments(...e){try{return e&&Array.isArray(e)||Be(!1,"must be array of strings"),ve(ze,{applicationArguments:e}),this}catch(e){throw Xe(1,e),e}}withRuntimeOptions(e){try{return e&&Array.isArray(e)||Be(!1,"must be array of strings"),ze.runtimeOptions?ze.runtimeOptions.push(...e):ze.runtimeOptions=e,this}catch(e){throw Xe(1,e),e}}withMainAssembly(e){try{return ve(ze,{mainAssemblyName:e}),this}catch(e){throw Xe(1,e),e}}withApplicationArgumentsFromQuery(){try{if(!globalThis.window)throw new Error("Missing window to the query parameters from");if(void 0===globalThis.URLSearchParams)throw new Error("URLSearchParams is supported");const e=new URLSearchParams(globalThis.window.location.search).getAll("arg");return this.withApplicationArguments(...e)}catch(e){throw Xe(1,e),e}}withApplicationEnvironment(e){try{return ve(ze,{applicationEnvironment:e}),this}catch(e){throw Xe(1,e),e}}withApplicationCulture(e){try{return ve(ze,{applicationCulture:e}),this}catch(e){throw Xe(1,e),e}}withResourceLoader(e){try{return Pe.loadBootResource=e,this}catch(e){throw Xe(1,e),e}}async download(){try{await async function(){lt(We),await Re(We),re(),D(),oe(),await Pe.allDownloadsFinished.promise}()}catch(e){throw Xe(1,e),e}}async create(){try{return this.instance||(this.instance=await async function(){return await ct(We),Fe.api}()),this.instance}catch(e){throw Xe(1,e),e}}async run(){try{return We.config||Be(!1,"Null moduleConfig.config"),this.instance||await this.create(),this.instance.runMainAndExit()}catch(e){throw Xe(1,e),e}}},mt=Xe,gt=ct;Ie||"function"==typeof globalThis.URL||Be(!1,"This browser/engine doesn't support URL API. Please use a modern version. See also https://aka.ms/dotnet-wasm-features"),"function"!=typeof globalThis.BigInt64Array&&Be(!1,"This browser/engine doesn't support BigInt64Array API. Please use a modern version. See also https://aka.ms/dotnet-wasm-features"),ft.withConfig(/*json-start*/{
+  "mainAssemblyName": "App1.Browser",
+  "resources": {
+    "hash": "sha256-2ogWPkg8WlouSH3HUsm2mhgsMeUQZtoWLlmczFJRh2g=",
+    "jsModuleNative": [
+      {
+        "name": "dotnet.native.0ako92055t.js"
+      }
+    ],
+    "jsModuleRuntime": [
+      {
+        "name": "dotnet.runtime.a6jcqbs390.js"
+      }
+    ],
+    "wasmNative": [
+      {
+        "name": "dotnet.native.7hs2pdmxwu.wasm",
+        "hash": "sha256-VVYp6XH0DbvJw6lUH7sWRVIKCZ45+w8XUA9M8LbZVxQ=",
+        "cache": "force-cache"
+      }
+    ],
+    "icu": [
+      {
+        "virtualPath": "icudt_CJK.dat",
+        "name": "icudt_CJK.tjcz0u77k5.dat",
+        "hash": "sha256-SZLtQnRc0JkwqHab0VUVP7T3uBPSeYzxzDnpxPpUnHk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "icudt_EFIGS.dat",
+        "name": "icudt_EFIGS.tptq2av103.dat",
+        "hash": "sha256-8fItetYY8kQ0ww6oxwTLiT3oXlBwHKumbeP2pRF4yTc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "icudt_no_CJK.dat",
+        "name": "icudt_no_CJK.lfu7j35m59.dat",
+        "hash": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs=",
+        "cache": "force-cache"
+      }
+    ],
+    "coreAssembly": [
+      {
+        "virtualPath": "System.Private.CoreLib.wasm",
+        "name": "System.Private.CoreLib.9s549gpy7m.wasm",
+        "hash": "sha256-txDQUdiH3VmsOgqRUepjpm922YZKLTGi5aqjJYtcMTE=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.InteropServices.JavaScript.wasm",
+        "name": "System.Runtime.InteropServices.JavaScript.a0smuvq74f.wasm",
+        "hash": "sha256-tq5pToZJGO7SPoDjoI6ztMHmMkRlFnxE1syzsag+I2E=",
+        "cache": "force-cache"
+      }
+    ],
+    "assembly": [
+      {
+        "virtualPath": "App1.wasm",
+        "name": "App1.53bm8w6dc4.wasm",
+        "hash": "sha256-X/auJZhle1mnTd+zon3QRyVaPDXoZitvyX717YoJujw=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "App1.Browser.wasm",
+        "name": "App1.Browser.t9kjref9xh.wasm",
+        "hash": "sha256-YRC+LcC781g8/YuL62+5phWTnEABfS+Ls7dnxZfyeAU=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.Base.wasm",
+        "name": "Avalonia.Base.hi23v6rqyq.wasm",
+        "hash": "sha256-ebavvc6bUoV5askRxV1v/YaaOMiFt4w751RYEJtPezI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.Browser.wasm",
+        "name": "Avalonia.Browser.bsnxfg8utl.wasm",
+        "hash": "sha256-VVpYiLYWUX3bjkVvjbyn4VDoJ6nsAG1LnC11SKLaJ3c=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.Controls.wasm",
+        "name": "Avalonia.Controls.gx5qith02h.wasm",
+        "hash": "sha256-hJZqeDHdcd0ItW385uOmzudlEONdWaVMIbD8ZRJS0KI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.DesignerSupport.wasm",
+        "name": "Avalonia.DesignerSupport.b0u0t0i1m5.wasm",
+        "hash": "sha256-FcsgzKse0TSCYHvwq6Q7MRk62uGt86KcuCQtmnGeF8M=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.Dialogs.wasm",
+        "name": "Avalonia.Dialogs.gphlvsiib1.wasm",
+        "hash": "sha256-5FvyUUE/NuU6hW6M7d77StucNt+F5/dS4ro9+R87xGk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.Fonts.Inter.wasm",
+        "name": "Avalonia.Fonts.Inter.wc9vji7wt6.wasm",
+        "hash": "sha256-ICxTg8uzdWVRv+zY7VisUQxANwXqfZkUaM4Ewhb0Ta4=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.Markup.wasm",
+        "name": "Avalonia.Markup.6wego6pqf5.wasm",
+        "hash": "sha256-Zq/gzas0Rrh3vkLes/osNCNCRoEcCziy5TQuVs5c1XY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.Markup.Xaml.wasm",
+        "name": "Avalonia.Markup.Xaml.7k9mr4q3ax.wasm",
+        "hash": "sha256-58Ru2a/PQPMrK1tW8bc3t1HjAAIUj41PYaOeXyLjStI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.Metal.wasm",
+        "name": "Avalonia.Metal.a1trlafjv0.wasm",
+        "hash": "sha256-vhhoiDN9aXFKTAnSiC2N6ZOAphyVUqLEK2FR08c51NQ=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.MicroCom.wasm",
+        "name": "Avalonia.MicroCom.l5a1chlq6c.wasm",
+        "hash": "sha256-qSlOn4m4tp0kEQZMB1f5ZuydnRqyWEKeVxeW9DZ6Zm8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.OpenGL.wasm",
+        "name": "Avalonia.OpenGL.f91htzqokn.wasm",
+        "hash": "sha256-XZYaYdxYapDNdavH/nlY3/YlyBXeL+vTXIbFwznl3jY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.Remote.Protocol.wasm",
+        "name": "Avalonia.Remote.Protocol.y9odstt7hi.wasm",
+        "hash": "sha256-JnzNhEQ7ViQq1kHF022cwWSafeMuDNNTBklkAW1AM/g=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.Skia.wasm",
+        "name": "Avalonia.Skia.0czubqrpyj.wasm",
+        "hash": "sha256-YJFdLUv2tNRg1K0kMhj/8/7Zmz/KltT2OnyR4JTw0UM=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.Themes.Fluent.wasm",
+        "name": "Avalonia.Themes.Fluent.npdwd6m7l7.wasm",
+        "hash": "sha256-lc1bQ5R13xq2t3QR7Qi5Dk1JdAKz1utj0dhP1VF2nuE=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.Vulkan.wasm",
+        "name": "Avalonia.Vulkan.54p4rdz6pl.wasm",
+        "hash": "sha256-JVdjoRGpOOQevyOonZYqPSfJLEYm68aQjW4K7jSVGqc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia.wasm",
+        "name": "Avalonia.qijfoe9ue1.wasm",
+        "hash": "sha256-bs9js7aWxynydgqEAniLljVIZHweeFso3O3G7oHO/Gc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia_EventHub.wasm",
+        "name": "Avalonia_EventHub.oruqt1qrof.wasm",
+        "hash": "sha256-vKBOhnOyPxqIIcy6OeGiXoyaPlsXfFO/mCnxy2Ln+Xo=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Avalonia_Navigation.wasm",
+        "name": "Avalonia_Navigation.8mv5wzirf3.wasm",
+        "hash": "sha256-sGRItRPKC+C+VttdW8c4XMMVpOyoGSf31qXG7yLjTZc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "CommunityToolkit.Mvvm.wasm",
+        "name": "CommunityToolkit.Mvvm.7gmxmsktu4.wasm",
+        "hash": "sha256-5zW+GBaJU3Yx7rmRTIROwNk92oqs1+nRVbHJ1xleJRQ=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "HarfBuzzSharp.wasm",
+        "name": "HarfBuzzSharp.j0s9sjzmln.wasm",
+        "hash": "sha256-E27Yd8SSv+ZATx22loehsnmYWSGQTqIbichqRnNkXKk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Irihi.Avalonia.Shared.wasm",
+        "name": "Irihi.Avalonia.Shared.9qltq1kw95.wasm",
+        "hash": "sha256-QVFcOMZmMfVmOU2x3JlgC4JQrZyHta3hz8YKJsIIRIE=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Irihi.Avalonia.Shared.Contracts.wasm",
+        "name": "Irihi.Avalonia.Shared.Contracts.eif03g9zbp.wasm",
+        "hash": "sha256-hsHAlpuCDp1TUKnkdSJPKxJsgUdnNITfMPBX+uX1Imc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "MicroCom.Runtime.wasm",
+        "name": "MicroCom.Runtime.8lt3mh4b1t.wasm",
+        "hash": "sha256-dI22KS20yc+ziyg4tSUpmSjG0ebPXDL5QTSZf+ehjwI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Microsoft.CSharp.wasm",
+        "name": "Microsoft.CSharp.y8cabdi7yj.wasm",
+        "hash": "sha256-foTztPRrzoq1jElVsdRv+okt60TEvQeYphwV9t9NDKI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Microsoft.Extensions.DependencyInjection.wasm",
+        "name": "Microsoft.Extensions.DependencyInjection.5tzvwbi8co.wasm",
+        "hash": "sha256-CROtsTGDTDJlWx7ZklMQhZcEfWcwJDFLhufWD9MlngY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Microsoft.Extensions.DependencyInjection.Abstractions.wasm",
+        "name": "Microsoft.Extensions.DependencyInjection.Abstractions.8pvxjyp0o1.wasm",
+        "hash": "sha256-vGl9tIbONmhneLc24yhhn4QNyhmQV33L4TPNeHmfWcY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Microsoft.VisualBasic.Core.wasm",
+        "name": "Microsoft.VisualBasic.Core.rj6qwnj2np.wasm",
+        "hash": "sha256-WdAu9w+/3N6zBiVnPDG93KylB3tMbEvzetW+JVs/phQ=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Microsoft.VisualBasic.wasm",
+        "name": "Microsoft.VisualBasic.m5z1bpmsgy.wasm",
+        "hash": "sha256-xkh4dkn7gNe1WLAQe3cfm3CjdRVNcJvlpSSdHWynwrI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Microsoft.Win32.Primitives.wasm",
+        "name": "Microsoft.Win32.Primitives.i6x74v9vcb.wasm",
+        "hash": "sha256-ulM/aFba69M17/Tj1tuJ2PpvdQPnNbGtRVryXQ4hBpo=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Microsoft.Win32.Registry.wasm",
+        "name": "Microsoft.Win32.Registry.y4gq7fo2lp.wasm",
+        "hash": "sha256-zigLwYnX2uS92hS70FRqXnZISw2C3v0KY6hKX+fXkA0=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Semi.Avalonia.wasm",
+        "name": "Semi.Avalonia.8yg0qyl3s6.wasm",
+        "hash": "sha256-MHiAchkyosnPd5OoqQi8Yu/ICJ+nUq9+w92chKrjhn8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "SkiaSharp.wasm",
+        "name": "SkiaSharp.8dph0bad52.wasm",
+        "hash": "sha256-VHlhtYNzQReypwMfzGmEyAZ+xQ0MQdsy6ZTvok5vDU0=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.AppContext.wasm",
+        "name": "System.AppContext.2bkkwkya64.wasm",
+        "hash": "sha256-Msxz+VaXeSzLcO+27REusA3i8rZyDPExRwGOEKzVK2M=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Buffers.wasm",
+        "name": "System.Buffers.28ngaukdh3.wasm",
+        "hash": "sha256-ktsOwh8KMvMN3Q8A2Mb8Y71n8aEHhVV1xQZzvE2Npyk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Collections.wasm",
+        "name": "System.Collections.0wg2pdla5w.wasm",
+        "hash": "sha256-AJ/sh3LfpzJ6U8IlpLtJlxr7CkJA4R3q8GfHYYLuP7Q=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Collections.Concurrent.wasm",
+        "name": "System.Collections.Concurrent.uigxbozvg6.wasm",
+        "hash": "sha256-5gzik54yVqs8LFsqbaXng6lrn3RhlMDfCC8jLq2VZHk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Collections.Immutable.wasm",
+        "name": "System.Collections.Immutable.jity4go0mw.wasm",
+        "hash": "sha256-6w1JgRvP2NIlEP//vr+XQFKoJRWi0F+a6pwJB59tq6U=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Collections.NonGeneric.wasm",
+        "name": "System.Collections.NonGeneric.t4c1msu741.wasm",
+        "hash": "sha256-rVmOtWPpzaYEkyK81lYUn46nwxbzLjFlSj27xuHuoUg=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Collections.Specialized.wasm",
+        "name": "System.Collections.Specialized.rjq2931kbi.wasm",
+        "hash": "sha256-55c3YH9310sCKy6fGqY4Zllu/y8OvSsTYjHn6vgtSks=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.ComponentModel.Annotations.wasm",
+        "name": "System.ComponentModel.Annotations.x1bvmbqcbl.wasm",
+        "hash": "sha256-tctQ8UYwJJ8shbwNq007DYmG7LPwqPz+S0ofwAfcbO8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.ComponentModel.DataAnnotations.wasm",
+        "name": "System.ComponentModel.DataAnnotations.0ugm2kn0ef.wasm",
+        "hash": "sha256-uIBMcrYQTLgnbuFLK9AicbBy9f1zxigmcq4uOhvRZ3c=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.ComponentModel.EventBasedAsync.wasm",
+        "name": "System.ComponentModel.EventBasedAsync.iqz7yfxk0z.wasm",
+        "hash": "sha256-qr6WZ92/fTRJqDjbCzCtcyRISjqpy6THwhvvVptQPs8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.ComponentModel.Primitives.wasm",
+        "name": "System.ComponentModel.Primitives.66wyka365l.wasm",
+        "hash": "sha256-XoOP7YWbPst7iwpA+IVsqnFj35UVSNLQX0qd95WX50A=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.ComponentModel.TypeConverter.wasm",
+        "name": "System.ComponentModel.TypeConverter.le29ulsuyy.wasm",
+        "hash": "sha256-bQZSZ/geEtNaQeXITxyPdOnz5maRkPb0OLmq5b8dBfk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.ComponentModel.wasm",
+        "name": "System.ComponentModel.wj8g6avob9.wasm",
+        "hash": "sha256-TK2nsOyraXFIh5vQiUCbhr1pLr+FmtVFfbPV0bsZvA4=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Configuration.wasm",
+        "name": "System.Configuration.7xj6hflys1.wasm",
+        "hash": "sha256-W8cY5EWSRm4MysMCu596PIjDOw7/PGHbGXOo9q0cV8M=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Console.wasm",
+        "name": "System.Console.bdauwtppto.wasm",
+        "hash": "sha256-Aeyntn8KICi8KijwpeMGqeuLLrf5re9RB8xfbQD+fuk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Core.wasm",
+        "name": "System.Core.63xjv55d3c.wasm",
+        "hash": "sha256-QnFF7W0rRqgKv3dhgaDpxeIv0rGcJmcd2TC4pwMfIhs=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Data.Common.wasm",
+        "name": "System.Data.Common.or5475be6q.wasm",
+        "hash": "sha256-zD75iwjfjKKb57d/N4AYDNHvJ6nlzcKqI86L1GCKqFI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Data.DataSetExtensions.wasm",
+        "name": "System.Data.DataSetExtensions.aie27nz2fz.wasm",
+        "hash": "sha256-DncPkqYn3WSSuOXGrXqqDORmp24KsFKLbpo+0kYEKrc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Data.wasm",
+        "name": "System.Data.s403jyj13x.wasm",
+        "hash": "sha256-bE6W63dBZbAllE7txwGlEzFzTfKrHlSzzWBPrCOaw2E=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Diagnostics.Contracts.wasm",
+        "name": "System.Diagnostics.Contracts.awjvmobi6a.wasm",
+        "hash": "sha256-etzdUlIlT6ITWKDVaYadkvzxVF6uXsOwpAGEfRUnJLo=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Diagnostics.Debug.wasm",
+        "name": "System.Diagnostics.Debug.zd32j0e68b.wasm",
+        "hash": "sha256-p9AUpWapiBUcVVNRFi/p5xCLlcbZQE51E45GvIyG8ao=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Diagnostics.DiagnosticSource.wasm",
+        "name": "System.Diagnostics.DiagnosticSource.h063kza90u.wasm",
+        "hash": "sha256-MSH2kpV4JRkQdze0/1G3U9hK1KybKDnKOvkaU7mYrG8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Diagnostics.FileVersionInfo.wasm",
+        "name": "System.Diagnostics.FileVersionInfo.5faw37z8re.wasm",
+        "hash": "sha256-wYtSW2PUGZABZMPyfxFKdw4E/wKwaHYfMzeSE+LtvXg=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Diagnostics.Process.wasm",
+        "name": "System.Diagnostics.Process.85y49vqmlw.wasm",
+        "hash": "sha256-JNVVDKXz5lryO6yeAVcogoktKW0wn9Gzk18oFvUvW7Y=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Diagnostics.StackTrace.wasm",
+        "name": "System.Diagnostics.StackTrace.y2jslxj8se.wasm",
+        "hash": "sha256-ZidOHreDMi/G8aTupFo/T2T/sI9Azq+qCgFlQTG+MXg=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Diagnostics.TextWriterTraceListener.wasm",
+        "name": "System.Diagnostics.TextWriterTraceListener.ubfqtow1rg.wasm",
+        "hash": "sha256-Gq3UhJVGKCsKOSadrTJmeBoEBIB1aQJ72wi830/RcTM=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Diagnostics.Tools.wasm",
+        "name": "System.Diagnostics.Tools.fxjm3tg3oa.wasm",
+        "hash": "sha256-Y0UtthJI9vonI4z+/+qVeMuu9BvQseV3W5Kqiok/ih0=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Diagnostics.TraceSource.wasm",
+        "name": "System.Diagnostics.TraceSource.m2df4u53h3.wasm",
+        "hash": "sha256-7ruz7b/4taN1hslEvPDNya7jlAq9S1zU7lmtSSakJ3c=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Diagnostics.Tracing.wasm",
+        "name": "System.Diagnostics.Tracing.yykvalakbz.wasm",
+        "hash": "sha256-6tlwP/rw9w1Z8STeEKk244ROhuLPG14Tc5Oj2Q5SoWo=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Drawing.Primitives.wasm",
+        "name": "System.Drawing.Primitives.6ajpvk5hee.wasm",
+        "hash": "sha256-IvOqWcdITeDzamSnAm41HZ6ZZw5s+TdJRLabbbwPhHg=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Drawing.wasm",
+        "name": "System.Drawing.pwn69jd1sx.wasm",
+        "hash": "sha256-iaPXgmZStjRI791gA9FgGZi75saGgt1ZYR8BLjPQVWU=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Dynamic.Runtime.wasm",
+        "name": "System.Dynamic.Runtime.dwxo8l4rdr.wasm",
+        "hash": "sha256-Y8JLZ0Q+Hq+Ue1lIam/t2R4RHRYTP2hsKwtdLLCFzbY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Formats.Asn1.wasm",
+        "name": "System.Formats.Asn1.7r6f4x6f4s.wasm",
+        "hash": "sha256-DWjLEno2gKPUwP685ugb0pFCHtmWn4oy4sP6cPEZV/g=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Formats.Tar.wasm",
+        "name": "System.Formats.Tar.9uzzbcwdi8.wasm",
+        "hash": "sha256-z4QPxqj5k7y27vorrM+w5Lb6PKiqGEC/V4iygoxfIRo=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Globalization.Calendars.wasm",
+        "name": "System.Globalization.Calendars.h9ciwjgoxu.wasm",
+        "hash": "sha256-lVq7a0doxTh2Vdzn7wf95Ec5i6lGujvXY2h51TKCwaQ=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Globalization.Extensions.wasm",
+        "name": "System.Globalization.Extensions.7iv43bve8g.wasm",
+        "hash": "sha256-f9c3SyP0tYtSkV1QBevO7XVhgOr7ElNa8MGXINgPyAQ=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Globalization.wasm",
+        "name": "System.Globalization.xg8c7skko3.wasm",
+        "hash": "sha256-H7Pb+7TbWWnbEng/b6DeLvfgzAUpnKGLFAiKUPT+ztA=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.Compression.Brotli.wasm",
+        "name": "System.IO.Compression.Brotli.cgycdoss65.wasm",
+        "hash": "sha256-bIbkKjMJR7l1Eb5D4ccKG402uQETLvgNDy0Si0Y+6MA=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.Compression.FileSystem.wasm",
+        "name": "System.IO.Compression.FileSystem.g80du2epa5.wasm",
+        "hash": "sha256-kHfLrKhxx+6ZSM7H39Cj/GOK1BL9i3h1xfZBfsBzD64=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.Compression.ZipFile.wasm",
+        "name": "System.IO.Compression.ZipFile.hq70g0m5k0.wasm",
+        "hash": "sha256-KdcAEnDQx2xDH9z2aM5SNHrnGKuCEyGSYso5pH5pr4I=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.Compression.wasm",
+        "name": "System.IO.Compression.ntu9cg6tk2.wasm",
+        "hash": "sha256-tY/H2xmqAFiTHnxU8/6WOVCG3oOvp3Q36T+Ri12gYZY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.FileSystem.AccessControl.wasm",
+        "name": "System.IO.FileSystem.AccessControl.bcre3rjv67.wasm",
+        "hash": "sha256-66BQoQMVYbtLrbMUkas4ERFlUxxAUDkcbDfgDdrF7KA=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.FileSystem.DriveInfo.wasm",
+        "name": "System.IO.FileSystem.DriveInfo.gc4k28tlqi.wasm",
+        "hash": "sha256-ADtnUkdgbU+XmzYlZKS3sdn0JX5AbRpy9rVIiIrGguE=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.FileSystem.Primitives.wasm",
+        "name": "System.IO.FileSystem.Primitives.be43v34w5x.wasm",
+        "hash": "sha256-A+TZDIDlLB1ptZp36gHd+RLUU4zM4+ZPOLxudzxPBAc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.FileSystem.Watcher.wasm",
+        "name": "System.IO.FileSystem.Watcher.8qc3wsh77q.wasm",
+        "hash": "sha256-0LzsIBUxLN+Zm/auCG7U7PuycOU4LbpvMbAr0Y0/BdI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.FileSystem.wasm",
+        "name": "System.IO.FileSystem.h8uqkh82lb.wasm",
+        "hash": "sha256-b2xR11S13yOtUTmfYqWUcj4clfG8CpqTAGOcl9BvYSc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.IsolatedStorage.wasm",
+        "name": "System.IO.IsolatedStorage.gzsye4pxc9.wasm",
+        "hash": "sha256-xApXuMRImNGmM7zijGSXr+yCBzzPE679wsp7tk1sglA=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.MemoryMappedFiles.wasm",
+        "name": "System.IO.MemoryMappedFiles.4lxw69q3da.wasm",
+        "hash": "sha256-+KNHSvZ3txWouIGreidDWZCKCygCEk2aIswbmYp/HKg=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.Pipelines.wasm",
+        "name": "System.IO.Pipelines.u8n6swt2ok.wasm",
+        "hash": "sha256-LifQPBrvqxFYfjzJY6xu+jsKV85XzBNlkK/ZEecWLLc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.Pipes.AccessControl.wasm",
+        "name": "System.IO.Pipes.AccessControl.ddt7du9svb.wasm",
+        "hash": "sha256-j3oMbcOE033ryvYZ1UpWgz2JDdzqfyuZoINDD7XY9pc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.Pipes.wasm",
+        "name": "System.IO.Pipes.tv4o1w1yo1.wasm",
+        "hash": "sha256-RyDhQqgIoxLo5y+9F17kNsNkC74iI4n/Lg/T2NwEzyM=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.UnmanagedMemoryStream.wasm",
+        "name": "System.IO.UnmanagedMemoryStream.jb5bmgvv05.wasm",
+        "hash": "sha256-UUr5CkM630/je64hE0usuhtwSOwZICJaY0IiBqJBvhc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.IO.wasm",
+        "name": "System.IO.g204ske44p.wasm",
+        "hash": "sha256-qNqGDefXxtmI6Y2xlF+3wmVeYRdJ7n8L4gdXZEsy8m8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Linq.AsyncEnumerable.wasm",
+        "name": "System.Linq.AsyncEnumerable.w2ftt5zfx7.wasm",
+        "hash": "sha256-aK38b6Cs8BCUvR7kA91s5SkdRfpB5cR1Fd7c2lrlSSs=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Linq.Expressions.wasm",
+        "name": "System.Linq.Expressions.rwll9v3f54.wasm",
+        "hash": "sha256-K9cXMgZg9w0hnksRk8PpoKoaHkwjWOMfLAEQXKeHuM0=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Linq.Parallel.wasm",
+        "name": "System.Linq.Parallel.78wbzaw40x.wasm",
+        "hash": "sha256-5+JiBPrI7kdLCZ7yqsvuIJPNBhR6LtkkXKV8zrBabVM=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Linq.Queryable.wasm",
+        "name": "System.Linq.Queryable.bk0gkg2iiv.wasm",
+        "hash": "sha256-29qySGTwBU0h5CGKfGtTw+CY1qfR7D0DIo2sm+6MohI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Linq.wasm",
+        "name": "System.Linq.bmrkhne1ox.wasm",
+        "hash": "sha256-01WUz7Yv5hQ268Pf7fl0rHnNi25Ck3iSZDLt5m1pe2Y=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Memory.wasm",
+        "name": "System.Memory.6sz098jj9v.wasm",
+        "hash": "sha256-Jm7+XsbP0Ll97vwpeYJdmR8pUDsLOBOjaEVGq+C9eEc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.Http.wasm",
+        "name": "System.Net.Http.08oi8qoit4.wasm",
+        "hash": "sha256-IPslUryM8dVMBqWDGmwJOqFw2NE70E0TKHBKxWXwzTE=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.Http.Json.wasm",
+        "name": "System.Net.Http.Json.56y669zj3s.wasm",
+        "hash": "sha256-fWzfpAk6aZRzGuXScLDlmyI3EXkyM9CypUDdUa7L6Do=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.HttpListener.wasm",
+        "name": "System.Net.HttpListener.qg0j6amwue.wasm",
+        "hash": "sha256-5ujUQXWdkVb8ENZ5zXA4gQJakpvEbymx2RmDHE970Os=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.Mail.wasm",
+        "name": "System.Net.Mail.533n6ks0cq.wasm",
+        "hash": "sha256-YcW4pvIlOA0n74N6n6fMMsmtQh2G2Rd8wUvc3ag7RGA=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.NameResolution.wasm",
+        "name": "System.Net.NameResolution.s5btvjcq6y.wasm",
+        "hash": "sha256-QDfh/6RWl8mhbIZnLp0F6Ht518QlZNHfFNAGbACj4tY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.NetworkInformation.wasm",
+        "name": "System.Net.NetworkInformation.ucbqjhtjil.wasm",
+        "hash": "sha256-At2HflEs9TiHOLkqi0C9uHSUc6W6ggZl5mmPtQ70h98=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.Ping.wasm",
+        "name": "System.Net.Ping.ustem6o7fc.wasm",
+        "hash": "sha256-Xnw6mzltKz5abYZcmWscptzw8YDn9G7oKkQqgzZ2L1c=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.Primitives.wasm",
+        "name": "System.Net.Primitives.935qhm3yb8.wasm",
+        "hash": "sha256-RRU91O3azj9Hpy1my1LrAgkWCSQnuJEETf3U1dARGC8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.Quic.wasm",
+        "name": "System.Net.Quic.cnkjqkyrlb.wasm",
+        "hash": "sha256-SPl+qTwgQTcGqmoi3kHf2e1Vve6P7Q+rp/B8CNbtDJY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.Requests.wasm",
+        "name": "System.Net.Requests.7w1r8uf0a4.wasm",
+        "hash": "sha256-qY2UjpCNzp3MWqBSN0rWK+NoIqsox2XfMVY6DaSetO8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.Security.wasm",
+        "name": "System.Net.Security.xlqynrdyot.wasm",
+        "hash": "sha256-Nc4p2mSzW5BUO2Sk5pWpwE7DnOdBE8Laxh+N2ESNMt0=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.ServerSentEvents.wasm",
+        "name": "System.Net.ServerSentEvents.vwcoz3tazw.wasm",
+        "hash": "sha256-oWmHBCyId3b5/cbJBZQeU/Y+xXqWotSiIvoMcxat0ZU=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.ServicePoint.wasm",
+        "name": "System.Net.ServicePoint.8k7uo97505.wasm",
+        "hash": "sha256-OPKuJnS12kqgLWBaqqR2p4clW7f/Kz6XqzO1eXZRB14=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.Sockets.wasm",
+        "name": "System.Net.Sockets.krbyf8n4l7.wasm",
+        "hash": "sha256-8JDtmlYFyYP3Bvv5f9JiGKjhqINet8gjwbERDmn4Exw=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.WebClient.wasm",
+        "name": "System.Net.WebClient.s7es5vcafa.wasm",
+        "hash": "sha256-+He4X18r5PRKcxFeDHkC9+5aPZb5ciN8CK3kQcANit8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.WebHeaderCollection.wasm",
+        "name": "System.Net.WebHeaderCollection.9quxghu2aq.wasm",
+        "hash": "sha256-L5Im66UgOUCTv+gWwTLFnvaC2+14u/dfO0w3KFESBfc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.WebProxy.wasm",
+        "name": "System.Net.WebProxy.ivbmxiwm57.wasm",
+        "hash": "sha256-nq4JOOk8Mu0Tu8QO2O3gYrIHiYvYBx8hsSumxJK49+I=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.WebSockets.Client.wasm",
+        "name": "System.Net.WebSockets.Client.x9i7zul9bw.wasm",
+        "hash": "sha256-u9wSj7Qki++uQCOriQ5b5jnVPvd8AF6TYzo1cRQbBnI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.WebSockets.wasm",
+        "name": "System.Net.WebSockets.ep3trdpcsb.wasm",
+        "hash": "sha256-ApeOH9Go2vMvwnpus7yN0CbpFrmVqvrUzyNiqQ4nMa4=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Net.wasm",
+        "name": "System.Net.lkc10g164w.wasm",
+        "hash": "sha256-5cVTGqwp/o594m8mPq30CCXdD5PCuHiSw00BaSNwMoY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Numerics.Vectors.wasm",
+        "name": "System.Numerics.Vectors.ohk6rx7mq3.wasm",
+        "hash": "sha256-xENvAVz3MoraJsO1Do+MFN9aj6L46Rv/go2fyoNjtgM=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Numerics.wasm",
+        "name": "System.Numerics.w9sdg2myku.wasm",
+        "hash": "sha256-ZAhFzKBLuaEJkgnZyMvbo8oBIYU1oY7pWxtfo/3zg4Y=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.ObjectModel.wasm",
+        "name": "System.ObjectModel.o49nwl5106.wasm",
+        "hash": "sha256-+LHFvGnrKMcSMi+sCz3ls/7Y8KznT+IBB9FGgz3HCnk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Private.DataContractSerialization.wasm",
+        "name": "System.Private.DataContractSerialization.l1wepxshem.wasm",
+        "hash": "sha256-uXYok4ofkKh/+NRuBxkTDDA3yo7sgBJeLf+1bK1+lMI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Private.Uri.wasm",
+        "name": "System.Private.Uri.17wno6fz9h.wasm",
+        "hash": "sha256-vaJ55eXDUo9PrCfYLiid4iEcArxzTRq0aERdG2wOub0=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Private.Xml.wasm",
+        "name": "System.Private.Xml.1znmymukzn.wasm",
+        "hash": "sha256-I4P+SLG8x3OY+ffkuKnjFI69+1oRN53/dcu1clzUlWc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Private.Xml.Linq.wasm",
+        "name": "System.Private.Xml.Linq.6ndmellwxq.wasm",
+        "hash": "sha256-koAzBx3YzD0rGdvPEhKBKpHm+b5E2ZuZlXmAj1bFgZk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Reactive.wasm",
+        "name": "System.Reactive.uf3cxq9a4s.wasm",
+        "hash": "sha256-lurqzInE6vTnJTNO3+E8MzBx0+2iqgFpuY/9QtyOE44=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Reflection.DispatchProxy.wasm",
+        "name": "System.Reflection.DispatchProxy.uhng0i33yv.wasm",
+        "hash": "sha256-8lJBa5yMe9ocAPcf+u2FEMVvtvKlfpGtadJJ9qiA+RY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Reflection.Emit.ILGeneration.wasm",
+        "name": "System.Reflection.Emit.ILGeneration.mki4j8yrd1.wasm",
+        "hash": "sha256-BiohgywrtvUlQ9yweDjQ42xVwKvXvkRWqQ8oOS6AT/U=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Reflection.Emit.Lightweight.wasm",
+        "name": "System.Reflection.Emit.Lightweight.rwbaytvlax.wasm",
+        "hash": "sha256-NX9QaiN1pdiDQUvzVp22sBxPq7qb1h286QrFavpuy3M=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Reflection.Emit.wasm",
+        "name": "System.Reflection.Emit.sioal9node.wasm",
+        "hash": "sha256-pAN3h4XuXHIgJ8N41G135W2oE4YV8nEXX5Pwby0UT5k=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Reflection.Extensions.wasm",
+        "name": "System.Reflection.Extensions.j3sy1079ix.wasm",
+        "hash": "sha256-vxPC8Lknhll6pYAa+m93AyDMrs5YBR6JzCmZUZtbWvU=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Reflection.Metadata.wasm",
+        "name": "System.Reflection.Metadata.jppm5mm49v.wasm",
+        "hash": "sha256-WTe8k2LAdrTBQ7WnMhCgrSw9Ec9lBDpDsJ9f9hdLrxg=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Reflection.Primitives.wasm",
+        "name": "System.Reflection.Primitives.td0lyduqh2.wasm",
+        "hash": "sha256-MQtgnTwTHMtaT/DvGALvcRBAjJyIDjtzGcOfjvDrd7E=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Reflection.TypeExtensions.wasm",
+        "name": "System.Reflection.TypeExtensions.bw6raolkdi.wasm",
+        "hash": "sha256-Varexc6bfsick0m07M5v70eo7ESJJoe5x16sRVRFd6o=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Reflection.wasm",
+        "name": "System.Reflection.vtl64yeamf.wasm",
+        "hash": "sha256-/Z9nzWOLfEe/X8opJD3DYvv9M4a9XlFDkVkiD9nL2Nw=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Resources.Reader.wasm",
+        "name": "System.Resources.Reader.v4f2264f3m.wasm",
+        "hash": "sha256-4SzOk8ZsFz3dJqEv8Fxp7ovBvYMrh9eLR8tL6DEZHCw=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Resources.ResourceManager.wasm",
+        "name": "System.Resources.ResourceManager.wfbqycsq2f.wasm",
+        "hash": "sha256-lPHfv+UMo6+cO5sShlE+9SjMel1I2JgTWBw/WbMZIAc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Resources.Writer.wasm",
+        "name": "System.Resources.Writer.yomp7oq8px.wasm",
+        "hash": "sha256-IqZrJO3pSEU3l8PLAHs6dHyhf6tBXW4Kd03oQlJX9/U=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.wasm",
+        "name": "System.Runtime.6x7t8axmdw.wasm",
+        "hash": "sha256-Ws0TMOkKaNQMKuS+Fshtw+92XVxaFCimL/bkvDLq9DU=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.CompilerServices.Unsafe.wasm",
+        "name": "System.Runtime.CompilerServices.Unsafe.3fy8j39bry.wasm",
+        "hash": "sha256-wXC73+lTf8SQZxg7fIN2JaI1aKh71Z5tuNtZLp+rjGI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.CompilerServices.VisualC.wasm",
+        "name": "System.Runtime.CompilerServices.VisualC.lzt2t2jx25.wasm",
+        "hash": "sha256-Ufl48Z38OOFBpwxI6Hg3TQlHVe5gMkgRAS6tgq45Sd4=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.Extensions.wasm",
+        "name": "System.Runtime.Extensions.bllnsrspwd.wasm",
+        "hash": "sha256-D7U74t7jbJRnfpa9v5g9GvG2xUimYX/yBzd+nTEef5w=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.Handles.wasm",
+        "name": "System.Runtime.Handles.l1doztbysk.wasm",
+        "hash": "sha256-9+ASatqkwUS5JQeNsDnxqx7qbEjguRM/mj0dnx5TpsY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.InteropServices.wasm",
+        "name": "System.Runtime.InteropServices.92mbh6ougs.wasm",
+        "hash": "sha256-jzLv11RwmdCK+0szbQUORqhqWV4qbY/fJXbFKK1jn6c=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.InteropServices.RuntimeInformation.wasm",
+        "name": "System.Runtime.InteropServices.RuntimeInformation.9rm6cit8v0.wasm",
+        "hash": "sha256-tZytQU9Ot9cWvPshR0e0K8sL/w8AP6NwtvIIGULv0SI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.Intrinsics.wasm",
+        "name": "System.Runtime.Intrinsics.m5kkftjqir.wasm",
+        "hash": "sha256-ClZynzaqD2k+36tnRxpIMIgLWf3mFLGMeiPJsNCky+s=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.Loader.wasm",
+        "name": "System.Runtime.Loader.8tidl2vik3.wasm",
+        "hash": "sha256-hHJDGEgMAWr1s+qiW1BrV+1Z7exLoySo/6fOWJqrd3A=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.Numerics.wasm",
+        "name": "System.Runtime.Numerics.ym3nhl4pae.wasm",
+        "hash": "sha256-1ui5OHMJ7wPS8CMagRQST8GZ+0fbZ/9pltkCoT+90pM=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.Serialization.Formatters.wasm",
+        "name": "System.Runtime.Serialization.Formatters.jfoer9a9b1.wasm",
+        "hash": "sha256-0e07W2MjfznHKpgHXH4mF/uPkhswpfke9rEm8SzrIpc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.Serialization.Json.wasm",
+        "name": "System.Runtime.Serialization.Json.04ot9ggpin.wasm",
+        "hash": "sha256-sLc2UXv86/7spmjl9k/FlzZJtgLB91oVoAjVSMmI64A=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.Serialization.Primitives.wasm",
+        "name": "System.Runtime.Serialization.Primitives.v0sloygu0k.wasm",
+        "hash": "sha256-4R6za3QhAG738JhwTSlKYmmVUewZL3+JEiy2EBTBZkY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.Serialization.Xml.wasm",
+        "name": "System.Runtime.Serialization.Xml.l9p36z8pw0.wasm",
+        "hash": "sha256-qZRNlDomw6MJdamd4o5xAXyVc89w8VvVilN0uYK+IYU=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Runtime.Serialization.wasm",
+        "name": "System.Runtime.Serialization.sl1f80ke8z.wasm",
+        "hash": "sha256-4H3w8zpYK/k5VcLN3klMmYqX9gmmcmLJDWGp/xNzDS0=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.AccessControl.wasm",
+        "name": "System.Security.AccessControl.3nwl7fw3mc.wasm",
+        "hash": "sha256-gaQKfUFeWC/yC+vIXYGwISG7E0h347ZKZFxR/rMFCwc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.Claims.wasm",
+        "name": "System.Security.Claims.xz90ei9jt5.wasm",
+        "hash": "sha256-ndi9w48lPV0EGw6ddNHDBcPoYQbPWSE3/SEuHecjHoc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.Cryptography.Algorithms.wasm",
+        "name": "System.Security.Cryptography.Algorithms.p2act7isih.wasm",
+        "hash": "sha256-/2jRTOBlxI2qAsJecgUlKA7HPIDGfC4FSSyvPvlXduo=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.Cryptography.Cng.wasm",
+        "name": "System.Security.Cryptography.Cng.x43abjiulr.wasm",
+        "hash": "sha256-nxpZpScv6JOfnBL71rSVmbIJSvAulY3TLi8FsHGXimo=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.Cryptography.Csp.wasm",
+        "name": "System.Security.Cryptography.Csp.ujvbo6nowk.wasm",
+        "hash": "sha256-hivAoL3huWK/hEsopqiDNzD2Q6LaTS0V13mwDvU45zA=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.Cryptography.Encoding.wasm",
+        "name": "System.Security.Cryptography.Encoding.87lifboqsx.wasm",
+        "hash": "sha256-LElRZ2Qff7na2E+Ht9jLV7zIfkfGWk5ZGEe6X9rwEYM=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.Cryptography.OpenSsl.wasm",
+        "name": "System.Security.Cryptography.OpenSsl.u2qntds71c.wasm",
+        "hash": "sha256-xvSMbbP5mYs78WPxfabMxS6CEiVXXW/z8DHAd06Ta9w=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.Cryptography.Primitives.wasm",
+        "name": "System.Security.Cryptography.Primitives.ei71q5x4j1.wasm",
+        "hash": "sha256-uoVej/K2vISCzdMszNTRCw8JHuzCyCjDp8gZotB5KZE=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.Cryptography.X509Certificates.wasm",
+        "name": "System.Security.Cryptography.X509Certificates.2spowjj5l2.wasm",
+        "hash": "sha256-fqvts/KgaVC7h71J3M5xks4Qm3qnemRlLg9paDnsBm8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.Cryptography.wasm",
+        "name": "System.Security.Cryptography.na4q58ou4y.wasm",
+        "hash": "sha256-P91IL4b6yQRR9l71weSqfJ9rOXTRBEZI4DHXNPgKQTo=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.Principal.Windows.wasm",
+        "name": "System.Security.Principal.Windows.w9a1l2myly.wasm",
+        "hash": "sha256-REeNMiKakK0i+LDpQR0G3oIO8RHhAlL2UI+0CW7mxNE=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.Principal.wasm",
+        "name": "System.Security.Principal.bh1imzrvgv.wasm",
+        "hash": "sha256-AXZeh8L/uen1b1P66TzL/H/2MUPuRm/CSLFrXqLfrDE=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.SecureString.wasm",
+        "name": "System.Security.SecureString.x4k3li7xsu.wasm",
+        "hash": "sha256-TwpwRnrNs27dbje6sMEyhXmdicvOpBted27udig6sTI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Security.wasm",
+        "name": "System.Security.xcu685weif.wasm",
+        "hash": "sha256-MZseoEAYl49td4OBMPYnTVFqg4ab7Q4lhtQKSYVjRfM=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.ServiceModel.Web.wasm",
+        "name": "System.ServiceModel.Web.bj3h2scdlc.wasm",
+        "hash": "sha256-J16MH06/hNRpUncDtgqLUlkzHraiCdEChHC3tlESOG0=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.ServiceProcess.wasm",
+        "name": "System.ServiceProcess.5a1uwxr095.wasm",
+        "hash": "sha256-/VUsU+8LpVIGBsJ1in3k4k+oT2Ge2My8YuSWCIQATCg=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Text.Encoding.CodePages.wasm",
+        "name": "System.Text.Encoding.CodePages.bxr2gc97io.wasm",
+        "hash": "sha256-IfZW7z5urfuADmp1nHcnlH+MShrRjbc8KxlXi9SqOOM=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Text.Encoding.Extensions.wasm",
+        "name": "System.Text.Encoding.Extensions.ar7spvhfea.wasm",
+        "hash": "sha256-uoSlDj/RP4D2q3z3Mw3VrUm19I7Fo7xOZfT5XzvpXyk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Text.Encoding.wasm",
+        "name": "System.Text.Encoding.z1tsijp8tc.wasm",
+        "hash": "sha256-F5CjAxi2QCwntYK4j4UOtDegwSjxrZS4XYVZMFAHuhQ=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Text.Encodings.Web.wasm",
+        "name": "System.Text.Encodings.Web.ecvfozax9d.wasm",
+        "hash": "sha256-kk8Pc1Ur6Uul8F3nt+GPXzvBTnzgSIxM4vdWNJQbU+Q=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Text.Json.wasm",
+        "name": "System.Text.Json.t2y3tht3ok.wasm",
+        "hash": "sha256-u3/5pDXPp1eZr4wgxyiFy0TOQgg8ibzjBJG/Ed7YQ4M=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Text.RegularExpressions.wasm",
+        "name": "System.Text.RegularExpressions.qwxrrj2acp.wasm",
+        "hash": "sha256-llRhUd8PtG73MH2dI6tpZGZxISRKAn4l/bDru8ma/nw=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Threading.wasm",
+        "name": "System.Threading.7dgt1d3mf6.wasm",
+        "hash": "sha256-G51WQ7j03lstpVgFIS/Rgx9Ei7vwZLqoTddlzUCBzaE=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Threading.AccessControl.wasm",
+        "name": "System.Threading.AccessControl.9ykh0d964r.wasm",
+        "hash": "sha256-UeiDPJNkvktS+ZHXy5yEvXt6rnrqX4PxuwzgrHFmnS8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Threading.Channels.wasm",
+        "name": "System.Threading.Channels.kqljytjj5u.wasm",
+        "hash": "sha256-zNpzMcNMjctVEjN+LqhOMsphJ2pOVztYiWXaOO+25ZI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Threading.Overlapped.wasm",
+        "name": "System.Threading.Overlapped.aw0j9ufvn4.wasm",
+        "hash": "sha256-tuNpEI8jQs7rbsph7idVqHCnCY/pzMmZRqoLnGGMvZo=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Threading.Tasks.Dataflow.wasm",
+        "name": "System.Threading.Tasks.Dataflow.gsdu90uund.wasm",
+        "hash": "sha256-sFWZt9uAGjanOJVHa7llIVf5qVeKRIp1FFo2UfHLZx8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Threading.Tasks.Extensions.wasm",
+        "name": "System.Threading.Tasks.Extensions.bxz0ahfwn3.wasm",
+        "hash": "sha256-ISzNUJ/eFCKfXPMRBqZg+Rlqf2tXnLTOrIsIuaRAoSM=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Threading.Tasks.Parallel.wasm",
+        "name": "System.Threading.Tasks.Parallel.m6q3sy58px.wasm",
+        "hash": "sha256-TltUJqcCWphq9MN5/g3hVFqm5phD5d5Y5ICxEgONuBU=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Threading.Tasks.wasm",
+        "name": "System.Threading.Tasks.vr7balnlm6.wasm",
+        "hash": "sha256-G2p7e/b1thoMgqV+/VcmMWKgaVN3zSNfApUd54HG1PU=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Threading.Thread.wasm",
+        "name": "System.Threading.Thread.yoidgvo6hg.wasm",
+        "hash": "sha256-4ov9QfcmtHwHRwpxCXAsKH4g3veXT8rI3FbsEW89Zm8=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Threading.ThreadPool.wasm",
+        "name": "System.Threading.ThreadPool.ylzen93rxt.wasm",
+        "hash": "sha256-xta6KYtN6poMtdBSQbH3CTNjayPc1HEaCXZnwC5v9F4=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Threading.Timer.wasm",
+        "name": "System.Threading.Timer.ai8c4yy4gy.wasm",
+        "hash": "sha256-7t2V9QZ4oI7StPrXJhUOQ1iQnRNqIiLKjRi4uVRFQOs=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Transactions.Local.wasm",
+        "name": "System.Transactions.Local.lzy5oi4lqx.wasm",
+        "hash": "sha256-YWBAk4+509RyG20xmF8GrmkC4sigz0LUX6jWck0sFYk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Transactions.wasm",
+        "name": "System.Transactions.t2zd200496.wasm",
+        "hash": "sha256-K8uoLN/UN2qdfmJT9XTYrNxmI2VoUC2Jrqoc534LSSI=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.ValueTuple.wasm",
+        "name": "System.ValueTuple.7wn6he28cp.wasm",
+        "hash": "sha256-d4etbGmiQtcQ25lQP+/DjZsS1rqs5vw2JVObdI8IMXc=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Web.HttpUtility.wasm",
+        "name": "System.Web.HttpUtility.6tp4nz4hbm.wasm",
+        "hash": "sha256-qr42CBau61hV8Bc9xTDtRzHthtHhg/xit/+HAsdTiqE=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Web.wasm",
+        "name": "System.Web.ebdit25xqb.wasm",
+        "hash": "sha256-FteOHi1+0r+SGe0svuqML4XCBC3B/PiupXgkQFjqB/A=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Windows.wasm",
+        "name": "System.Windows.aq6lwwfr3z.wasm",
+        "hash": "sha256-UmXZ2xzXZIwSArLJnHQKjfyFNH56w4sRe4Z4egHlwxg=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Xml.wasm",
+        "name": "System.Xml.4dgsvowdwq.wasm",
+        "hash": "sha256-KJ9OjBdfB9r+m4yEC31C17mLDPbgDqHCknx0g2IACwQ=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Xml.Linq.wasm",
+        "name": "System.Xml.Linq.b7gdbqfifs.wasm",
+        "hash": "sha256-uWnWhnYQtarrd5PsokR9QKk0fsUwI4oFad4rx0VBQGM=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Xml.ReaderWriter.wasm",
+        "name": "System.Xml.ReaderWriter.y98l7nfpbl.wasm",
+        "hash": "sha256-2o8zaXKRoPKOFJ7IrUCXwSbXzm77CYg+jqnzkXYm2qM=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Xml.Serialization.wasm",
+        "name": "System.Xml.Serialization.7yexjpd5e3.wasm",
+        "hash": "sha256-79DtH9ut2lkny/R8gyJGHraPPQzvgEH5tRXB5wmh064=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Xml.XDocument.wasm",
+        "name": "System.Xml.XDocument.vg9k1j0zjc.wasm",
+        "hash": "sha256-EQYoTyz3fqjCQ/5iFxAnoR81oKunRdddg6LZdVAqMWk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Xml.XPath.XDocument.wasm",
+        "name": "System.Xml.XPath.XDocument.kwdgho41kx.wasm",
+        "hash": "sha256-nMReov8iBoHa8IEuE+MUl62tVe9irNcWbeLVIy44lXw=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Xml.XPath.wasm",
+        "name": "System.Xml.XPath.b1ds872h3h.wasm",
+        "hash": "sha256-/xTzME6qvVBigmgDbmVEVp/FiIcVmiqdcZAJkU11zLY=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Xml.XmlDocument.wasm",
+        "name": "System.Xml.XmlDocument.7obbgjtztj.wasm",
+        "hash": "sha256-KSTTCxTwFkS8RtZg1NdpyxnM94/yUsOywQjy4XTa6kU=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.Xml.XmlSerializer.wasm",
+        "name": "System.Xml.XmlSerializer.vgjr3kbu2b.wasm",
+        "hash": "sha256-sYHb48y2hJbaWT2iDShSJefi0STSVUdV/ipwhbIZo+o=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "System.wasm",
+        "name": "System.bv0vfagjd5.wasm",
+        "hash": "sha256-J62Baw7gfV8sK5XwURj1GDN87DYteBFag2haGMDvA6M=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Ursa.wasm",
+        "name": "Ursa.5fybe7mjca.wasm",
+        "hash": "sha256-Ae1H60NqpHMsrNc2gHbKjcTPjBNrzy1DN5KnirgYPkk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "Ursa.Themes.Semi.wasm",
+        "name": "Ursa.Themes.Semi.7qdpkq47u6.wasm",
+        "hash": "sha256-v01NCWs4Yp9kMY0G/sEHEocCB6+PIiv/MHOASN/joXk=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "WindowsBase.wasm",
+        "name": "WindowsBase.fin39dxgo4.wasm",
+        "hash": "sha256-x6awrG0PK6N88ErLKZtswG2jfcmeesJojz0dPh3MvME=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "mscorlib.wasm",
+        "name": "mscorlib.83s5ln6r4i.wasm",
+        "hash": "sha256-dC5aSPpW8ylC2bmsSpcll/w4ThaEhnL/KEwOF3TQQcw=",
+        "cache": "force-cache"
+      },
+      {
+        "virtualPath": "netstandard.wasm",
+        "name": "netstandard.qv9s71s9sf.wasm",
+        "hash": "sha256-+tPP7i1i4Q/boVeZgA7ptN+InVDWoJbxot5eS/i9fqY=",
+        "cache": "force-cache"
+      }
+    ]
+  },
+  "debugLevel": 0,
+  "globalizationMode": "sharded",
+  "runtimeConfig": {
+    "runtimeOptions": {
+      "configProperties": {
+        "MVVMTOOLKIT_ENABLE_INOTIFYPROPERTYCHANGING_SUPPORT": true,
+        "System.Diagnostics.Debugger.IsSupported": false,
+        "System.Diagnostics.Metrics.Meter.IsSupported": false,
+        "System.Diagnostics.Tracing.EventSource.IsSupported": false,
+        "System.Globalization.Invariant": false,
+        "System.TimeZoneInfo.Invariant": false,
+        "System.Linq.Enumerable.IsSizeOptimized": true,
+        "System.Net.Http.EnableActivityPropagation": false,
+        "System.Net.Http.WasmEnableStreamingResponse": true,
+        "System.Net.SocketsHttpHandler.Http3Support": false,
+        "System.Reflection.Metadata.MetadataUpdater.IsSupported": false,
+        "System.Resources.UseSystemResourceKeys": true,
+        "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": false,
+        "System.Text.Encoding.EnableUnsafeUTF7Encoding": false
+      }
+    }
+  }
+}/*json-end*/);export{gt as default,ft as dotnet,mt as exit};
