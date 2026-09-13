@@ -28,7 +28,7 @@ public class MainActivity : AvaloniaMainActivity<App>
         if (navigatorService == null) return;
         if (navigatorService.IsExit())
         {        
-            OnBackPressedDispatcher.OnBackPressed();
+            Finish();
         }
         else  
         {        
