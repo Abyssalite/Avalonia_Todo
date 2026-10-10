@@ -35,7 +35,7 @@ public partial class AddTaskView : UserControl
 
         var width = topLevel.Bounds.Width;
 
-        if (width <= 650)
+        if (width < 650)
         {
             AddTaskPanel.Margin =  new Thickness(10) ;
         }

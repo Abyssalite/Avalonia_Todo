@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Avalonia_Navigation;
-using Avalonia_EventHub;
+using Custom_Navigation;
+using Custom_EventHub;
 
 namespace App1.ViewModels;
 

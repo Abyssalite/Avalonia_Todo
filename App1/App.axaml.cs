@@ -7,8 +7,8 @@ using App1.ViewModels;
 using App1.Views;
 using Semi.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
-using Avalonia_Navigation;
-using Avalonia_EventHub;
+using Custom_Navigation;
+using Custom_EventHub;
 
 namespace App1;
 
@@ -30,8 +30,8 @@ public partial class App : Application
         // Register all the services needed for the application to run
         IServiceCollection collection = new ServiceCollection();
         collection.AddCommonServices();
-        collection.AddAvaloniaNavigation();
-        collection.AddAvaloniaEventHub();
+        collection.AddCustomNavigation();
+        collection.AddCustomEventHub();
 
         // Creates a ServiceProvider containing services from the provided IServiceCollection
         Services = collection.BuildServiceProvider();

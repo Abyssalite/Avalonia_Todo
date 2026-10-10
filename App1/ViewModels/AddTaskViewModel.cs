@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using Avalonia_Navigation;
-using Avalonia_EventHub;
+using Custom_Navigation;
+using Custom_EventHub;
 using App1.Events;
 using System;
 

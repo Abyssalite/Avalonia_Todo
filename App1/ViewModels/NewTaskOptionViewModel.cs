@@ -1,7 +1,7 @@
 namespace App1.ViewModels;
 
-using Avalonia_EventHub;
-using Avalonia_Navigation;
+using Custom_EventHub;
+using Custom_Navigation;
 
 public partial class NewTaskOptionViewModel : ViewModelBase
 {

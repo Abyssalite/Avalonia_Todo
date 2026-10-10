@@ -1,7 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Avalonia_EventHub;
+using Custom_EventHub;
 
 public class StoreHelpers
 {

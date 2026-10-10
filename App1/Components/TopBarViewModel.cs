@@ -4,7 +4,7 @@ using App1.ViewModels;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Avalonia_EventHub;
+using Custom_EventHub;
 using System.Collections.Generic;
 using App1.Events;
 

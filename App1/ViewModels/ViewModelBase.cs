@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Avalonia_Navigation;
-using Avalonia_EventHub;
+using Custom_Navigation;
+using Custom_EventHub;
 using System.Collections.Generic;
 
 namespace App1.ViewModels;

@@ -22,7 +22,7 @@ public static class TaskHelpers
     private static string GetAppDataPath()
     {
         var folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var appFolder = Path.Combine(folder, "Avalonia_Todo");
+        var appFolder = Path.Combine(folder, "Custom_Todo");
         Directory.CreateDirectory(appFolder);
         return appFolder;
     }
