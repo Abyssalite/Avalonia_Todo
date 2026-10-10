@@ -35,7 +35,7 @@ public partial class TaskDetailView : UserControl
 
         var width = topLevel.Bounds.Width;
 
-        if (width < 650)
+        if (width <= 650)
         {
             TaskDetailPanel.Margin =  new Thickness(10) ;
         }

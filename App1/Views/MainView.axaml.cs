@@ -103,7 +103,7 @@ public partial class MainView : UserControl
 
         if (!_isOverride)
         {
-            if (IsPaneOpen && width < 650)
+            if (IsPaneOpen && width <= 650)
             {
                 _isSetted = true;
                 OpenPane(false);
