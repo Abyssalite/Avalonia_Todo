@@ -9,3 +9,7 @@
 - dotnet run --project App1.Desktop -f net10.0
 
 - dotnet run --project App1.Browser -f net10.0-browser
+
+- dotnet publish Lan_Camera.Desktop -f net10.0 -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+
+-dotnet publish Lan_Camera.Desktop -f net10.0 -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true
